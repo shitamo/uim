@@ -143,75 +143,93 @@ Phase 2 knows what to fix rather than re-discovering it:
   hide it) but worth a second look once there's real-world data on what
   actually fails in the wild.
 
-## Phase 2 (proposed): a real ibus-style architecture
+## Phase 2 (proposed, on hold): a real ibus-style architecture
 
-Phase 1 only moves the existing *bus* onto D-Bus; it does not change how
-an application's im module talks to the input method engine itself. That
-path is separate and today looks roughly like:
+**Status: paused after step 1, pending a decision on whether to pursue
+it at all.** The rest of this section, beyond the correction below, is
+a proposal that was written before the current architecture had been
+checked carefully enough. It's kept for reference, but should not be
+read as a committed plan.
+
+### Correction: uim does not have an agent process today
+
+An earlier draft of this section described uim's current architecture
+as:
 
 ```
 application <-> im module (gtk3/qt/xim) <-> uim-agent (fork/exec'd) <-> uim core (scheme/plugins)
 ```
 
-with `uim/agent.c` and the toolkit-specific bridge code
-(`gtk3/immodule`, `qt5/immodule`, `xim/`) each implementing their own
-framing over a private pipe/socket pair per input context. That's the
-part that would need to change to look like ibus's actual architecture,
-where:
+with a `uim-agent` process handling key events over a per-context
+pipe, analogous to how `ibus-daemon` handles them today. **That is not
+what the code does.** `uim/agent.c` is an abandoned, never-finished
+prototype (its own header comment says "prototype ... TOOOO...
+experimental", and its `main()` literally returns before reaching any
+of the code that would run it) -- it is not used by, or reachable
+from, any real im module.
 
-- a single long-running daemon (`ibus-daemon` equivalent) owns a D-Bus
-  name and exposes a `Bus`/`Factory` object that creates a fresh
-  `org.freedesktop.IBus.InputContext`-style object (its own D-Bus object
-  path) per focused input context;
-- im modules talk to that daemon's D-Bus objects directly (method calls
-  for `ProcessKeyEvent`, `FocusIn`, `FocusOut`, `SetCursorLocation`, ...;
-  signals for `CommitText`, `UpdatePreeditText`, `UpdateAuxString`,
-  `UpdateLookupTable`, ...) instead of going through a bespoke
-  pipe-framed protocol;
-- panel/candidate-window/toolbar processes are themselves D-Bus clients
-  of the daemon rather than peers on a flat broadcast bus, which is what
-  actually removes the "everyone sees everyone else's messages and
-  filters" pattern Phase 1 still preserves for compatibility.
+What every toolkit im module actually does (checked directly in
+`gtk3/immodule/gtk-im-uim.c`, which calls `uim_create_context()` and
+`uim_press_key()` straight from its own code, and the equivalent is
+true of `qt5/immodule`, `xim/`, etc.) is link `libuim.so` and run the
+uim core -- the Scheme interpreter (sigscheme) and every IM plugin --
+**in-process, inside the application itself.** There is no daemon and
+no IPC on the key-event path at all today. The helper bus (both the
+socket one and Phase 1's D-Bus transport) is a completely separate,
+secondary channel used only for the auxiliary UI processes (candidate
+window, toolbar, `uim-pref-*`, `uim-im-switcher`) to exchange
+preedit/candidate/property updates with whichever application process
+currently has focus -- it was never on the key-processing path.
 
-This is a substantially larger effort than Phase 1: it touches
-`uim/agent.c`, every toolkit im module (`gtk3/immodule`, `gtk4/immodule`,
-`qt3` through `qt6/immodule`, `tqt/immodule`, `xim/`), and the UI-side
-processes (`*/candwin`, `*/toolbar`, `*/pref`, `*/switcher`). A realistic
-path there is incremental, in roughly this order, each step independently
-shippable and each one able to fall back to the pre-existing mechanism
-the same way Phase 1 falls back to the socket transport:
+### Why this changes the scope of Phase 2
 
-1. **(done)** Define the D-Bus interfaces and land them alongside the
-   existing agent protocol, unused.
-2. Convert `uim-agent` into a D-Bus-activated per-session daemon that
-   exposes those interfaces *in addition to* its current stdio/pipe
-   protocol, proxying to the same core.
-3. Port one im module (the natural choice is `gtk3/immodule`, since it's
-   the most actively used) to talk to the new D-Bus interface, gated by
-   an environment variable / configure flag, with the pipe-based path
-   kept as the default and fallback -- exactly the pattern Phase 1
-   established with `UIM_HELPER_TRANSPORT`.
-4. Once that's proven out, port the remaining im modules and the
-   UI-side processes, and only then consider retiring the non-D-Bus
-   paths (a multi-release deprecation, not a flag day -- uim supports
-   too wide a range of desktop environments and toolkit versions,
-   several of them (qt3/tqt) essentially unmaintained upstream, to
-   remove the fallback quickly).
+The Phase 2 proposal below assumed step 2 was "wire D-Bus onto an
+existing daemon." With no existing daemon, step 2 is actually "write a
+new, single, long-running process that hosts the uim core (sigscheme +
+every plugin) out-of-process for the whole session, and move every im
+module from linking `libuim` and calling it in-process to being a thin
+D-Bus client of that new process instead." That is a fundamentally
+different, much larger undertaking than Phase 1:
 
-Only step 1 is implemented so far -- steps 2-4 are still just this plan.
+- It is not additive in the way Phase 1 was. Phase 1 added a transport
+  underneath an unchanged protocol and left every call site alone.
+  Doing this for real changes *where uim's core code runs* -- moving
+  it out of each application's address space into a shared daemon --
+  which affects per-engine state, plugin loading, crash isolation
+  (today one application's uim state can't take down another's; a
+  shared daemon changes that), and startup latency characteristics,
+  not just the wire format.
+- It has no small, independently-shippable first slice the way Phase 1
+  did (a transport swap you can build, test and fall back from in an
+  afternoon). A minimally useful version already means: a new daemon
+  binary: D-Bus activation and lifecycle for it; session/IC bookkeeping
+  keyed by client + focus; and at least one im module actually ported
+  to it end-to-end before any of it is validated against real usage.
+- It's the kind of rearchitecture that's worth deciding deliberately,
+  not backing into via an incremental patch series, given how large
+  the eventual diff is and how central the changed code path is to
+  every user of uim.
+
+### What's actually landed, and what isn't
+
+Only interface *definitions* (step 1 in the original numbered plan
+below) are implemented -- see the next subsection. No daemon, no
+im-module port, and no build/runtime wiring for any of it exists. This
+document is being left in place, corrected, as the reference for
+*if and when* Phase 2 is picked back up, not as an active plan.
 
 ### Step 1 (done): interface definitions
 
-- `uim/uim-dbus-ic.h` defines the two interfaces as C constants
+- `uim/uim-dbus-ic.h` defines two interfaces as C constants
   (bus name, object paths, interface names, method/signal names), with
   the full method/signal shapes documented in comments right next to
   each constant.
 - `data/dbus-1/interfaces/org.uim.Factory1.xml` and
   `data/dbus-1/interfaces/org.uim.InputContext1.xml` mirror the same
   shapes as standalone D-Bus introspection XML, kept in sync with the
-  header by hand -- useful as a reference for anyone inspecting the
-  eventual daemon with `d-feet`/`busctl introspect`/etc. once step 2
-  exists, and as a design doc in its own right until then.
+  header by hand -- useful as a reference for anyone inspecting a
+  future daemon with `d-feet`/`busctl introspect`/etc., and as a
+  design doc in its own right.
 - Naming uses uim's own namespace (`org.uim.Agent` bus name,
   `org.uim.Factory1`/`org.uim.InputContext1` interfaces) rather than
   IBus's (`org.freedesktop.IBus.*`). uim is not attempting wire
@@ -222,11 +240,38 @@ Only step 1 is implemented so far -- steps 2-4 are still just this plan.
   compatibility benefit ("some existing IBus client works against uim
   unmodified") that's speculative until a concrete such client shows
   up wanting it.
-- **Nothing calls any of this yet.** `uim-dbus-ic.h` is not included
-  from any `.c` file, and the two `.xml` files aren't read by any code
-  or referenced from any `Makefile.am` install rule -- they exist purely
-  for review and as the reference the step 2 implementation will be
-  written against. Interface names, method signatures and object path
-  shapes here are still a proposal, not a committed ABI: expect them to
-  move once step 2 (an actual daemon implementing this) surfaces
-  something this header got wrong.
+- **Nothing calls any of this.** `uim-dbus-ic.h` is not included from
+  any `.c` file, and the two `.xml` files aren't read by any code or
+  referenced from any `Makefile.am` install rule -- they exist purely
+  as a design reference. Interface names, method signatures and object
+  path shapes here are a proposal, not a committed ABI, and should be
+  expected to change if this is ever picked back up, once a real
+  implementation surfaces something this header got wrong.
+
+### Original staged plan (kept for reference; steps 2-4 not started)
+
+The plan below was written assuming an existing agent process could be
+incrementally converted. With that premise corrected above, step 2 in
+particular needs to be re-scoped (a new daemon, not a converted one)
+before any of this is acted on:
+
+1. **(done)** Define the D-Bus interfaces and land them alongside the
+   existing agent protocol, unused.
+2. ~~Convert `uim-agent` into a D-Bus-activated per-session daemon~~ --
+   there is no existing `uim-agent` process to convert (see the
+   correction above). A real step 2 means designing and writing a new
+   out-of-process daemon from scratch that hosts the uim core and
+   exposes `org.uim.Factory1`/`org.uim.InputContext1`, with every
+   im module continuing to work unmodified against in-process `libuim`
+   in the meantime.
+3. Port one im module (the natural choice is `gtk3/immodule`, since
+   it's the most actively used) to talk to the new D-Bus interface,
+   gated by an environment variable / configure flag, with the
+   in-process `libuim` path kept as the default and fallback --
+   the same pattern Phase 1 established with `UIM_HELPER_TRANSPORT`.
+4. Once that's proven out, port the remaining im modules and the
+   UI-side processes, and only then consider retiring the in-process
+   path (a multi-release deprecation, not a flag day -- uim supports
+   too wide a range of desktop environments and toolkit versions,
+   several of them (qt3/tqt) essentially unmaintained upstream, to
+   remove the fallback quickly).

@@ -263,6 +263,48 @@ fi
 
 AM_CONDITIONAL(OPENSSL, test "x$enable_openssl" = xyes)
 
+# ***********************************
+# *** Tests for D-Bus helper bus ***
+# ***********************************
+AC_ARG_ENABLE(helper-dbus,
+  AC_HELP_STRING([--enable-helper-dbus],
+    [use D-Bus for the uim helper bus (candidate window / toolbar / pref
+     tool IPC) instead of the legacy Unix-domain-socket protocol. The
+     socket transport remains as an automatic runtime fallback and can
+     be forced back on with UIM_HELPER_TRANSPORT=socket. [default=auto]]),
+  [],
+  [enable_helper_dbus=auto])
+
+have_dbus=no
+if test "x$enable_helper_dbus" != xno; then
+  PKG_CHECK_MODULES(DBUS, dbus-1 >= 1.6, have_dbus=yes, have_dbus=no)
+  if test "x$enable_helper_dbus" = xyes -a "x$have_dbus" = xno; then
+    AC_MSG_ERROR([--enable-helper-dbus was given but dbus-1 (>= 1.6) was not found by pkg-config])
+  fi
+fi
+
+if test "x$have_dbus" = xyes; then
+  AC_DEFINE(HAVE_DBUS, 1, [Define if the D-Bus helper-bus transport is enabled])
+
+  DBUS_SESSION_SERVICES_DIR=`$PKG_CONFIG dbus-1 --variable=session_bus_services_dir 2>/dev/null`
+  if test "x$DBUS_SESSION_SERVICES_DIR" = x; then
+    DBUS_SESSION_SERVICES_DIR="$datadir/dbus-1/services"
+  fi
+  AC_SUBST(DBUS_SESSION_SERVICES_DIR)
+
+  have_systemd_user_unitdir=no
+  if test "x$PKG_CONFIG" != x; then
+    SYSTEMD_USER_UNIT_DIR=`$PKG_CONFIG systemd --variable=systemduserunitdir 2>/dev/null`
+    if test "x$SYSTEMD_USER_UNIT_DIR" != x; then
+      have_systemd_user_unitdir=yes
+      AC_SUBST(SYSTEMD_USER_UNIT_DIR)
+    fi
+  fi
+fi
+
+AM_CONDITIONAL(HAVE_DBUS, test "x$have_dbus" = xyes)
+AM_CONDITIONAL(HAVE_SYSTEMD_USER_UNITDIR, test "x$have_systemd_user_unitdir" = xyes)
+
 # *************************
 # *** Tests for SQLite3 ***
 # *************************
@@ -2011,6 +2053,8 @@ AC_CONFIG_FILES([Makefile
                  tables/Makefile
                  byeoru-data/Makefile
                  data/Makefile
+                 data/dbus-1/services/org.uim.HelperBus.service
+                 data/systemd/uim-helper-bus.service
                  test/Makefile
                  test2/Makefile
                  test2/run-singletest.sh

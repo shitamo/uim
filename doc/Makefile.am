@@ -1,3 +1,4 @@
 EXTRA_DIST = 00INDEX COMPATIBILITY CUSTOM DOT-UIM ENV HELPER-CANDWIN \
 	     HELPER-PROTOCOL KEY PACKAGING PLUGIN RELEASING \
-	     UIM-SCM UIM-SH UNIT-TEST uim-im-switcher-cli.md
+	     UIM-SCM UIM-SH UNIT-TEST uim-im-switcher-cli.md \
+	     dbus-helper-bus.md

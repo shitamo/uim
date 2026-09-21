@@ -52,6 +52,7 @@
 #include "uim-internal.h"
 #include "uim-helper.h"
 #include "uim-posix.h"
+#include "uim-helper-dbus.h"
 
 /*
  * uim-notify is disabled since I'm not confident about:
@@ -122,6 +123,11 @@ uim_helper_send_message(int fd, const char *message)
   if (fd < 0 || !message)
     return;
 #endif
+
+  if (uim_helper_client_fd_is_dbus(fd)) {
+    uim_helper_dbus_send_message(fd, message);
+    return;
+  }
 
   uim_asprintf(&buf, "%s\n", message);
 

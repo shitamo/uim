@@ -54,6 +54,7 @@
 #include "uim-helper.h"
 #include "uim-internal.h"
 #include "uim-util.h"
+#include "uim-helper-dbus.h"
 
 
 #define RECV_BUFFER_SIZE 1024
@@ -79,8 +80,24 @@ int uim_helper_init_client_fd(void (*disconnect_cb)(void))
   char path[MAXPATHLEN];
   FILE *serv_r = NULL, *serv_w = NULL;
   int fd = -1;
-  
+
   uim_fd = -1;
+
+  if (uim_helper_dbus_enabled()) {
+    fd = uim_helper_dbus_init_client_fd(disconnect_cb);
+    if (fd >= 0) {
+      if (!uim_read_buf)
+	uim_read_buf = uim_strdup("");
+      uim_disconnect_cb = disconnect_cb;
+      uim_fd = fd;
+      return fd;
+    }
+    fd = -1;
+    /* The D-Bus session bus isn't reachable (e.g. no full desktop
+     * session, such as a bare console or an early boot service) --
+     * fall back to the legacy per-user Unix-domain-socket helper bus
+     * so uim keeps working there exactly as before. */
+  }
 
   if (!uim_helper_get_pathname(path, sizeof(path)))
     goto error;
@@ -156,6 +173,12 @@ error:
 void
 uim_helper_close_client_fd(int fd)
 {
+  if (uim_helper_client_fd_is_dbus(fd)) {
+    uim_helper_dbus_close_client_fd(fd);
+    uim_fd = -1;
+    return;
+  }
+
   if (fd != -1)
     close(fd);
 
@@ -190,6 +213,11 @@ uim_helper_read_proc(int fd)
 {
   int rc;
 
+  if (uim_helper_client_fd_is_dbus(fd)) {
+    uim_helper_dbus_read_proc(fd);
+    return;
+  }
+
   while (uim_helper_fd_readable(fd) > 0) {
     rc = read(fd, uim_recv_buf, sizeof(uim_recv_buf));
     if (rc == 0 || (rc == -1 && errno != EAGAIN)) {
@@ -205,4 +233,19 @@ char *
 uim_helper_get_message(void)
 {
   return uim_helper_buffer_get_message(uim_read_buf);
+}
+
+void
+uim_helper_client_queue_incoming_message(const char *terminated_message)
+{
+  size_t len;
+
+  if (!terminated_message)
+    return;
+
+  if (!uim_read_buf)
+    uim_read_buf = uim_strdup("");
+
+  len = strlen(terminated_message);
+  uim_read_buf = uim_helper_buffer_append(uim_read_buf, terminated_message, len);
 }

@@ -55,6 +55,7 @@
 #include "uim.h"
 #include "uim-internal.h"
 #include "uim-helper.h"
+#include "uim-helper-dbus.h"
 
 
 struct client {
@@ -375,6 +376,20 @@ main(int argc, char **argv)
   int server_fd;
 
   uim_init_error();
+
+  if (uim_helper_dbus_enabled()) {
+    /* Let D-Bus activation (optionally via systemd --user, see
+     * data/dbus-1/services/org.uim.HelperBus.service) manage this
+     * daemon's startup and environment, instead of it being fork/exec'd
+     * by whichever client process happened to need it first and
+     * inheriting that process's environment. uim_helper_dbus_server_run()
+     * blocks until there's nothing left to do; see uim-helper-dbus.c. */
+    if (uim_helper_dbus_server_run())
+      return 0;
+    /* No D-Bus session bus reachable at all -- fall back to the legacy
+     * socket server below so uim keeps working outside a full desktop
+     * session. */
+  }
 
   if (!uim_helper_get_pathname(path, sizeof(path)))
     return 0;

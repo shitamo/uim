@@ -1,6 +1,8 @@
 00INDEX (This file)    contain the index.
 COMPATIBILITY          Tracks API/ABI compatibility change
 CUSTOM                 Usage of uim-custom API for developers
+dbus-helper-bus.md     D-Bus transport for the helper bus, and the roadmap
+                       toward a fully D-Bus-based (ibus-like) architecture
 DOT-UIM                Usage of the user customization file
 ENV                    Environment variables
 HELPER-CANDWIN         Protocol between candidatewindow apps and uim-xim

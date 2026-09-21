@@ -56,6 +56,7 @@ libuim_la_SOURCES = \
 		uim-key.c uim-func.c uim-util.c uim-posix.c \
 		uim-iconv.h iconv.c dynlib.c \
 		uim-ipc.c uim-helper.c uim-helper-client.c \
+		uim-helper-dbus.h uim-helper-dbus.c \
 		gettext.h intl.c \
 		rk.c
 
@@ -252,6 +253,11 @@ libuim_la_CPPFLAGS = $(uim_defs) \
 		     -DPKGLIBDIR=\"$(pkglibdir)\" \
 		     -DPKGDATADIR=\"$(pkgdatadir)\"
 
+if HAVE_DBUS
+  libuim_la_CPPFLAGS += $(DBUS_CFLAGS)
+  libuim_la_LIBADD += $(DBUS_LIBS)
+endif
+
 if ENABLE_ANTHY_STATIC
   libuim_la_LIBADD += @ANTHY_LIBS@
   libuim_la_CPPFLAGS += -DENABLE_ANTHY_STATIC
@@ -294,8 +300,14 @@ uim_helper_server_CPPFLAGS = $(uim_defs) $(AM_CPPFLAGS)
 # uim-notify workaround for uim-error.c combined with non-libuim program
 uim_helper_server_CPPFLAGS += -DUIM_NON_LIBUIM_PROG
 uim_helper_server_CFLAGS =
-uim_helper_server_SOURCES = uim-helper.c uim-helper-server.c uim-error.c
+uim_helper_server_SOURCES = uim-helper.c uim-helper-server.c uim-error.c \
+			     uim-helper-dbus.h uim-helper-dbus.c
 uim_helper_server_LDADD = $(top_builddir)/replace/libreplace.la
+
+if HAVE_DBUS
+  uim_helper_server_CPPFLAGS += $(DBUS_CFLAGS)
+  uim_helper_server_LDADD += $(DBUS_LIBS)
+endif
 
 uim_sh_LIBS =
 uim_sh_CPPFLAGS = $(uim_defs) $(AM_CPPFLAGS)

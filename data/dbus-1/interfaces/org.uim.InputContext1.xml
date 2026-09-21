@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  org.uim.InputContext1 -- proposed Phase 2 interface, NOT YET IMPLEMENTED.
+
+  See doc/dbus-helper-bus.md ("Phase 2") and uim/uim-dbus-ic.h for the
+  design notes this XML documents. Exported (once step 2 lands) at
+  agent-assigned object paths of the shape
+  /org/uim/InputContext/<n>, one per live input context, created by
+  org.uim.Factory1.CreateInputContext() and released by this
+  interface's own Destroy() method.
+
+  This file is not consumed by any code yet -- it's a reference
+  introspection document, kept in sync with uim-dbus-ic.h by hand.
+-->
+<node name="/org/uim/InputContext">
+  <interface name="org.uim.InputContext1">
+    <method name="ProcessKeyEvent">
+      <arg name="keyval" type="u" direction="in"/>
+      <arg name="keycode" type="u" direction="in"/>
+      <arg name="state" type="u" direction="in"/>
+      <arg name="handled" type="b" direction="out"/>
+    </method>
+    <method name="SetCursorLocation">
+      <arg name="x" type="i" direction="in"/>
+      <arg name="y" type="i" direction="in"/>
+      <arg name="w" type="i" direction="in"/>
+      <arg name="h" type="i" direction="in"/>
+    </method>
+    <method name="SetCursorLocationRelative">
+      <arg name="x" type="i" direction="in"/>
+      <arg name="y" type="i" direction="in"/>
+      <arg name="w" type="i" direction="in"/>
+      <arg name="h" type="i" direction="in"/>
+    </method>
+    <method name="FocusIn"/>
+    <method name="FocusOut"/>
+    <method name="Reset"/>
+    <method name="SetCapabilities">
+      <arg name="caps" type="u" direction="in"/>
+    </method>
+    <method name="SetEngine">
+      <arg name="name" type="s" direction="in"/>
+    </method>
+    <method name="Destroy"/>
+
+    <signal name="CommitText">
+      <arg name="text" type="s"/>
+    </signal>
+    <signal name="UpdatePreeditText">
+      <arg name="text" type="s"/>
+      <arg name="cursor_pos" type="u"/>
+      <arg name="visible" type="b"/>
+    </signal>
+    <signal name="UpdateAuxString">
+      <arg name="text" type="s"/>
+      <arg name="visible" type="b"/>
+    </signal>
+    <signal name="UpdateLookupTable">
+      <arg name="candidates" type="as"/>
+      <arg name="cursor_pos" type="i"/>
+      <arg name="visible" type="b"/>
+    </signal>
+    <signal name="Enabled"/>
+    <signal name="Disabled"/>
+  </interface>
+</node>

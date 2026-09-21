@@ -14,6 +14,8 @@ endif
 endif
 
 EXTRA_DIST = dbus-1/services/org.uim.HelperBus.service.in \
-	     systemd/uim-helper-bus.service.in
+	     systemd/uim-helper-bus.service.in \
+	     dbus-1/interfaces/org.uim.Factory1.xml \
+	     dbus-1/interfaces/org.uim.InputContext1.xml
 CLEANFILES = dbus-1/services/org.uim.HelperBus.service \
 	     systemd/uim-helper-bus.service

@@ -11,7 +11,7 @@ DEFS += $(SSCM_DEFS)
 
 AUTOMAKE_OPTIONS = foreign
 
-EXTRA_DIST = encoding-table.c test-gc.c version.h.in
+EXTRA_DIST = encoding-table.c test-gc.c version.h.in uim-dbus-ic.h
 
 uim_defs = -DSCM_FILES=\"$(datadir)/uim\"
 # FIXME: $(UIM_SCM_CFLAGS) should only affect on uim-scm.c

@@ -181,12 +181,8 @@ path there is incremental, in roughly this order, each step independently
 shippable and each one able to fall back to the pre-existing mechanism
 the same way Phase 1 falls back to the socket transport:
 
-1. Define the D-Bus interfaces (`org.uim.InputContext1`,
-   `org.uim.Factory1` or similar -- whether to mirror IBus's own
-   interface names for drop-in compatibility with IBus-aware tooling, or
-   define uim's own, is an open design question worth settling before
-   writing code) and land them alongside the existing agent protocol,
-   unused.
+1. **(done)** Define the D-Bus interfaces and land them alongside the
+   existing agent protocol, unused.
 2. Convert `uim-agent` into a D-Bus-activated per-session daemon that
    exposes those interfaces *in addition to* its current stdio/pipe
    protocol, proxying to the same core.
@@ -202,5 +198,35 @@ the same way Phase 1 falls back to the socket transport:
    several of them (qt3/tqt) essentially unmaintained upstream, to
    remove the fallback quickly).
 
-None of Phase 2 is implemented yet. Treat the interface names and object
-paths above as a starting proposal, not a committed ABI.
+Only step 1 is implemented so far -- steps 2-4 are still just this plan.
+
+### Step 1 (done): interface definitions
+
+- `uim/uim-dbus-ic.h` defines the two interfaces as C constants
+  (bus name, object paths, interface names, method/signal names), with
+  the full method/signal shapes documented in comments right next to
+  each constant.
+- `data/dbus-1/interfaces/org.uim.Factory1.xml` and
+  `data/dbus-1/interfaces/org.uim.InputContext1.xml` mirror the same
+  shapes as standalone D-Bus introspection XML, kept in sync with the
+  header by hand -- useful as a reference for anyone inspecting the
+  eventual daemon with `d-feet`/`busctl introspect`/etc. once step 2
+  exists, and as a design doc in its own right until then.
+- Naming uses uim's own namespace (`org.uim.Agent` bus name,
+  `org.uim.Factory1`/`org.uim.InputContext1` interfaces) rather than
+  IBus's (`org.freedesktop.IBus.*`). uim is not attempting wire
+  compatibility with IBus-aware tooling; sharing IBus's own interface
+  names would risk bus-name/object-path collisions with an actual
+  `ibus-daemon` running in the same session and would tie uim's
+  method/signal shapes to whatever IBus happens to do, for a
+  compatibility benefit ("some existing IBus client works against uim
+  unmodified") that's speculative until a concrete such client shows
+  up wanting it.
+- **Nothing calls any of this yet.** `uim-dbus-ic.h` is not included
+  from any `.c` file, and the two `.xml` files aren't read by any code
+  or referenced from any `Makefile.am` install rule -- they exist purely
+  for review and as the reference the step 2 implementation will be
+  written against. Interface names, method signatures and object path
+  shapes here are still a proposal, not a committed ABI: expect them to
+  move once step 2 (an actual daemon implementing this) surfaces
+  something this header got wrong.

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  org.uim.Factory1 -- proposed Phase 2 interface, NOT YET IMPLEMENTED.
+
+  See doc/dbus-helper-bus.md ("Phase 2") and uim/uim-dbus-ic.h for the
+  design notes this XML documents. Exported (once step 2 lands) at
+  object path /org/uim/Factory by the per-session agent daemon on the
+  org.uim.Agent bus name.
+
+  This file is not consumed by any code yet -- it's a reference
+  introspection document, kept in sync with uim-dbus-ic.h by hand.
+-->
+<node name="/org/uim/Factory">
+  <interface name="org.uim.Factory1">
+    <method name="CreateInputContext">
+      <arg name="client_name" type="s" direction="in"/>
+      <arg name="ic_path" type="o" direction="out"/>
+    </method>
+    <method name="ListEngines">
+      <arg name="names" type="as" direction="out"/>
+    </method>
+  </interface>
+</node>

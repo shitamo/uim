@@ -58,6 +58,23 @@
 
 #include "key-util-gtk4.h"
 
+/*
+ * GTK4's GdkModifierType dropped the GDK_MOD3_MASK/GDK_MOD4_MASK/
+ * GDK_MOD5_MASK names that existed in GTK3. The underlying bit
+ * positions are unchanged (GdkModifierType still mirrors the raw X11
+ * modifier byte layout on the X11 backend), so simply restore the
+ * historical macros for compatibility.
+ */
+#ifndef GDK_MOD3_MASK
+#define GDK_MOD3_MASK (1 << 5)
+#endif
+#ifndef GDK_MOD4_MASK
+#define GDK_MOD4_MASK (1 << 6)
+#endif
+#ifndef GDK_MOD5_MASK
+#define GDK_MOD5_MASK (1 << 7)
+#endif
+
 static gboolean g_use_custom_modifier_masks = FALSE;
 
 #ifdef GDK_WINDOWING_X11

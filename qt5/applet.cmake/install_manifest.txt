@@ -1,7 +1,0 @@
-/usr/share/plasma/plasmoids/com.github.uim.status/contents/ui/main.qml
-/usr/share/plasma/plasmoids/com.github.uim.status/contents/ui/messageProcessor.js
-/usr/share/plasma/plasmoids/com.github.uim.status/metadata.json
-/usr/share/plasma/plasmoids/com.github.uim.status/metadata.json
-/usr/share/metainfo/com.github.uim.status.appdata.xml
-/usr/lib/x86_64-linux-gnu/qt5/qml/com/github/uim/libuim-qtquick-plugin.so
-/usr/lib/x86_64-linux-gnu/qt5/qml/com/github/uim/qmldir

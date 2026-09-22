@@ -1,3 +1,0 @@
-# Hashes of file build rules.
-3eb525537cfac5cd13c0ba2a399a2c13 qtquick-plugin/CMakeFiles/uim-qtquick-plugin_autogen
-670c363cd38d06361fc987a71f8ea316 qtquick-plugin/uim-qtquick-plugin_autogen/timestamp

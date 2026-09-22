@@ -1,0 +1,128 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
+
+# workaround for #1019974
+export DEB_CFLAGS_MAINT_APPEND += -O1
+
+DPKG_EXPORT_BUILDFLAGS = 1
+include /usr/share/dpkg/buildflags.mk
+
+DEB_HOST_ARCH      ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
+DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
+
+confflags := \
+	--libdir=/usr/lib/$(DEB_HOST_MULTIARCH) \
+	--libexecdir=/usr/lib/uim \
+	--with-libgcroots=installed \
+	--disable-rpath \
+	--enable-static \
+	--enable-shared \
+	--enable-helper-dbus \
+	--enable-maintainer-mode \
+	$(NULL)
+
+confflags += \
+	--with-fep \
+	--with-anthy \
+	--with-anthy-utf8 \
+	--with-m17nlib \
+	--with-x \
+	--with-gtk \
+	--with-gtk3 \
+	--with-gtk4 \
+	--without-qt4 \
+	--without-qt4-immodule \
+	--with-qt5 \
+	--with-qt5-immodule \
+	--with-qt6 \
+	--with-qt6-immodule \
+	--with-expat \
+	--disable-dict \
+	--disable-gnome-applet \
+	--disable-gnome3-applet \
+	--disable-kde4-applet \
+	$(NULL)
+
+confflags += $(shell dpkg-buildflags --export=configure)
+
+ifneq (,$(filter $(DEB_HOST_ARCH), ia64 s390))
+confflags += UIM_SCM_CFLAGS=-fno-strict-aliasing
+endif
+
+export QT_SELECT=qt5
+
+%:
+	dh $@
+
+override_dh_autoreconf:
+	dh_autoreconf $(CURDIR)/autogen.sh
+
+override_dh_auto_configure:
+	dh_auto_configure -- $(confflags)
+
+override_dh_auto_clean:
+	dh_auto_clean
+	rm -f $(CURDIR)/tables/wb86.table $(CURDIR)/tables/zm.table
+	rm -f $(CURDIR)/config.log $(CURDIR)/config.status
+
+override_dh_auto_install:
+	dh_auto_install -- GTK_IMMODULES=/dev/null
+
+override_dh_install:
+	install -d $(CURDIR)/debian/uim/var/lib/uim
+	cp $(CURDIR)/debian/README.var-lib-uim $(CURDIR)/debian/uim/var/lib/uim/README
+	install -d $(CURDIR)/debian/tmp/usr/share/uim/helperdata
+	cp $(CURDIR)/qt4/chardict/bushu.t \
+		$(CURDIR)/debian/tmp/usr/share/uim/helperdata
+	dh_install --sourcedir=debian/tmp
+
+override_dh_link:
+	dh_link -p uim \
+		var/lib/uim/installed-modules.scm \
+		usr/share/uim/installed-modules.scm
+	dh_link -p uim \
+		var/lib/uim/loader.scm \
+		usr/share/uim/loader.scm
+	dh_link
+
+override_dh_makeshlibs:
+	dh_makeshlibs \
+		--exclude=usr/lib/$(DEB_HOST_MULTIARCH)/uim/plugin \
+		--exclude=usr/lib/$(DEB_HOST_MULTIARCH)/gtk-2.0 \
+		--exclude=usr/lib/$(DEB_HOST_MULTIARCH)/gtk-3.0 \
+		$(NULL)
+
+override_dh_installdocs:
+	cp -f $(CURDIR)/debian/uim-data.docs $(CURDIR)/debian/uim.docs
+	dh_installdocs -puim -puim-data \
+		-plibuim8 -plibuim-scm0 -plibuim-custom2 \
+		-puim-plugins \
+		-puim-el -puim-fep -puim-xim
+	rm -f $(CURDIR)/debian/uim.docs
+	# arch:all
+	dh_installdocs --link-doc uim-data \
+		-puim-anthy -puim-skk -puim-m17nlib \
+		-puim-byeoru -puim-latin -puim-pinyin \
+		-puim-tcode -puim-viqr -puim-ipa-x-sampa -puim-look
+	# arch:any
+	dh_installdocs --link-doc uim \
+		-puim-gtk2.0 -puim-gtk2.0-immodule \
+		-puim-gtk3 -puim-gtk3-immodule \
+		-puim-gtk4 -puim-gtk4-immodule \
+		-puim-qt5 -puim-qt5-immodule \
+		-puim-qt6 -puim-qt6-immodule
+	dh_installdocs --link-doc libuim8 -plibuim-dev
+
+override_dh_installchangelogs:
+	dh_installchangelogs -puim -puim-data \
+		-puim-plugins \
+		-plibuim8 -plibuim-scm0 -plibuim-custom2 -plibuim-dev \
+		-puim-el -puim-fep -puim-xim \
+		RELNOTE

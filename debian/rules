@@ -24,7 +24,6 @@ confflags := \
 	--disable-rpath \
 	--enable-static \
 	--enable-shared \
-	--enable-helper-dbus \
 	--enable-maintainer-mode \
 	$(NULL)
 

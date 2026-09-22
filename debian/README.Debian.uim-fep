@@ -1,0 +1,19 @@
+uim-fep for Debian
+------------------
+* Using uim-fep
+  - You cannot input "shift-space" as generic-on-key and generic-off-key.
+    But they are default global key settings.
+    So you have to change generic-on-key and generic-off-key by uim-pref-*.
+    See http://code.google.com/p/uim-doc-ja/wiki/UimFep
+
+    For example, if set "ctrl-space" as generic-on-key and generic-off-key,
+    create ~/.uim.d/customs/custom-global-keys1.scm file and put below lines.
+
+    (define generic-on-key '("zenkaku-hankaku" "<Shift> " "<Control> "))
+    (define generic-on-key? (make-key-predicate '("zenkaku-hankaku" "<Shift> " "<Control> ")))
+    (define generic-off-key '("zenkaku-hankaku" "<Shift> " "<Control> "))
+    (define generic-off-key? (make-key-predicate '("zenkaku-hankaku" "<Shift> " "<Control> ")))
+
+    Then you can on/off conversion with "ctrl-space".
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Mon, 14 Apr 2014 17:17:03 +0900

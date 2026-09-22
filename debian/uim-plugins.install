@@ -1,0 +1,12 @@
+usr/lib/*/uim/plugin/libuim-custom-enabler.so
+usr/lib/*/uim/plugin/libuim-editline.so
+usr/lib/*/uim/plugin/libuim-expat.so
+usr/lib/*/uim/plugin/libuim-fileio.so
+usr/lib/*/uim/plugin/libuim-lolevel.so
+usr/lib/*/uim/plugin/libuim-look.so
+usr/lib/*/uim/plugin/libuim-process.so
+usr/lib/*/uim/plugin/libuim-socket.so
+usr/lib/*/uim/plugin/libuim-anthy.so
+usr/lib/*/uim/plugin/libuim-anthy-utf8.so
+usr/lib/*/uim/plugin/libuim-skk.so
+usr/lib/*/uim/plugin/libuim-m17nlib.so

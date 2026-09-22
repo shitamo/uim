@@ -1,0 +1,5 @@
+debian/tmp/usr/bin/uim-pref-qt6
+debian/tmp/usr/bin/uim-im-switcher-qt6
+debian/tmp/usr/bin/uim-chardict-qt6
+debian/tmp/usr/bin/uim-toolbar-qt6
+debian/tmp/usr/lib/uim/uim-candwin-qt6

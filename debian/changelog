@@ -1,0 +1,2404 @@
+uim (1:1.9.6-1.1~dbus11) UNRELEASED; urgency=medium
+
+  * Add D-Bus session-bus transport for the helper bus (local patch).
+  * Add GTK4 frontends (toolbar, switcher, pref, pad, candwin) and a
+    GTK4 input method module, packaged as new uim-gtk4 and
+    uim-gtk4-immodule binary packages.
+
+ -- SHITAMORI Akira <sitamo@gmail.com>  Tue, 22 Sep 2026 13:24:00 +0900
+
+uim (1:1.9.6-1.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * d/rules: fix FTBFS: do not use --as-needed with dh-autoreconf
+    (Closes: #1145951)
+  * uim-plugins: drop a lintian override that is an alien tag and causes error
+  * convert dpkg-maintscript-helper call to maintscript to prevent lintian error
+
+ -- Luke Yasuda <jing@jing.rocks>  Fri, 28 Aug 2026 20:01:51 +0900
+
+uim (1:1.9.6-1) unstable; urgency=medium
+
+  * New upstream
+  * d/p/0008-use-ScmFncType.patch: removed
+
+ -- NOKUBI Takatsugu <knok@daionet.gr.jp>  Sat, 17 May 2025 06:37:08 +0000
+
+uim (1:1.9.3-1) unstable; urgency=medium
+
+  * New upstream release
+  * d/p/support_anthy-0.3.patch: fix latest version (Closes: #1104618)
+  * d/p/0008-use-ScmFncType.patch: work on -Wincompatible-pointer-types
+
+ -- NOKUBI Takatsugu <knok@daionet.gr.jp>  Mon, 05 May 2025 10:09:49 +0900
+
+uim (1:1.9.0-3) unstable; urgency=medium
+
+  * debian/conrtol: remove dpkg pre-depends (Closes: #1100107)
+
+ -- NOKUBI Takatsugu <knok@daionet.gr.jp>  Wed, 12 Mar 2025 00:03:50 +0000
+
+uim (1:1.9.0-2) unstable; urgency=medium
+
+  [ YOSHINO Yoshihito ]
+  * Non-maintainer upload.
+  * debian/{control,rules,libuim-data.*}: Drop libuim-data (Closes: #1032792).
+  * debian/uim-data.postinst: Renamed from libuim-data.
+
+  [ NOKUBI Takatsugu ]
+  * import debdiff
+
+ -- NOKUBI Takatsugu <knok@daionet.gr.jp>  Mon, 10 Mar 2025 00:52:33 +0000
+
+uim (1:1.9.0-1) unstable; urgency=medium
+
+  [ YOSHINO Yoshihito ]
+  * Non-maintainer upload.
+  * New upstream release (Closes: #1021075).
+  * d/p/configure-Fix-snprintf-check-for-strict-er-C99-compi.patch:
+    removed, applied upstream.
+  * d/p/0007-skip-po-check-keep-Makefile.in.in.patch: Refreshed.
+  * d/{control,rules}: Add Qt 6 support.
+
+  [ NOKUBI Takatsugu ]
+  * import debdiff
+
+ -- NOKUBI Takatsugu <knok@daionet.gr.jp>  Wed, 05 Mar 2025 14:03:23 +0900
+
+uim (1:1.8.9-0.1) UNRELEASED; urgency=medium
+
+  * Non-maintainer upload.
+  * New upstream release (Closes: #1021075).
+  * d/p/replace_obsolete_since_emacs22.1.patch: removed, applied upstream.
+  * d/p/0007-skip-po-check-keep-Makefile.in.in.patch: Refreshed.
+  * d/control: Add extra-cmake-modules, libkf5plasma-dev, qtdeclarative5-dev
+    to Build-Depends.
+  * d/watch: Updated to really watch GitHub.
+
+ -- YOSHINO Yoshihito <yy.y.ja.jp@gmail.com>  Sun, 02 Mar 2025 21:29:53 +0900
+
+uim (1:1.8.8-10) unstable; urgency=medium
+
+  * debian/patches/0007-skip-po-check-keep-Makefile.in.in.patch: workaround po/ test, closes: #1092240
+
+ -- NOKUBI Takatsugu <knok@daionet.gr.jp>  Sun, 09 Feb 2025 13:55:59 +0000
+
+uim (1:1.8.8-9.5) unstable; urgency=medium
+
+  * Non-maintainer upload.
+
+  [ Dmitry Shachnev ]
+  * Make libuim8 break old versions of uim, because uim-module-manager used
+    the internal symbols which disappeared with glibc 2.38. Closes: #1073828
+
+  [ Andreas Metzler ]
+  * Tighten all deps of binary-any packages on libuim8 to ${binary:Version}.
+
+ -- Dmitry Shachnev <mitya57@debian.org>  Sat, 29 Jun 2024 12:25:06 +0300
+
+uim (1:1.8.8-9.4) unstable; urgency=medium
+
+  * Non-maintainer upload.
+
+  [ Andreas Metzler ]
+  * Ignore internal symbols in debian/libuim8.symbols. Closes: #1070389
+
+ -- Dmitry Shachnev <mitya57@debian.org>  Tue, 14 May 2024 23:30:24 +0300
+
+uim (1:1.8.8-9.3) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Fix ./configure related FTBFS with -Werror=implicit-function-declaration.
+    Closes: #1066433
+
+ -- Andreas Metzler <ametzler@debian.org>  Sun, 24 Mar 2024 10:52:54 +0100
+
+uim (1:1.8.8-9.2) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Build with -O1 to workaround #1019974.
+
+ -- Adrian Bunk <bunk@debian.org>  Tue, 04 Oct 2022 15:38:11 +0300
+
+uim (1:1.8.8-9.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * I finally lost my motivation then stepped down uim's maintainer.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sun, 26 Jun 2022 23:40:31 +0900
+
+uim (1:1.8.8-9) unstable; urgency=medium
+
+  * drop to register anthy (EUC-JP) again (Closes: #953616).
+    but you can still use anthy (EUC-JP). if you want to use or stop using
+    anthy (EUC-JP), you run uim-module-manager command with root privilege.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sat, 27 Feb 2021 11:40:47 +0900
+
+uim (1:1.8.8-8) unstable; urgency=medium
+
+  [ YOSHINO Yoshihito ]
+  * uim-anthy: prefer UTF-8 module (Closes: #983370)
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Tue, 23 Feb 2021 12:33:54 +0900
+
+uim (1:1.8.8-7) unstable; urgency=medium
+
+  [ NOKUBI Takatsugu ]
+  * d/p/disable-composer-test.patch: add the patch to skip composer-test.
+    (Closes: #973459)
+
+  [ HIGUCHI Daisuke (VDR dai) ]
+  * d/p/replace_obsolete_since_emacs22.1.patch: Replace
+    process-kill-without-query with set-process-query-on-exit-flag
+    (Closes: #977397, #977257)
+  * resurrect anthy for EUC-JP (Closes: #953616)
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Tue, 22 Dec 2020 21:07:53 +0900
+
+uim (1:1.8.8-6.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * d/libuim-data.postinst: unregister not-installed modules (Closes: #945344).
+    The previous upload to fix #939588 caused regression, which has
+    accidentally registered some not-installed modules.
+
+ -- YOSHINO Yoshihito <yy.y.ja.jp@gmail.com>  Sun, 12 Jan 2020 19:42:26 +0900
+
+uim (1:1.8.8-6) unstable; urgency=medium
+
+  [ HIGUCHI Daisuke (VDR dai) ]
+  * d/control: depends emacs instead of emacs24 (Closes: #942300)
+    - patch created by Gianfranco Costamagna <locutusofborg@debian.org>, thanks.
+  * d/control: set Rules-Requires-Root: as no.
+  * bump up Standards-Version 4.4.1.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Tue, 15 Oct 2019 14:16:44 +0900
+
+uim (1:1.8.8-5) unstable; urgency=medium
+
+  [ HIGUCHI Daisuke (VDR dai) ]
+  * d/control: Bump debhelper compatibility level to 12 and
+    use debhelper-compat instead of d/compat
+  * bump up Standards-Version 4.4.0.
+  * d/*.symbols: eliminate lintian warning:
+    symbols-file-missing-build-depends-package-field
+  * d/uim.lintian-overrides: override lintian warning:
+    package-contains-documentation-outside-usr-share-doc
+  * d/*.lintian-overrides: update lintian-overrides:
+    spelling-error-in-copyright
+  * d/rules: eliminate lintian warning:
+    debug-symbol-migration-possibly-complete
+  * d/not-installed: new file, mute dh_missing.
+  * d/uim-plugins.lintian-overrides: set lintian override:
+    library-not-linked-against-libc
+    usr/lib/*/uim/plugin/libuim-custom-enabler.so does not have NEEDED libc.so,
+    but it is plugin.
+  * resurrect libuim-data as a transitional package (Closes: #939588).
+    After upgrading from stretch to buster, if purging libuim-data,
+    its postrm script deletes /var/lib/uim/*.scm files required by uim.
+    This libuim-data transitional package can be removed safely.
+
+  [ NOKUBI Takatsugu ]
+  * d/control: uim-data depends libuim-data dummy package,
+    change the description.
+  * d/libuim-data.postint: re-register all modules, fix #939588
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sun, 22 Sep 2019 00:33:18 +0900
+
+uim (1:1.8.8-4) unstable; urgency=medium
+
+  [ YOSHINO Yoshihito ]
+  * Non-maintainer upload.
+  * d/{uim.{postinst,prerm},NEWS}: Do not auto-register/unregister plugins of
+    the following input methods:
+    byeoru, ipa-x-sampa, latin, look, m17nlib, pinyin, viqr
+    When upgrading from stretch this behaved badly and they took precedence
+    over other popular plugins many people use.
+  * d/{control,rules,uim-*.{postinst,prerm}}: Resurrect packages
+    uim-{byeoru,ipa-x-sampa,latin,look,m17nlib,pinyin,viqr} for those plugins.
+    All of them exist in stretch and should upgrade normally.
+    Dear testing/sid users,
+    If you are using some of the input methods above, you have to manually
+    install the respective package(s). Sorry for any inconvenience.
+  * d/{uim.preinst,control}: Unregister those plugins on upgrade from
+    testing/sid. Make uim Pre-Depends: uim-data accordingly.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Thu, 28 Mar 2019 09:31:18 +0900
+
+uim (1:1.8.8-3) unstable; urgency=medium
+
+  [ HIGUCHI Daisuke (VDR dai) ]
+  * d/control: set Breaks+Replaces: uim-qt5 to uim-qt5-immodule
+    (Closes: #905186).
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Fri, 03 Aug 2018 21:26:06 +0900
+
+uim (1:1.8.8-2) unstable; urgency=medium
+
+  [ HIGUCHI Daisuke (VDR dai) ]
+  * d/t/: do not use Makefile.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sun, 13 May 2018 17:00:05 +0900
+
+uim (1:1.8.8-1) unstable; urgency=medium
+
+  [ HIGUCHI Daisuke (VDR dai) ]
+  * New upstream release.
+  * d/control: tighten build-dependency libgcroots-dev.
+  * d/p/support_anthy-0.3.patch: refresh patch.
+  * d/p/fix_spelling_error_sigscheme.patch: removed, imported upstream.
+  * d/p/uim_can_work_with_libgcroot_0.2.2.patch: removed, imported upstream.
+  * d/rules, d/uim-data.docs: use RELNOTE as upstream changelog.
+  * support autopkgtest.
+  * bump up Standards-Version 4.1.4.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sat, 12 May 2018 13:11:45 +0900
+
+uim (1:1.8.6+gh20180301.c79432c-1) unstable; urgency=medium
+
+  [ HIGUCHI Daisuke (VDR dai) ]
+  * New upstream git checkout.
+  * d/p/qt5-disable-debug-flag.patch: removed, imported upstream.
+  * d/p/qt5-immodule-qmake-conf.patch: removed, not-needed.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sat, 03 Mar 2018 20:32:03 +0900
+
+uim (1:1.8.6+gh20180114.64e3173-2) unstable; urgency=medium
+
+  [ HIGUCHI Daisuke (VDR dai) ]
+  * eliminate lintian warning: spelling-error-in-patch-description
+  * uim-data and uim-plugins breaks/replaces old uim-anthy (Closes: #890068).
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sun, 11 Feb 2018 11:47:26 +0900
+
+uim (1:1.8.6+gh20180114.64e3173-1) unstable; urgency=medium
+
+  [ HIGUCHI Daisuke (VDR dai) ]
+  * New upstream git checkout.
+  * d/p/pass_cppflags_to_cmake_cxx_flags.patch: removed, imported upstream.
+  * uim-anthy pre-depends uim-data (Closes: #877918)
+    thanks to Andreas Beckmann <anbe@debian.org>.
+  * eliminate lintian warning: insecure-copyright-format-uri
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Wed, 24 Jan 2018 01:34:29 +0900
+
+uim (1:1.8.6+gh20180111.cbd2c5e-1) unstable; urgency=medium
+
+  [ HIGUCHI Daisuke (VDR dai) ]
+  * New upstream git checkout.
+  * Move Vcs-* to salsa.debian.org
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sun, 14 Jan 2018 17:53:34 +0900
+
+uim (1:1.8.6+gh20180106.ec697da-1) unstable; urgency=medium
+
+  [ HIGUCHI Daisuke (VDR dai) ]
+  * New upstream git checkout.
+  - gtk3: support Wayland backend (Closes: #810739)
+  * d/p/do_not_use_run-singletest_sh.patch: removed, imported upstream.
+  * d/p/panel_applet_inprocess.patch: removed, imported upstream.
+  * d/p/qt5-delayed-candwin.patch: removed, imported upstream.
+  * d/p/qt5-do-not-use-private-qt_plugin_prf.patch: removed, imported upstream.
+  * d/p/qt5-fix-candwin-unexpected-behavior.patch: removed, imported upstream.
+  * d/p/qt5-qt4-fix-toolbar-icon.patch: removed, imported upstream.
+  * d/p/fix-lib-deps.patch: removed, imported upstream.
+  * Refresh patches.
+  * d/README.source: remove dpatch entry and add origin of this package source.
+  * upgrade debhelper to 11.
+  * bump up Standards-Version 4.1.3.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sun, 07 Jan 2018 18:44:59 +0900
+
+uim (1:1.8.6+gh20161003.0.d63dadd-9) unstable; urgency=medium
+
+  [ HIGUCHI Daisuke (VDR dai) ]
+  * d/control: uim-data depends m17n-db for icons (Closes: #880366)
+  * d/p/qt5-fix-candwin-unexpected-behavior.patch: Fix an unexpected behavior
+    of a candidate window after d/p/qt5-delayed-candwin.patch.
+  * bump up Standards-Version 4.1.2.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Fri, 15 Dec 2017 22:28:51 +0900
+
+uim (1:1.8.6+gh20161003.0.d63dadd-8) unstable; urgency=medium
+
+  [ NOKUBI Takatsugu ]
+  * d/libuim-dev.postinst: relink document, closes: #880403
+
+ -- NOKUBI Takatsugu <knok@daionet.gr.jp>  Wed, 01 Nov 2017 08:55:19 +0900
+
+uim (1:1.8.6+gh20161003.0.d63dadd-7) unstable; urgency=medium
+
+  [ HIGUCHI Daisuke (VDR dai) ]
+  * d/p/qt5-delayed-candwin.patch: delays a creation of candwin instance
+    until it is really needed.
+  * d/control: do not conflict uim-gtk3 with ibus
+    #873155 is not caused by conflicting between ibus and uim. maybe wayland.
+
+ -- NOKUBI Takatsugu <knok@daionet.gr.jp>  Thu, 19 Oct 2017 01:13:16 +0900
+
+uim (1:1.8.6+gh20161003.0.d63dadd-6) unstable; urgency=medium
+
+  [ NOKUBI Takatsugu ]
+  * debian/libuim-dev.postinst: Invoke dir_to_symlink, closes: #877476
+  * debian/rules: Add /var/lib/uim/README, closes: #877632
+
+ -- NOKUBI Takatsugu <knok@daionet.gr.jp>  Wed, 11 Oct 2017 23:11:35 +0900
+
+uim (1:1.8.6+gh20161003.0.d63dadd-5) unstable; urgency=medium
+
+  [ HIGUCHI Daisuke (VDR dai) ]
+  * upload to unstable. see debian/NEWS for details.
+  * drop Qt4 support (Closes: #875216)
+  * bump up Standards-Version 4.1.1.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sat, 30 Sep 2017 11:15:40 +0900
+
+uim (1:1.8.6+gh20161003.0.d63dadd-5~exp2) experimental; urgency=medium
+
+  * upload to experimental due to drastic package arrangement.
+
+  [ HIGUCHI Daisuke (VDR dai) ]
+  * do not register uim-toolbar-gtk{,3}-systray as uim-toolbar alternatives
+    - d/uim-gtk{2.0,3}.postinst: do not register uim-toolbar-gtk{,3}-systray
+    - d/uim-gtk{2.0,3}.preinst: unregister uim-toolbar-gtk{,3}-systray
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Wed, 13 Sep 2017 20:11:36 +0900
+
+uim (1:1.8.6+gh20161003.0.d63dadd-5~exp1) experimental; urgency=medium
+
+  * upload to experimental due to drastic package arrangement.
+
+  [ HIGUCHI Daisuke (VDR dai) ]
+
+  * d/uim.{postinst,prerm}: register/unregister all supported modules.
+    suggested by Justin B Rye <justin.byam.rye@gmail.com>, thanks.
+    - d/NEWS: add entry.
+  * d/uim-data.install: do not install ajax-ime and social-ime.
+  * drop applet packages: uim-applet-gnome and plasma-widget-uim
+    (Closes: #731672).
+  * drop anthy (EUC-JP). please use anthy-utf8 instead of it.
+    - d/p/support_anthy-0.3.patch: support anthy 0.3 version
+      (Closes: #873874, #873739, #873123).
+  * split uim-{{gtk2.0,3},{qt,qt5} out into immodule packages (Closes: #863664)
+    thanks to Yuriy M. Kaminskiy <yumkam+debian@gmail.com>.
+  * resurrect uim-plugin package split out from uim package.
+  * mark uim-gtk3 as Conflicts with ibus (Closes: #873155).
+  * d/p/qt5-qt4-fix-toolbar-icon.patch: fix preference icon is not displayed
+    on qt4/5 toolbar.
+  * d/changelog: merge 1:1.8.6+gh20161003.0.d63dadd-3 changelog.
+  * d/control: update Breaks/Replaces debian revision due to step forward
+    at unstable.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sun, 03 Sep 2017 09:58:05 +0900
+
+uim (1:1.8.6+gh20161003.0.d63dadd-4) unstable; urgency=medium
+
+  [ HIGUCHI Daisuke (VDR dai) ]
+
+  * Brown paper bag release.
+  * debian/rules: remove autotools_dev from dh
+  * uim-utils is marked as Multi-Arch: foreign.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Wed, 16 Aug 2017 19:10:26 +0900
+
+uim (1:1.8.6+gh20161003.0.d63dadd-3) unstable; urgency=medium
+
+  * Ack NMU. thanks to Dmitry Shachnev <mitya57@debian.org>.
+
+  * B-D: automake instead of obsolete automake1.11 (Closes: #865263).
+    - d/p/do_not_use_run-singletest_sh.patch: new file.
+    - d/p/qt5-use-automake-1.11.patch: remove.
+  * d/control: remove dropped PRIME a long time ago.
+  * d/control: remove pre-stretch Replaces/Breaks.
+  * libuim-data,uim-{byeoru,latin,pinyin,tcode,viqr,ipa-x-sampa,look} are
+    marked as Multi-Arch: foreign.
+  * uim-{skk,anthy,m17nlib} are marked as Multi-Arch: same.
+  * bump up Standards-Version 4.0.0.
+
+  * cherry-picked from debian-experimental branch.
+    - d/control: replace Uploaders.
+      Thanks to Kiwamu Okabe <kiwamu@debian.or.jp> and
+      Nobuhiro Iwamatsu <iwamatsu@debian.org> for previous works.
+      Welcome to NOKUBI Takatsugu <knok@daionet.gr.jp>.
+    - upgrade debhelper to 10.
+      d/control: remove autotools-dev and dh-autoreconf from B-D:
+      d/rules: remove autotools_dev and autoreconf from dh.
+    - remove quilt from B-D due to source format 3.0 quilt.
+
+  * fix FTBFS with Qt 5.9: Could not find feature reduce_exports.
+    thanks to Dmitry Shachnev <mitya57@debian.org>, (Closes: #868031).
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Wed, 16 Aug 2017 15:02:53 +0900
+
+uim (1:1.8.6+gh20161003.0.d63dadd-3~exp2) experimental; urgency=medium
+
+  * upload to experimental due to drastic package arrangement.
+
+  [ HIGUCHI Daisuke (VDR dai) ]
+
+  * d/changelog: update 3~exp1 entry.
+  * d/NEWS: fix version and date.
+  * d/control
+    - update uim's long description.
+    - uim suggests uim-{mozc,anthy,skk}.
+  * d/rules: resurrect accidentally removed uim config directory and symlinks.
+  * uim-dict-gtk{,3}: remove packages due to low-popcon.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Fri, 11 Aug 2017 01:09:30 +0900
+
+uim (1:1.8.6+gh20161003.0.d63dadd-3~exp1) experimental; urgency=medium
+
+  * upload to experimental due to drastic package arrangement.
+
+  [ NOKUBI Takatsugu ]
+
+  * uim-{byeoru,ipa-x-sampa,latin,look,m17nlib,pinyin,viqr}: Remove packages,
+    see NEWS.Debian
+  * uim: Make as main package.
+    - uim-common, uim-utils, libuim-plugins: Removed and integrated into
+      uim package. (Closes: #858111).
+  * uim-data: Add as a new package, arch-independent.
+    - uim-common, libuim-data: Removed and integrated into uim-data package.
+  * uim-{anthy,skk,tcode}: Make as meta packages and intergrated into uim
+    package.
+
+  [ HIGUCHI Daisuke (VDR dai) ]
+
+  * upgrade debhelper to 10.
+    - d/control: remove autotools-dev and dh-autoreconf from B-D:
+    - d/rules: remove autotools_dev and autoreconf from dh.
+  * d/control
+    - replace Uploaders.
+      Thanks to Kiwamu Okabe <kiwamu@debian.or.jp> and
+      Nobuhiro Iwamatsu <iwamatsu@debian.org> for previous works.
+      Welcome to NOKUBI Takatsugu <knok@daionet.gr.jp>.
+    - Remove quilt from B-D to source format 3.0 quilt.
+    - Remove pre-wheezy/jessie/stretch Replaces/Breaks.
+    - Remove dropped PRIME long time ago.
+  * d/p/do_not_use_run-singletest_sh.patch: update DEP-3 patch header.
+  * B-D: automake instead of obsolete automake1.11 (Closes: #865263).
+  * bump up Standards-Version 4.0.0.
+
+ -- NOKUBI Takatsugu <knok@daionet.gr.jp>  Thu, 10 Aug 2017 16:50:12 +0900
+
+uim (1:1.8.6+gh20161003.0.d63dadd-2.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Fix build with gnome-panel 3.24 (closes: #866388).
+    - Backport two upstream commits to use the in-process panel applet
+      (panel_applet_inprocess.patch).
+    - Update debian/uim-applet-gnome.install.
+    - Bump libpanel-applet-dev build-dependency to 3.22.
+
+ -- Dmitry Shachnev <mitya57@debian.org>  Sun, 09 Jul 2017 16:42:53 +0300
+
+uim (1:1.8.6+gh20161003.0.d63dadd-2) unstable; urgency=medium
+
+  * debian/uim-{qt,gtk3,common,qt5,gtk2.0}.{postinst,prerm}:
+    maintainer script(s) do not start on #!
+    (Closes: #843284, #843286, #843293, #843296, #843300)
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sun, 06 Nov 2016 10:10:07 +0900
+
+uim (1:1.8.6+gh20161003.0.d63dadd-1) unstable; urgency=medium
+
+  * New upstream git checkout.
+    - do not use GtkWidget-focus-* deprecated since GTK 3.14 (Closes: #838844).
+  * debian/control: mark libuim-plugins as Multi-Arch: same,
+    reported by Multiarch hinter
+  * debian/README.Debian: eliminate lintian warning:
+    spelling-error-in-readme-debian Chosing Choosing
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Mon, 03 Oct 2016 21:04:12 +0900
+
+uim (1:1.8.6+gh20160630.0.c408e95-1) unstable; urgency=medium
+
+  * New upstream git checkout.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Thu, 30 Jun 2016 15:39:41 +0900
+
+uim (1:1.8.6+gh20160626.0.6821431-1) unstable; urgency=medium
+
+  * New upstream git checkout.
+  * resurrect wb86/zm scms and icons.
+  * debian/libuim-data.install: re-remove tables wb86.table and zm.table.
+  * debian/rules: fix table suffix.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sun, 26 Jun 2016 12:40:01 +0900
+
+uim (1:1.8.6+gh20160621.0.87bf935-1) unstable; urgency=medium
+
+  * New upstream git checkout.
+  * revert /usr/share/doc/uim-xim is linked to /usr/share/doc/uim-common.
+    - debian/rules: do not dh_link from /usr/share/doc/uim-xim to uim-common's.
+    - debian/uim-xim.lintian-overrides: resurrect.
+  * debian/uim-qt5.menu: remove.
+  * upload to unstable.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Thu, 23 Jun 2016 18:33:21 +0900
+
+uim (1:1.8.6+gh20160614.0.ec95c5a-1) experimental; urgency=medium
+
+  * New upstream git checkout.
+  * remove Applied-Upstream and needless patches.
+    - 90_close_socket_on_exec.patch
+    - 95_sock_cloexec.patch
+    - add_keywords_to_application_desktop_files.patch
+    - close_socket_after_uim_skk_requests_disconnection.patch
+    - fix-stuck-messages-to-uim-input-pad-ja.patch
+    - fix_candwin_vertical_gtk.patch
+    - fix_global-variablel-uim_fd.patch
+    - fix_spelling_errors.patch
+    - libpanel-applet.patch
+    - ppc64el.patch
+    - qt5-fix-candwin-infinite-loop.patch
+    - qt5-fix-candwin-infinite-loop2.patch
+    - qt5-fix-qt-5.5.1.patch
+    - qt5-immodule-destdir.patch
+    - qt5-no-longer-supports-Q_WS_X11.patch
+    - qt5-support.patch
+    - workaround_for_gtk3_higher_3.7.8.patch
+  * debian/control
+    - re-fix Breaks+Replaces relation (ref. #810351)
+    - update Vcs-* urls.
+  * debian/rules: remove dh-orig for emacs/uim-version.el and uim.desktop.
+  * /usr/share/doc/uim-xim is linked to /usr/share/doc/uim-common.
+    - debian/rules: dh_link from /usr/share/doc/uim-xim to uim-common's.
+    - debian/uim-xim.lintian-overrides: remove.
+  * debian/libuim-data.install
+    - add new xkb.scm entry.
+    - re-add tables wb86.table and zm.table.
+      see https://github.com/uim/uim/issues/78
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Fri, 17 Jun 2016 14:06:15 +0900
+
+uim (1:1.8.6-15exp3) UNRELEASED; urgency=medium
+
+  * debian/rules: enable hardening all
+  * debian/copyright: eliminate lintian warning: spelling-error-in-copyright
+  * fix spelling errors.
+    - debian/patches/fix_spelling_errors.patch: add.
+  * fix cannot select candidate on GTK3 application.
+    - debian/patches/fix_candwin_vertical_gtk.patch: add
+  * fix uim-candwin-qt5 infinite loop bug (add missing part)
+    - debian/patches/qt5-fix-candwin-infinite-loop2.patch: add.
+  * fix global variablel uim_fd
+    - debian/patches/fix_global-variablel-uim_fd.patch: add
+    - debian/libuim8.symbols: add optional uim_set_uim_fd and uim_unset_uim_fd.
+  * debian/patches/*: update headers.
+  * debian/control:
+    - eliminate lintian warning: vcs-field-uses-insecure-uri
+    - fix Breaks+Replaces relation (Closes: #810351)
+    - bump up Standards-Version 3.9.8.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Tue, 07 Jun 2016 14:29:29 +0900
+
+uim (1:1.8.6-15exp2) experimental; urgency=medium
+
+  * fix uim-candwin-qt5 infinite loop bug.
+    - debian/patches/qt5-qt4-define-candwin.patch: remove
+    - debian/patches/qt5-fix-candwin-infinite-loop.patch: add.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Mon, 06 Jun 2016 18:38:43 +0900
+
+uim (1:1.8.6-15exp1) experimental; urgency=medium
+
+  * cherry-pick from debian version 15.
+
+  * eliminate lintian warning: command-in-menu-file-and-desktop-file
+    - debian/uim-gtk2.0.menu: remove.
+    - debian/uim-gtk3.menu: remove.
+    - debian/uim-qt.menu: remove.
+  * eliminate lintian warning: obsolete-url-in-packaging
+    - debian/copyright: replace Google Code with GitHub.
+  * migrate to automatic dbg package.
+    - debian/control: B-D: debhelper (>= 9.20151219)
+    - debian/control: drop uim-dbg package.
+    - debian/rules: obsoletes uim-dbg package.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Tue, 05 Jan 2016 16:51:25 +0900
+
+uim (1:1.8.6-15) unstable; urgency=medium
+
+  * debian version 12, 13 and 14 are in experimental, so skipped.
+
+  * eliminate lintian warning: command-in-menu-file-and-desktop-file
+    - debian/uim-gtk2.0.menu: remove.
+    - debian/uim-gtk3.menu: remove.
+    - debian/uim-qt.menu: remove.
+  * eliminate lintian warning: obsolete-url-in-packaging
+    - debian/copyright: replace Google Code with GitHub.
+  * migrate to automatic dbg package.
+    - debian/control: B-D: debhelper (>= 9.20151219)
+    - debian/control: drop uim-dbg package.
+    - debian/rules: obsoletes uim-dbg package.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Tue, 05 Jan 2016 14:56:56 +0900
+
+uim (1:1.8.6-14exp1) experimental; urgency=medium
+
+  * use version suffix for experimental upload.
+  * build against qtbase-abi-5-5-1.
+    - Qt5 no longer supports Q_WS_X11, it breaks qt5 modules.
+      thanks to NgoHuy <huynhok.uit@gmail.com>.
+      + debian/patches/qt5-no-longer-supports-Q_WS_X11.patch: new file.
+      + debian/control: add libqt5x11extras5-dev to B-D.
+    - Qt5.5.1 doesn't work with uim.
+      thanks to NgoHuy <huynhok.uit@gmail.com>.
+      + debian/patches/qt5-fix-qt-5.5.1.patch: new file.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Thu, 22 Oct 2015 21:37:34 +0900
+
+uim (1:1.8.6-14) experimental; urgency=medium
+
+  * split libuim-data into libuim-data and libuim-plugins
+    to eliminate lintian warning: arch-dep-package-has-big-usr-share.
+    - debian/control
+      + change libuim-data's arch from any to all.
+      + add libuim-plugins.
+      + add Depends: libuim-plugins to uim-utils, uim-anthy, uim-skk,
+        uim-m17nlib, uim-byeoru, uim-latin, uim-pinyin, uim-tcode, uim-viqr,
+        uim-ipa-x-sampa and uim-look.
+    - debian/libuim-data.install: remove usr/lib/*/uim/plugin/libuim-*.
+    - debian/libuim-plugins.install: new file.
+    - debian/rules: add libuim-plugins.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sat, 25 Jul 2015 11:09:53 +0900
+
+uim (1:1.8.6-13) experimental; urgency=medium
+
+  * debian/uim-qt5.menu: replace command *-qt4 with *-qt5.
+  * debian/patches/qt5-temporarily-disable-candwin.patch: remove.
+    - this also disables Qt4 candwin.
+  * debian/patches/qt5-qt4-define-candwin.patch: new file.
+    - Define #QT{4,5}_CANDWIN when #qt{4,5} is enabled.
+      enables only Qt4 candwin and disables Qt5 candwin.
+  * eliminate lintian warning: build-depends-on-metapackage
+    - debian/control: drop qt5-default from B-D.
+    - debian/rules: export QT_SELECT=qt5.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sat, 25 Jul 2015 00:13:42 +0900
+
+uim (1:1.8.6-12) experimental; urgency=medium
+
+  * upload to experimental. Qt5 support is still under development.
+    see https://github.com/uim/uim/issues/30 for more details.
+  * add Qt5 support (Closes: #792151)
+    - debian/patches/qt5-support.patch: new file.
+      + backported from upstream master.
+    - debian/patches/qt5-immodule-qmake-conf.patch: new file.
+      + Re-add qmake required file.
+    - debian/patches/qt5-qt4-coexist.patch: new file.
+      + fix CMake Error not found QT_QT_INCLUDE_DIR when specify
+        both --with-qt4 and --with-qt5.
+    - debian/patches/qt5-temporarily-disable-candwin.patch: new file.
+      + temporarily disable uim-candwin-qt5
+    - debian/patches/qt5-immodule-destdir.patch: new file.
+      + Add DESTDIR variable for qt5 inputcontext lib.
+    - debian/patches/qt5-disable-debug-flag.patch: new file.
+      + disable debug flag.
+    - debian/patches/qt5-use-automake-1.11.patch: new file.
+      + use automake-1.11 for LOG_DRIVER unsupported Makefiles.
+    - debian/patches/series: update.
+    - debian/control
+      + add uim-qt5 package.
+      + add qtbase5-dev, qtbase5-private-dev and qt5-default to Build-Depends.
+      + add dh-autoreconf to Build-Depends.
+      + replace automake with automake1.11 at Build-Depends.
+      + add uim-qt5 to uim's Depends.
+      + add uim-qt5 to uim-xim's Suggests.
+    - debian/rules
+      + add --with-qt5 --with-qt5-immodule to confflags.
+      + use dh_autoreconf.
+      + add uim-qt5 package.
+    - debian/uim-qt5.install: new file.
+    - debian/uim-qt5.lintian-overrides: new file.
+    - debian/uim-qt5.menu: new file.
+    - debian/uim-qt5.postinst: new file.
+    - debian/uim-qt5.prerm: new file.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Wed, 22 Jul 2015 13:03:38 +0900
+
+uim (1:1.8.6-11) unstable; urgency=medium
+
+  * Port to GAction and libpanel-applet 3.14 (Closes: #789025).
+    thanks to Dmitry Shachnev <mitya57@debian.org>.
+    - debian/control: replace libpanel-applet-4-dev with libpanel-applet-dev.
+    - debian/uim-applet-gnome.install: replace 4.0 with 5.0.
+    - debian/patches/libpanel-applet.patch: new file.
+      Autoreconf fails, so patch configure and Makefile.am directly.
+    - debian/patches/series: update.
+  * move from Google Code to GitHub.
+    - debian/control: update Homepage: to GitHub Wiki.
+    - debian/watch: update release to GitHub repo.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Mon, 22 Jun 2015 10:25:43 +0900
+
+uim (1:1.8.6-10) unstable; urgency=medium
+
+  * fix stuck messages to uim-input-pad-ja (Closes: #787824).
+    thanks to "Yuriy M. Kaminskiy" <yumkam@gmail.com>.
+    - debian/patches/fix-stuck-messages-to-uim-input-pad-ja.patch: new file.
+  * drop uim-{yahoo-jp,social-ime,ajax-ime,google-cgiapi-jp,baidu-olime-jp}
+    packages, because of low-popcon.
+    - debian/NEWS: add uim-module-manager --register/--unregister information.
+    - debian/README.Debian: remove uim-yahoo-jp information.
+    - debian/control: drop/replace/break them.
+    - debian/libuim-data.install: include thier scms.
+    - debian/uim-common.install: include their pngs.
+    - debian/*.{install,postinst,prerm}: remove their info files.
+    - debian/rules: do not make their packages.
+  * debian/libuim-data.install: re-include mana, sj3 and wnn scm files.
+  * debian/control
+    - remove dependency on xemacs21-gnome* transitional packages.
+    - layout Build-Depends/Depends/Replaces/Breaks.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Mon, 08 Jun 2015 11:21:31 +0900
+
+uim (1:1.8.6-9) unstable; urgency=medium
+
+  * plug leak to unclosed socket after exec() in client (Closes: #787208).
+    thanks to "Yuriy M. Kaminskiy" <yumkam@gmail.com>.
+    - debian/patches/90_close_socket_on_exec.patch: new file.
+    - debian/patches/95_sock_cloexec.patch: new file.
+  * drop uim-canna.
+    - debian/NEWS: add news to drop uim-canna.
+    - debian/README.Debian: drop uim-canna.
+    - debian/control
+      + drop libcanna1g-dev from B-D.
+      + drop uim-canna package.
+      + uim-common and libuim-data replaces/brekas uim-canna.
+    - debian/libuim-data.install: add canna scms.
+    - debian/rules
+      + build without canna.
+      + drop uim-canna package.
+    - debian/uim-common.install: add canna pixmap.
+  * eliminate lintian warnings.
+    - debian/copyright
+      + wildcard-matches-nothing-in-dep5-copyright
+      + unused-file-paragraph-in-dep5-copyright
+      + dep5-copyright-license-name-not-unique
+    - debian/control: duplicate-in-relation-field
+    - debian/patches/add_keywords_to_application_desktop_files.patch
+      + desktop-entry-lacks-keywords-entry
+  * override lintian warning: spelling-error-in-copyright
+    - debian/uim-fep.lintian-overrides: update.
+    - debian/uim-el.lintian-overrides: update.
+    - debian/uim-common.lintian-overrides: new file.
+    - debian/uim-xim.lintian-overrides: new file.
+  * bump up Standards-Version 3.9.6.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Mon, 01 Jun 2015 21:20:59 +0900
+
+uim (1:1.8.6-8) unstable; urgency=medium
+
+  * debian/control
+    - depends emacs24 instead of emacs23. emacs23 has been removed from jessie.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Thu, 13 Nov 2014 22:07:00 +0900
+
+uim (1:1.8.6-7) unstable; urgency=medium
+
+  * Add a workaround for gtk+ >= 3.7.8 (Closes: #752226).
+    - debian/patches/workaround_for_gtk3_higher_3.7.8.patch: new file.
+    - debian/patches/series: update.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sat, 21 Jun 2014 21:37:07 +0900
+
+uim (1:1.8.6-6) unstable; urgency=medium
+
+  * debian/README.Debian: remove "framebuffer" from "Using uim-fep".
+  * debian/README.Debian.uim-fep: add config example for Using uim-fep.
+  * support alternatives for uim-toolbar requested by im-config.
+    - debian/uim-common.{postinst,prerm}; new file.
+    - debian/uim-gtk3.{postinst,prerm}; new file.
+    - debian/uim-gtk2.0.{postinst,prerm}; new file.
+    - debian/uim-qt.{postinst,prerm}; new file.
+  * fix FTBFS on ppc64el. pick up from uim 1:1.8.6-4ubuntu1.
+    thanks to Matthias Klose <doko@ubuntu.com> (Closes: #744673).
+    - debian/patches/ppc64el.patch: new file
+    - debian/rules: use autotools_dev with dh.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Thu, 24 Apr 2014 18:22:58 +0900
+
+uim (1:1.8.6-5) unstable; urgency=medium
+
+  * debian/control: uim-tcode depends t-code-common instead of t-code.
+  * add note for uim-fep (Closes: #743277).
+    - debian/README.Debian: add note.
+    - debian/README.Debian.uim-fep: new file.
+    - debian/uim-fep.docs: add README.Debian.uim-fep.
+  * bump up Standards-Version 3.9.5
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Wed, 02 Apr 2014 20:57:16 +0900
+
+uim (1:1.8.6-4) unstable; urgency=low
+
+  * debian/control: use automake instead of automake1.10 (Closes: #724442).
+  * debian/patches/close_socket_after_uim_skk_requests_disconnection.patch
+    - cherry-pick from upstream.
+    - close socket after uim-skk requests disconnection (Closes: #727086).
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Thu, 24 Oct 2013 11:08:20 +0900
+
+uim (1:1.8.6-3) unstable; urgency=low
+
+  * drop uim-prime.
+    - debian/uim-prime.install: remove.
+    - debian/uim-prime.postinst: remove.
+    - debian/uim-prime.prerm: remove.
+    - debian/libuim-data.install: add uim-prime's scm.
+    - debian/uim-common.install: add uim-prime's icon.
+    - debian/README.Debian: remove uim-prime.
+    - debian/control: remove prime from b-d.
+      add Breaks/Replaces: uim-prime to uim-common and libuim-data.
+    - debian/rules: remove uim-prime from override_dh_link.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sun, 15 Sep 2013 02:04:17 +0900
+
+uim (1:1.8.6-2) unstable; urgency=low
+
+  * debian/control
+    - tighten dependency avoid broken-symlink library (Closes: #715123).
+  * debian/patches/pass_cppflags_to_cmake_cxx_flags.patch: New file.
+    - pass CPPFLAGS to CMAKE_CXX_FLAGS for hardening.
+  * debian/patches/fix_spelling_error_sigscheme.patch
+    - fix spelling error sigscheme: charater character.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sat, 06 Jul 2013 19:16:28 +0900
+
+uim (1:1.8.6-1) unstable; urgency=low
+
+  * New upstream release.
+    - Avoid a crash when a Canna server name is specified.
+      Thanks to Kouichi ONO <kou1.ono@gmail.com> (Closes: #713997).
+  * debian/uim-el.emacsen-startup
+    - do not require uim-leim if LOGNAME is root (Closes: #671818).
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sun, 30 Jun 2013 21:54:51 +0900
+
+uim (1:1.8.5-2) unstable; urgency=low
+
+  * drop im-switch support (Closes: #629490)
+    - debian/README.Debian: remove im-switch documentation.
+    - debian/control: drop Recommendation.
+    - debian/im-switch/: drop directory.
+    - debian/rules: drop installation stuff.
+    - debian/uim-xim.{postinst,prerm}: drop update-alternatives stuff.
+  * drop obsoleted DMUA header.
+    - debian/control: remove DM-Upload-Allowed: yes.
+  * drop transitional packages: uim-qt3 uim-applet-kde uim-hangul.
+    - debian/control: drop transitional packages.
+    - debian/rules: drop symlinks.
+  * bump up Standards-Version 3.9.4
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sat, 11 May 2013 11:28:08 +0900
+
+uim (1:1.8.5-1) unstable; urgency=low
+
+  * New upstream release.
+    - debian/patches/add_cppflags_qt4_common.patch: removed.
+    - debian/patches/add_include_qt4_edittest.patch: removed.
+    - debian/rules: remove uim.spec.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Mon, 06 May 2013 02:18:49 +0900
+
+uim (1:1.8.1-3) unstable; urgency=medium
+
+  * Urgency set medium to fix RC bug.
+  * move installed-modules.scm and loader.scm from /etc/uim to /var/lib/uim
+    (Closes: #688233).
+    - debian/*.{postinst,prerm}: change path from /etc/uim to /var/lib/uim.
+    - debian/rules: do not generate installed-modules.scm and loader.scm.
+    - debian/libuim-data.maintscript: add mv_conffile installed-modules.scm
+      and loader.scm from /etc/uim to /var/lib/uim.
+      Suggested by Andreas Beckmann <debian@abeckmann.de>.  Thank you.
+    - debian/libuim-data.postinst: generate installed-modules.scm and
+      loader.scm if they do not exists in /var/lib/uim.
+    - debian/libuim-data.postrm: remove /etc/uim and /var/lib/uim contents.
+  * debian/control: libuim-data
+    - add Pre-Depends: dpkg (>= 1.15.7.2) to use dpkg-maintsctipt-helper.
+    - add Breaks: uim-MODULE (<< 1:1.8.1-3~).
+    - add Breaks: uim-mozc (<< 1.5.1090.102-4~), uim-chewing (<= 0.1.0-2)
+  * unset Multi-Arch: same of uim-dbg, because of plasma-widget-uim (kde4).
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sun, 14 Oct 2012 18:07:35 +0900
+
+uim (1:1.8.1-2) unstable; urgency=low
+
+  * enable Multiarch.
+    - this is partial, because of plasma-widget-uim (kde4).
+    - debian/compat: set to 9.
+    - debian/libuim-custom2.install
+      debian/libuim-data.install
+      debian/libuim-dev.install
+      debian/libuim-scm0.install
+      debian/libuim8.install
+      debian/uim-anthy.install
+      debian/uim-applet-gnome.install
+      debian/uim-gtk2.0.install
+      debian/uim-gtk3.install
+      debian/uim-m17nlib.install
+      debian/uim-qt.install
+      debian/uim-skk.install
+      debian/uim-utils.install
+      debian/rules: add triplet.
+    - debian/control
+      + mark libuim8, libuim-scm0, libuim-custom2, libuim-dev and uim0-dbg as
+        Multi-Arch: same.
+      + mark uim-common as Multi-Arch: foreign.
+  * enable more hardening.
+    - debian/patches/add_cppflags_qt4_common.patch: added.
+    - debian/patches/add_include_qt4_edittest.patch: added.
+  * debian/changelog: remove redundant name tags.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sun, 03 Jun 2012 00:20:45 +0900
+
+uim (1:1.8.1-1) unstable; urgency=low
+
+  * New upstream release.
+    - debian/uim-tcode.install: update for new file tutcode-rule-custom.scm.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Wed, 30 May 2012 12:44:59 +0900
+
+uim (1:1.8.0-2) unstable; urgency=low
+
+  * upload to unstable.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Thu, 17 May 2012 20:12:04 +0900
+
+uim (1:1.7.3-2.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Fix FTBFS against multiarch Qt 4.8 (Closes: #662796)
+    - Thanks to Felix Geyer for the fix
+
+ -- Scott Kitterman <scott@kitterman.com>  Tue, 15 May 2012 01:28:54 -0400
+
+uim (1:1.8.0-1) experimental; urgency=low
+
+  * New upstream release.
+    - replace rsvg with rsvg-convert (Closes: #666484)
+  * fix FTBFS against multiarch Qt 4.8 (Closes: #662796)
+    thanks to Felix Geyer <debfx-pkg@fobos.de>.
+  * including upstream changelogs.
+    - debian/uim-common.docs: added ChangeLog.old*
+    - debian/rules: add override_dh_installchangelogs.
+  * debian/rules: add uim-hangul to override_dh_link.
+  * upload to experimental.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sat, 31 Mar 2012 12:36:46 +0900
+
+uim (1:1.8.0~beta-1) UNRELEASED; urgency=low
+
+  * New upstream beta release.
+  * Update libuim version (7.1.0 -> 8.0.0)
+    - debian/libuim8.install: renamed from libuim7.install.
+    - debian/libuim8.symbols: updated and renamed from libuim7.symbols.
+    - debian/control: renamed from libuim7 to libuim8.
+    - debian/rules: renamed from libuim7 to libuim8.
+  * debian/patches/potfiles_intltool_0.50.x.patch: removed, fixed upstream.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sun, 25 Mar 2012 18:09:05 +0900
+
+uim (1:1.8.0~alpha-1) UNRELEASED; urgency=low
+
+  * New upstream alpha release.
+  * debian/copyright: added scm/packrat.scm scm/json.scm.
+  * debian/libuim7.symbols: updated.
+  * debian/libuim-data.install: added new scm files.
+  * debian/uim-gtk2.0.install: added uim-candwin-horizontal-gtk.
+  * debian/uim-gtk3.install: added uim-candwin-horizontal-gtk3.
+  * debian/uim-m17nlib.install: added new scm file.
+  * debian/uim-qt.install: removed uim-chardict-qt4.mo.
+  * debian/patches/potfiles_intltool_0.50.x.patch: updated.
+  * Add uim-google-cgiapi-jp and uim-baidu-olime-jp package.
+    - debian/control: add uim-google-cgiapi-jp and uim-baidu-olime-jp.
+    - debian/rules: add uim-google-cgiapi-jp and uim-baidu-olime-jp.
+    - debian/uim-google-cgiapi-jp.{install,postinst,prerm}: added.
+    - debian/uim-baidu-olime-jp.{install,postinst,prerm}: added.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Tue, 20 Mar 2012 14:25:36 +0900
+
+uim (1:1.7.3-2) unstable; urgency=low
+
+  * debian/patches/potfiles_intltool_0.50.x.patch: added.
+    - add missing POTFILES entries for intltool 0.50.x (Closes: #662795).
+  * debian/copyright: switched to DEP-5 format.
+  * Standards-Version 3.9.3.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sat, 10 Mar 2012 16:30:07 +0900
+
+uim (1:1.7.3-1) unstable; urgency=low
+
+  * New upstream release.
+  * debian/patches/fix_ftbfs_on_hurd-i386.patch: removed.
+  * debian/rules: enable hardening build flags using dpkg-buildflags.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Tue, 14 Feb 2012 17:09:20 +0900
+
+uim (1:1.7.2-5) unstable; urgency=low
+
+  * debian/patches/*: remove number prefix from patches.
+  * debian/patches/fix_ftbfs_on_hurd-i386.patch: added.
+    - fix FTBFS on hurd-i386, SVN upstream r7434.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Wed, 01 Feb 2012 23:01:38 +0900
+
+uim (1:1.7.2-4) unstable; urgency=low
+
+  * debian/control: updated.
+    - uim-common replaces/breaks uim-hangul (<< 1:1.7.0-1) (Closes: #657542).
+    - eliminate lintian warning: debian-control-has-unusual-field-spacing
+  * debian/rules: backup/restore removal files during dh_clean.
+  * uim-dict-gtk, uim-dict-gtk3: new package, from uim-gtk2.0 and uim-gtk3.
+    - debian/control: updated.
+      + added uim-dict-gtk and uim-dict-gtk3.
+      + uim-gtk{2.0,3} suggests uim-dict-gtk{,3}.
+      + uim-anthy and uim-canna suggests uim-dict-gtk{,3}.
+    - debian/rules: added uim-dict-gtk and uim-dict-gtk3.
+    - debian/uim-dict-gtk{,3}.install: new file.
+    - debian/uim-dict-gtk{,3}.lintian-overrides: new file.
+    - debian/uim-gtk{2.0,3}.install: remove uim-dict-gtk{,3}.
+    - debian/uim-gtk{2.0,3}.lintian-overrides: remove uim-dict-gtk{,3}.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Fri, 27 Jan 2012 18:03:37 +0900
+
+uim (1:1.7.2-3) unstable; urgency=low
+
+  * upload to unstable.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Thu, 19 Jan 2012 09:09:38 +0900
+
+uim (1:1.7.2-2) experimental; urgency=low
+
+  * upload to experimental.
+  * uim-dbg: renamed from libuim7-dbg.
+    - debian/control: just renamed package name.
+      it replaces/breaks libuim6-dbg and libuim7-dbg.
+    - debian/rules: just renamed package name.
+  * debian/libuim7.symbols: use arch tag.
+  * debian/libuim7.symbols.kfreebsd: removed.
+  * libuim7 split out into libuim7, libuim-scm0 and libuim-custom2
+    (Closes: #655700).
+    - debian/control: add libuim-scm0 and libuim-custom2.
+      they replaces/breaks libuim6 and libuim7 (<< 1:1.7.2-2).
+    - debian/rules: add libuim-scm0 and libuim-custom2.
+    - debian/libuim7.{install,symbols}: split out.
+    - debian/libuim-scm0.{install,symbols}: new files.
+    - debian/libuim-custom2.{install,symbols}: new files.
+  * debian/libuim*.symbols: update for squeeze.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sat, 14 Jan 2012 02:15:28 +0900
+
+uim (1:1.7.2-1) unstable; urgency=low
+
+  * New upstream release.
+  * debian/control
+    - update my email address.
+    - eliminate lintian warning: transitional-package-should-be-oldlibs-extra
+      + uim-qt3, uim-applet-kde, uim-hangul.
+  * debian/patches/
+    - 06_fix_ftbfs_on_ia64.patch: removed, no need.
+    - fix_segv_uim_toolbar_qt4_with_mozc.patch: removed, merged upstream.
+    - fix_build_with_ld_as_needed.patch: removed, merged upstream.
+    - series: updated.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Thu, 12 Jan 2012 10:07:59 +0900
+
+uim (1:1.7.1-3) unstable; urgency=low
+
+  * upload to unstable.
+  * New maintainer (acknowledged from former maintainer).
+    Thanks Kiwamu Okabe <kiwamu@debian.or.jp> for the great works.
+  * the GNOME 3 transition (Closes: #638102).
+    - debian/control
+      + drop b-d libpanel-applet2-dev, libgnome2-dev and libgnomeui-dev
+      + add b-d libpanel-applet-4-dev.
+      + uim-applet-gnome depends uim-gtk3 instead of uim-gtk2.0.
+    - debian/rules: add --disable-gnome-applet and --enable-gnome3-applet.
+    - debian/uim-applet-gnome.install: updated.
+  * fix ftbs with ld --as-needed (Closes: #639320)
+    - debian/patches/fix_build_with_ld_as_needed.patch: added.
+    - debian/patches/series: updated.
+  * taken from 1:1.7.1-2ubuntu1~oneiric[23].
+    Thanks Ikuya Awashiro <ikuya@fruitsbasket.info>.
+    - debian/im-switch/uim-toolbar-qt
+      + start uim-toolbar-qt4 instead of uim-toolbar-qt.
+    - fix segfault uim-toolbar-qt4 with uim-mozc.
+      + debian/patches/fix_segv_uim_toolbar_qt4_with_mozc.patch: added.
+      + debian/patches/series: updated.
+
+ -- HIGUCHI Daisuke (VDR dai) <debian@vdr.jp>  Sat, 15 Oct 2011 17:31:16 +0900
+
+uim (1:1.7.1-2) experimental; urgency=low
+
+  * upload to experimental.
+  * avoid to remove old libuim versions (Closes: #415394).
+    - move from uim-common and libuim7 files to libuim-data,
+      + debian/uim-common.install: usr/share/uim/*.scm
+      + debian/libuim7.install: usr/lib/uim/plugin/libuim-*.so
+      + debian/rules: etc/uim/*.scm
+    - arrange dependencies about moving libuim-data files.
+      + libuim-data: add Breaks/Replaces: libuim6 and uim-common.
+      + libuim-data: add Recommends: wordlist, im-config | im-switch
+      + libuim7: drop Conflicts: libuim6.
+      + libuim7: drop Depends/Breaks/Replaces: libuim-data.
+      + uim-common: drop Recommends: wordlist, im-config | im-switch.
+      + uim-*: add Depends: libuim-data
+  * debian/control
+    - Remove Conflicts/Breaks/Replaces against no longer exist packages
+      (libuim0, libuim1 and libuim3).
+    - change Architecture of uim-{canna,prime} from any to all.
+    - set Section: utils and Architecture: any of libuim-data.
+  * debian/changelog
+    - add missing NMU entry (1:1.5.7-9.1).
+    - acknowledge NMU, thanks to gregor herrmann <gregoa@debian.org>.
+
+ -- HIGUCHI Daisuke (VDR dai) <debian@vdr.jp>  Thu, 25 Aug 2011 15:18:17 +0900
+
+uim (1:1.7.1-1) unstable; urgency=low
+
+  * New upstream release.
+    - debian/uim-byeoru.install: reflect byeoru dict format change.
+  * debian/control
+    - change uim-el section from utils to lisp (Closes: #634939).
+
+ -- HIGUCHI Daisuke (VDR dai) <debian@vdr.jp>  Tue, 09 Aug 2011 15:41:20 +0900
+
+uim (1:1.7.0-3) unstable; urgency=low
+
+  * debian/patches/
+    - dropped merged/needless patches.
+  * debian/control
+    - add Replaces/Breaks: to uim-common and uim-gtk2.0.
+      add Suggests: to uim-xim. patches made by
+      YOSHINO Yoshihito <yy.y.ja.jp@gmail.com> (Closes: #633401).
+  * rename plasma-widget-uim from uim-applet-kde (Closes: #583783).
+    - debian/control: uim-applet-kde goes to dummy package.
+    - debian/plasma-widget-uim.install: renamed from uim-applet-kde.install.
+    - debian/rules: add plasma-widget-uim.
+
+ -- HIGUCHI Daisuke (VDR dai) <debian@vdr.jp>  Wed, 20 Jul 2011 12:50:03 +0900
+
+uim (1:1.7.0-2) unstable; urgency=low
+
+  [ Nobuhiro Iwamatsu ]
+  * debian/control
+    - Fix control within about 80 characters
+    - Drop emacs22, emacs21 and emacs-snapshot from Depends of uim-el
+    - Add uim-gtk3 to Depends of uim
+    - Change architecture of libuim-data from any to all
+
+  [ HIGUCHI Daisuke (VDR dai) ]
+  * debian/uim-tcode.install
+    - include "tcode.scm" and "trycode.scm" for code table file.
+      (Closes: #631746)
+  * debian/{uim-common,uim-utils}.postinst
+    - remove no longer need postinst script
+  * debian/libuim7.symbols.kfreebsd
+    - add a separate symbols file on kFreeBSD for issetugid
+  * debian/control
+    - remove unnecessary lib*-dev buil-dependencies (Closes: #623669)
+    - libuim-dev: fix Depends: add libgcroots-dev, remove libm17n-dev.
+      (Closes: #423269)
+    - uim-canna, uim-prime: do not depend ${shlibs:Depends}
+  * enable GTK+3 immodule and helper applications
+    - debian/control: uim-gtk3: new sub package.
+    - debian/rules: add --with-gtk3 to confflags.
+    - debian/uim-common.install: move /usr/share/uim/helperdata/
+      uim-dict-ui.xml from debian/uim-gtk2.0.install.
+    - debian/uim-gtk3.install: new file.
+    - debian/uim-gtk3.lintian-overrides: new file.
+    - debian/uim-gtk3.menu: new file.
+
+ -- HIGUCHI Daisuke (VDR dai) <debian@vdr.jp>  Thu, 30 Jun 2011 18:15:36 +0900
+
+uim (1:1.7.0-1) unstable; urgency=low
+
+  [ Nobuhiro Iwamatsu ]
+  * New upstream release.
+    - fixed FTBFS with binutils-gold (Closes: #556514)
+    - fixed uim crashes when in .XCompose file symbol not in current locale
+      (Closes: #599837)
+  * Update debian/control.
+    - Add Nobuhiro Iwamatsu to Uploaders.
+    - Drop qt3 support (Closes: #604385)
+
+  [ Kiwamu Okabe ]
+  * add HIGUCHI Daisuke (VDR dai) <debian@vdr.jp> to Uploaders.
+  * update standards-version=3.9.2
+  * fix lintian bug description-synopsis-starts-with-article.
+
+  [ HIGUCHI Daisuke (VDR dai) ]
+  * debian/control
+    - fix description. (Closes: #503858)
+    - Update uim-qt*'s description, they include qt*-immodules.
+      (Closes: #601866)
+    - update whole description.
+      Many thanks to Justin B Rye <jbr@edlug.org.uk> on debian-l10n-english.
+    - Convert Conflicts: to Breaks/Replaces:
+    - Remove Replace/Conflicts against no longer exist packages
+      (libuim0-gtk, libuim-gtk2.0 and uim-helper-server).
+    - wrap Build-Depends:
+    - update Vcs-* fields to anoncsm.debian.org
+    - switch to dh7 from cdbs
+  * debian/source/format: switch to 3.0 (quilt) from 1.0
+  * debian/copyright: updated.
+  * debian/watch: added. format stolen from abcde, thx.
+  * debian/libuim7.symbols: new file.
+  * debian/rules
+    - clean symlinks
+    - eliminate lintian warning: configure-generated-file-in-source
+    - eliminate lintian warning: duplicate-short-description
+      and binary-control-field-duplicates-source
+    - remove qt3 configure flag
+  * debian/NEWS: do not use asterisks in a bulleted list.
+  * debian/README.Debian
+    - Update "Related packages". Add "Using uim-yahoo-jp".
+    - add im-config desc (copied from im-config/README.Debian).
+  * debian/patches/*
+    - Add DP: to eliminate lintian information.
+    - convert to quilt from dpatch
+    - remove 14_distclean_qt4.patch, merged upstream.
+    - add 19_uim_can_work_with_libgcroot_0.2.2.patch
+  * debian/uim-*.install
+    - Include missed pixmaps (mainly *_dark_background.png)
+  * uim-common
+    - Add Recommends: wordlist. (Closes: #504988)
+    - Split uim-look for registration. (Closes: #611329)
+    - move ko_*.png from uim-hangul to uim-common. (Closes: #612773)
+    - add im-config | im-switch to Recommends. remove im-switch from Depends.
+      (Closes: #600476)
+    - add file for completion with Google Suggest
+  * uim: Add Depends: uim-qt. (Closes: #424005)
+  * libuim7: fix for uim-yahoo-jp, enable expat plugin.
+  * uim-look: do not depend virtual packages.
+  * uim-prime: Do not include svg.
+  * uim-m17nlib, uim-utils: lintian overrides binary-without-manpage.
+  * uim-tcode: drop tcode and trycode.
+  * uim-hangul: drop uim-hangul.
+  * uim-gtk2.0: do not ship im-uim.{a,la}
+
+ -- Nobuhiro Iwamatsu <iwamatsu@debian.org>  Sat, 25 Jun 2011 19:56:57 +0900
+
+uim (1:1.6.1-2) experimental; urgency=high
+
+  * Merge patches from HIGUCHI Daisuke (VDR dai) <debian@vdr.jp>, thanks!
+    - remove wb86 and zm files
+
+ -- Kiwamu Okabe <kiwamu@debian.or.jp>  Tue, 25 Jan 2011 21:09:19 +0900
+
+uim (1:1.6.1-1) experimental; urgency=high
+
+  * New upstream release.
+  * Imported Upstream version 1.6.0
+  * Merge patches from HIGUCHI Daisuke (VDR dai) <debian@vdr.jp>, thanks!
+    - add m17n-db to Build-Depends:
+    - bump soname libuim6 -> libuim7
+    - include new *.scm files.
+  * Add uim-yahoo-jp, uim-social-ime and uim-ajax-ime packages.
+  * Remove scm files for mana, scim, sj3 and wnn.
+
+ -- Kiwamu Okabe <kiwamu@debian.or.jp>  Mon, 10 Jan 2011 22:39:17 +0900
+
+uim (1:1.6.0-1) experimental; urgency=high
+
+  * New upstream release.
+  * Imported Upstream version 1.6.0
+  * Cleanup debian/patches.
+
+ -- Kiwamu Okabe <kiwamu@debian.or.jp>  Mon, 16 Aug 2010 20:55:02 +0900
+
+uim (1:1.5.7-9.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Fix "file conflict when upgrading from lenny": add Replaces/Breaks against
+    uim-applet-gnome (<< 1:1.5.7-3); thanks to dai for preparing the patch
+    (closes: #601996).
+  * Remove unversioned Replaces/Conflicts against libuim0-gtk, libuim-gtk2.0;
+    those packages don't exist in any suite anymore.
+
+ -- gregor herrmann <gregoa@debian.org>  Mon, 08 Nov 2010 01:06:37 +0100
+
+uim (1:1.5.7-9) unstable; urgency=low
+
+  * Merge patches from Miguel Landaeta <miguel@miguel.cc>, thanks!
+    - uim-tcode: Add support to mazegaki conversion. (Closes: #507996)
+      + add "17_fix_mazegaki_location.dpatch"
+    - uim-tcode: Depends uim-skk and t-code because of described above.
+  * uim-fep: Fix a typo in package description. (Closes: #586559)
+  * Fix a compile error with Qt 4.7. (Closes: #584112)
+    - add "18_qt47_compile_fix.dpatch"
+
+ -- Kiwamu Okabe <kiwamu@debian.or.jp>  Thu, 24 Jun 2010 17:39:05 +0900
+
+uim (1:1.5.7-8) unstable; urgency=medium
+
+  * Cleanup changelog.
+  * Adjust the ua_inst priority, uim-toolbar:40=>30 uim-systray:30=>40.
+
+ -- Kiwamu Okabe <kiwamu@debian.or.jp>  Fri, 28 May 2010 11:33:32 +0900
+
+uim (1:1.5.7-7) unstable; urgency=high
+
+  * Merge patches from VDR dai (deb) <d+deb@vdr.jp>, thanks!
+    - fix FTBFS Debian GNU/kFreeBSD (Closes: #494344)
+       + add "debian/patches/16_cred_for_kfreebsd.dpatch"
+    - fix FTBFS with dash.
+    - fix FTBFS: segfault in-uim-module-manager [ia64 s390] (Closes: #566978)
+       + debian/rules:
+         - add "-fno-strict-aliasing" to UIM_SCM_CFLAGS for ia64 and s390
+         - add "makebuilddir" and "cleanbuilddir" actions
+         - remove "DEB_AUTO_UPDATE_ACLOCAL := 1.10"
+         - include /usr/share/cdbs/1/rules/buildvars.mk.
+
+ -- Kiwamu Okabe <kiwamu@debian.or.jp>  Fri, 28 May 2010 02:10:41 +0900
+
+uim (1:1.5.7-6) unstable; urgency=low
+
+  * build-depend on cmake.
+    (Closes: #582178)
+  * distclean qt4.
+  * [patch] uim-el: uim-el hogs CPU during emacs install.
+    (Closes: #566791)
+
+ -- Kiwamu Okabe <kiwamu@debian.or.jp>  Sun, 23 May 2010 17:06:45 +0900
+
+uim (1:1.5.7-5) unstable; urgency=high
+
+  * Fix lintian bugs missing-debian-source-format,
+    out-of-date-standards-version.
+
+ -- Kiwamu Okabe <kiwamu@debian.or.jp>  Wed, 21 Apr 2010 19:40:37 +0900
+
+uim (1:1.5.7-4) unstable; urgency=low
+
+  * debian/rules: use DEB_AUTO_UPDATE_ACLOCAL instead of
+    DEB_AUTO_UPDATE_AUTOMAKE, for automake match version.
+    (Closes: #571375)
+  * debian/control: DM-Upload-Allowed: yes
+  * start source code managemen on git.
+    http://git.debian.org/?p=collab-maint/uim.git;a=summary
+
+ -- Kiwamu Okabe <kiwamu@debian.or.jp>  Thu, 25 Mar 2010 18:40:12 +0900
+
+uim (1:1.5.7-3) unstable; urgency=medium
+
+  * Fix lintian bugs desktop-command-not-in-package.
+    Move uim.desktop file to uim-gtk2.0 package.
+  * 13_fix_uim-xim_manpage-has-errors-from-man.dpatch:
+    Fix lintian bugs desktop-command-not-in-package.
+    Remove macro `"' from uim-xim.1.
+  * Fix lintian bugs depends-on-old-emacs.
+    uim-el package depends on emacs23.
+  * Overrides lintian bugs binary-without-manpage.
+  * Fix lintian bugs ancient-standards-version.
+    checked /usr/share/doc/debian-policy/upgrading-checklist.txt.gz.
+  * debian/control: added build dependency on libgnomeui-dev. This is
+    mandatory to build the Gnome applet and fixes a FTBFS.
+    (Closes: #566307)
+  * Zero lintian bugs.
+
+ -- Kiwamu Okabe <kiwamu@debian.or.jp>  Sat, 23 Jan 2010 16:16:06 +0900
+
+uim (1:1.5.7-2) unstable; urgency=low
+
+  * 12_uim_kde4_menu.dpatch:
+    Fix 'kde4 menu on a tool button appears at an incorrect position'.
+    See <https://bugs.freedesktop.org/show_bug.cgi?id=24728>.
+  * Drop the build dependency on libxtrap-dev. (Closes: #559700)
+  * Fix lintian bugs maintainer-script-empty preinst.
+    Remove uim-common.preinst.
+
+ -- Kiwamu Okabe <kiwamu@debian.or.jp>  Mon, 21 Dec 2009 21:38:21 +0900
+
+uim (1:1.5.7-1) unstable; urgency=high
+
+  * New upstream release.
+    - Fix 'cannot close some applications (e.g. evince) from window manager'.
+      See <http://code.google.com/p/uim/source/detail?r=6086> for more details.
+      (Closes: #557341)
+  * Fix lintian bugs debhelper-but-no-misc-depends.
+    Add misc:Depends to control file.
+  * Fix lintian bugs build-depends-on-1-revision.
+    Build-depend on libgtk2.0-dev (>= 2.10.1).
+  * Fix lintian bugs patch-system-but-no-source-readme.
+    Add README.source file.
+  * Remove static plugin files.
+  * Remove *.la files.
+  * Fix lintian bugs pkg-has-shlibs-control-file-but-no-actual-shared-libs.
+    Use dh_makelibs "--exclude" option.
+  * 09_support_skk_alternatives.dpatch:
+    Patch for supporting alternatives of /usr/share/skk/SKK-JISYO.
+  * uim-applet-kde include kde4 applet instead of kde3 applet.
+    Build-Depends: kdelibs5-dev
+  * Fix lintian bugs syntax-error-in-debian-news-file.
+    Reformat NEWS.Debian file.
+  * Fix lintian bugs menu-item-uses-apps-section, menu-item-creates-new-section.
+    Replace 'section="Apps/Tools"' by 'section="Applications/Accessibility"'.
+  * Fix lintian bugs wrong-section-according-to-package-name.
+    libuim6-dbg section libdevel => debug.
+  * Fix lintian bugs debug-package-should-be-priority-extra.
+    libuim6-dbg priority optional => extra.
+  * Fix lintian bugs command-with-path-in-maintainer-script.
+    Remove uim-module-manager command's absolute path in
+    {post,pre}{inst,rm} file.
+  * 10_set_path_uim-candwin-qt4.dpatch:
+    uim-candwin-qt4 locate /usr/lib/uim dir.
+  * 11_remove_rpath_plasma_applet_uim_so.dpatch:
+    Remove rpath from plasma_applet_uim.so file.
+    See <http://lintian.debian.org/tags/binary-or-shlib-defines-rpath.html>.
+
+ -- Kiwamu Okabe <kiwamu@debian.or.jp>  Tue, 24 Nov 2009 12:48:26 +0900
+
+uim (1:1.5.6-2) unstable; urgency=high
+
+  * 08_fix_segv_on_iceweasel_and_flashplugin.dpatch:
+    patch for fix segv on iceweasel and flashplugin.
+    See <http://bugs.freedesktop.org/show_bug.cgi?id=25139> for more details.
+  * Fix lintian bugs usr-share-doc-symlink-without-dependency for libuim*.
+    (closes: Bug#385666)
+  * Fix Bug 'obsolete build-dep on x-dev'. Switch depending on
+    x11proto-core-dev. (closes: Bug#515522)
+  * Fix Bug 'The icon is not contained'. (closes: Bug#482606)
+
+ -- Kiwamu Okabe <kiwamu@debian.or.jp>  Thu, 19 Nov 2009 20:16:24 +0900
+
+uim (1:1.5.6-1) unstable; urgency=high
+
+  * New upstream release.
+    - configure.ac : Fix not found gnome.h header (patch from Fedora).
+      See <http://code.google.com/p/uim/source/detail?r=5963> for more details.
+      (closes: Bug#536944)
+  * New maintainer (acknowledged from former maintainer Masahiro Omote).
+  * 07_fix_configure_notoverwrite_po_makefile.dpatch:
+    patch for not install uim-chardict-qt.mo file.
+    See <http://groups.google.com/group/uim-ja/browse_thread/thread/31a942b9e3bfc2b7/47e2601cd04b0f3c#47e2601cd04b0f3c> for more details (in Japanese).
+
+ -- Kiwamu Okabe <kiwamu@debian.or.jp>  Tue, 08 Sep 2009 16:44:29 +0900
+
+uim (1:1.5.5-1) unstable; urgency=low
+
+  * New upstream release and final upload by current maintainter.
+
+ -- Masahito Omote <omote@debian.org>  Sun, 01 Mar 2009 12:57:00 +0900
+
+uim (1:1.5.3-1) unstable; urgency=low
+
+  * New upstream release (closes: Bug#499356)
+
+ -- Masahito Omote <omote@debian.org>  Sun, 28 Sep 2008 23:01:26 +0900
+
+uim (1:1.5.1-2) unstable; urgency=low
+
+  * uim-tcode: provide tutcode-custom.scm, tutcode-bushudic.scm
+    and tutcode-rule.scm (Closes: #482659)
+  * Fix FTBFS: segv during compile (Closes: #483078).
+    I personally think this bug is not specific for uim but is a optimization
+    problem on gcc-4.3.1. (https://bugs.freedesktop.org/show_bug.cgi?id=16477)
+
+ -- Masahito Omote <omote@debian.org>  Wed, 25 Jun 2008 19:56:33 +0900
+
+uim (1:1.5.1-1) unstable; urgency=low
+
+  * New upstream release
+  * uim-qt3: Add uim inputcontext plugin for Qt3. And due to uim-*-qt are
+    not supported in Qt4 for now officially, uim-*-qt are contained in
+    this package.
+  * uim-qt: Depends uim-qt3 because of described above.
+  * libuim6: New package for syncing with upstream upgrade soversion.
+  * 05_qmake_bug_workaround.dpatch: patch for the workaround that qmake does
+    not add link option against other libraries(e.g. -lX11) by default.
+  * uim-tcode doesn't provide tutcode-custom.scm, tutcode-bushudic.scm
+    and tutcode-rule.scm (Closes: #482659)
+
+ -- Masahito Omote <omote@debian.org>  Wed, 25 Jun 2008 19:51:56 +0900
+
+uim (1:1.4.2-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Masahito Omote <omote@debian.org>  Thu, 28 Feb 2008 12:52:23 +0000
+
+uim (1:1.4.1-6) unstable; urgency=low
+
+  * Fix segv because of free and g_free problem on glib.
+    - uim-gtk2.0 causes gtk-gnutella to crash (Closes: #431047)
+  * Fix indent the description of uim and rewrite some part of them.
+    (Closes: #442450)
+  * uim-el: prefer emacs22 (Closes: #433973)
+
+ -- Masahito Omote <omote@debian.org>  Thu, 03 Jan 2008 18:26:12 +0900
+
+uim (1:1.4.1-5) unstable; urgency=low
+
+  * kde-devel is a too coarse grained build-dep (Closes: #431837)
+  * FTBFS if built twice in a row (Closes: #424196)
+  * Thanks to Kobayashi Noritada <nori1@dolphin.c.u-tokyo.ac.jp>.
+
+ -- Masahito Omote <omote@debian.org>  Sat, 04 Aug 2007 21:55:48 +0900
+
+uim (1:1.4.1-4) unstable; urgency=low
+
+  * Acknowledge the NMU fix.
+  * Don't call "uim-module-manager --unregister" in uim-common.postinst.
+    closes: #415393, #419617.
+
+ -- Masahito Omote <omote@debian.org>  Fri, 22 Jun 2007 00:15:41 +0900
+
+uim (1:1.4.1-3.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Version the dependencies of uim on uim-common and other uim binary
+    packages to use = ${source:Version} or >= ${source:Version};
+    closes: #415393, #419617.
+
+ -- Loic Minier <lool@dooz.org>  Thu, 07 Jun 2007 14:03:31 +0200
+
+uim (1:1.4.1-3) unstable; urgency=low
+
+  * Switch to dh_gtkmodules for the gtk 2.10 transition (Closes:
+    #419318)
+    - debian/control: Add ${misc:Depends} and remove libgtk2.0-bin on
+      uim-gtk2.0.
+    - debian/uim-gtk2.0.post{inst,rm}: Removed.
+
+ -- Masahito Omote <omote@debian.org>  Sat, 21 Apr 2007 03:46:09 +0900
+
+uim (1:1.4.1-2) unstable; urgency=low
+
+  * Upload to unstable.
+  * FTBFS: missing versioning gtk (Closes: #415527)
+  * Fix dependency between uim-common and uim-utils.
+
+ -- Masahito Omote <omote@debian.org>  Sat, 14 Apr 2007 23:57:11 +0900
+
+uim (1:1.4.1-1) experimental; urgency=low
+
+  * New upstream release
+    - Upload to experimental.
+  * Stop using "[ -f /usr/bin/dh_gtkmodules ]" in debian/rules.
+
+ -- Masahito Omote <omote@debian.org>  Sun, 18 Mar 2007 13:53:46 +0000
+
+uim (1:1.4.0-2) experimental; urgency=low
+
+  * Oops, /usr/lib/gtk-2.0/2.10.0/immodule-files.d/uim-gtk2.0.immoduls
+    is broken in 1:1.4.0-1.
+
+ -- Masahito Omote <omote@debian.org>  Wed, 14 Feb 2007 17:05:07 +0000
+
+uim (1:1.4.0-1) experimental; urgency=low
+
+  * New upstream release
+    - Build-Depends: libgcroots-dev, automake1.10, kde-devel.
+  * 03_intltool_fake_version.dpatch: very dirty hack for work on intltool
+    0.35.0. I cannot understand why new one is still not in experimental even
+    though GNOME 2.16.2 is in it. Why it is neglected over 8 months?
+  * Bump libuim's major version to 5.
+  * uim-applet-kde: New Package.
+  * Use dh_gtkmodules which was supported from 2.10.1-1. (closes: Bug#409583)
+
+ -- Masahito Omote <omote@debian.org>  Thu, 15 Feb 2007 00:57:41 +0900
+
+uim (1:1.3.1-2) experimental; urgency=low
+
+  * Merge uim-tutcode, uim-trycode into uim-tcode. These input style are
+    very special and most of Japanese does not use it. But people using
+    these IMs have more intelligence of uim, cofusions should not happen,
+    I think.
+    - This is because ftpmaster demand not to get obese the number of
+      packages. I do not fully agree his rejection. This change is a
+      maximum compromise.
+    - Also he demand me to split packages for each continent(Asia, Europe,
+      North America, Afirican, ...). But I do not agree with it, too. Not all
+      Japanese do need Hangul/Chinese/Vietnamese/... input style. And so
+      do Koreans, Chinese, Vietnamese and so on. And not all people do
+      need multiple IMs(using Anthy and SKK at the same time for example).
+      And installing multiple IMs by default make confusions of default
+      input style when using uim.
+
+ -- Masahito Omote <omote@debian.org>  Sat,  3 Feb 2007 17:36:49 +0900
+
+uim (1:1.3.1-1) experimental; urgency=low
+
+  * New upstream release
+  * Uploading to experimental.
+  * Don't call 'UIM' and 'Uim' in Debian's official Documents. 'uim' is a
+    formal wording and the only wording.
+  * From this version, IMs in uim-common are splitted into each packages.
+    You have to install them if you keep to use them. Splitted packages are
+    as follows,
+    - uim-byeoru: The Byeoru Hangul input suite for uim
+    - uim-hangul: Hangul input method for uim (2-beol/3-beol/Romaja)
+    - uim-latin: Latin and Germanic languages input style for uim
+    - uim-pinyin: Pinyin input method for uim
+    - uim-tcode: T-Code input style for uim
+    - uim-tutcode: TUT-Code input style for uim
+    - uim-trycode: Try-Code input style for uim
+    - uim-viqr: Vietnamese Quoted-Readable input style for uim
+    - uim-ipa-x-sampa: International Phonetic Alphabet (X-SAMPA) input style
+      for uim
+  * Change environment settings in im-switch from xim to uim.
+    (closes: Bug#400871)
+
+ -- Masahito Omote <omote@debian.org>  Thu,  4 Jan 2007 01:22:48 +0900
+
+uim (1:1.2.1-9) unstable; urgency=medium
+
+  * uim-gtk2.0.postinst: Don't call update-gtk-immodules on purge.
+    (closes: Bug#398530)
+
+ -- Masahito Omote <omote@debian.org>  Thu, 23 Nov 2006 15:10:53 +0900
+
+uim (1:1.2.1-8) unstable; urgency=low
+
+  * Use Pre-Depends libgtk2.0-bin instead of Depends for calling
+    /usr/bin/update-gtk-immodules properly when removing. Thanks to Osamu
+    Aoki for helping me. (closes: Bug#398530)
+
+ -- Masahito Omote <omote@debian.org>  Thu, 23 Nov 2006 10:37:23 +0900
+
+uim (1:1.2.1-7) unstable; urgency=high
+
+  * 02_fix_uim_module_manager_registratio.dpatch
+    - Change the behavior of --register from append to prepend. This change
+      does not harm for uim's behavior.
+    - By prepending the module, the priority of IMs installed later become
+      higher.
+    - By this fix, uim-anthy is given more priority than uim-tutcode when
+      installing both uim-common and uim-anthy.
+      (For d-i on Japanese environment)
+  * Urgency set high for entering in etch.
+
+ -- Masahito Omote <omote@debian.org>  Sun, 19 Nov 2006 13:57:32 +0900
+
+uim (1:1.2.1-6) unstable; urgency=low
+
+  * debian/rules: Fix FTBFS on running uim-module-manager.(closes: Bug#394980)
+
+ -- Masahito Omote <omote@debian.org>  Mon,  6 Nov 2006 23:11:33 +0900
+
+uim (1:1.2.1-5) unstable; urgency=high
+
+  * Urgency set high because of not containing /etc/uim. (closes: Bug#394400)
+
+ -- Masahito Omote <omote@debian.org>  Sun, 22 Oct 2006 19:24:02 +0900
+
+uim (1:1.2.1-4) unstable; urgency=low
+
+  * Acknowledge the NMU fix.
+    - libuim3 conflicts with libuim0 for sarge-upgrades. (closes: Bug#387661)
+  * libuim-data conflicts with libuim0 for sarge-upgrades.
+    (closes: Bug#387660, Bug#385581)
+  * debian/patches/01_support_skk_alternatives.dpatch:
+    - Patch for supporting alternatives of /usr/share/skk/SKK-JISYO.
+      (closes: Bug#342216)
+  * uim-el.emacsen-install: Use -no-site-file option. (closes: Bug#391801)
+  * Update copyright to pass lintian check.
+  * Transit to CDBS.
+  * uim-anthy: module unregistration is moved from postrm to prerm.
+  * uim-canna: Ditto.
+  * uim-skk: Ditto.
+  * uim-prime: Ditto.
+  * uim-m17nlib: Ditto.
+
+ -- Masahito Omote <omote@debian.org>  Fri, 20 Oct 2006 03:55:41 +0900
+
+uim (1:1.2.1-3.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * libuim3 conflicts with libuim0 for sarge-upgrades. Closes: #387661
+
+ -- Andreas Barth <aba@not.so.argh.org>  Sat, 14 Oct 2006 21:40:25 +0200
+
+uim (1:1.2.1-3) unstable; urgency=low
+
+  * Add conflicts libuim1 and libuim3(<< 1.2.1-2) to libuim-data.
+  * Move libuim-custom-enabler.* to libuim3.
+  * Do not run uim-module-manager on postrm process when upgrade.
+  * Do not run gtk-update-immodules on postrm process when upgrade.
+
+ -- Masahito Omote <omote@debian.org>  Sun, 10 Sep 2006 23:46:08 +0900
+
+uim (1:1.2.1-2) unstable; urgency=low
+
+  * I forgot to update libuim's shlib version.
+
+ -- Masahito Omote <omote@debian.org>  Mon, 28 Aug 2006 08:06:52 +0900
+
+uim (1:1.2.1-1) unstable; urgency=low
+
+  * New upstream release
+  * Remove conflicts libuim0. (closes: Bug#382126)
+  * Rebuild against latest gnutls library. (closes: Bug#383040)
+  * libuim-data: split plugin and locales from libuim1.
+
+ -- Masahito Omote <omote@debian.org>  Sat, 26 Aug 2006 16:46:05 +0900
+
+uim (1:1.1.1-2) unstable; urgency=low
+
+  * Update copyright.
+  * Cleanup in debian/*.
+  * debian/compat: Set 5.
+  * uim-common.postinst: Add pyload to uim-module-manager --register.
+  * uim-qt: Add uim-qt.menu.
+
+ -- Masahito Omote <omote@debian.org>  Tue,  8 Aug 2006 08:58:21 +0900
+
+uim (1:1.1.1-1) unstable; urgency=low
+
+  * New upstream release.
+  * Bump libuim's major version. libuim0 becomes obsolete.
+  * Acknowledge the NMU fix.
+    - Apply im-switch update. (closes: Bug#368147)
+  * Remove --enable-debug. -Werror is removed in building process.
+    Therefore, FTBFS caused by -Werror should't be happened.
+    (closes: Bug#375212, Bug#375081)
+  * Bump up Standards-Version 3.7.2.1.
+  * Change sections of following packages. I already sent a mail to
+    override-changes@d.o.
+    - uim, uim-common and uim-fep: text -> utils.
+    - uim-anthy, uim-canna, uim-el, uim-m17nlib, uim-prime and uim-skk: libs
+    -> utils.
+
+ -- Masahito Omote <omote@debian.org>  Thu,  3 Aug 2006 02:03:06 +0900
+
+uim (1:1.1.0-1.2) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Added -Wno-cast-align to CFLAGS, as per the RM's recommendations:
+
+    < vorlon> Sesse: -Wno-cast-align and to hell with it :P
+
+    Really fixes FTBFS. (Really Closes: #375081)
+
+ -- Steinar H. Gunderson <sesse@debian.org>  Thu,  6 Jul 2006 22:17:24 +0200
+
+uim (1:1.1.0-1.1) unstable; urgency=high
+
+  * Non-maintainer upload.
+  * Make must_malloc return void* instead of char*, like the real malloc;
+    fixes FTBFS on several architectures since the package is built using
+    -Wcast-align -Werror. (Closes: #375081)
+
+ -- Steinar H. Gunderson <sesse@debian.org>  Wed,  5 Jul 2006 22:03:59 +0200
+
+uim (1:1.1.0-1.0.1) unstable; urgency=low
+
+  * NMU.
+  * im-switch scripts are improved to start safely and in
+    different modes.
+  * README.Debian updated.
+
+ -- Osamu Aoki <osamu@debian.org>  Fri, 16 Jun 2006 10:51:15 +0900
+
+uim (1:1.1.0-1) unstable; urgency=low
+
+  * New upstream release
+  * Acknowledge the NMU fix.
+
+ -- Masahito Omote <omote@debian.org>  Sun, 11 Jun 2006 01:30:39 +0900
+
+uim (1:1.0.0-2.0.1) unstable; urgency=low
+
+  * NMU.
+  * Update to match im-switch.
+  * README.Debian updated for GUI config tools and toolbar.
+
+ -- Osamu Aoki <osamu@debian.org>  Fri, 19 May 2006 07:52:19 +0900
+
+uim (1:1.0.0-2) unstable; urgency=low
+
+  * Acknowledge the NMU fix. (closes: Bug#345253)
+  * debian/control:
+    - cleanup. Obsolete -nox package is removed.
+    - Add versioned dependency of uim-common and uim-utils.
+      (closes: Bug#344943)
+    - Remove circular Depends between uim-common and uim-utils.
+      (closes: Bug#357798)
+    - uim-applet-gnome: Add Depends: uim-gtk2.0. (closes: Bug#348294)
+  * uim-common: Add mana-custom.scm which I forget to add.
+    (closes: Bug#355236).
+  * uim-common.postinst: Add byeoru support. (closes: Bug#345449)
+  * uim-xim: Receiving XIM ERROR is already fixed in 1.0.0.
+    (closes: Bug#341838)
+  * im-switch/*: Fix typo and add byeoru and uim-m17nlib support.
+    (closes: Bug#345448)
+  * uim.desktop.in.in(upstream source): Remove Mimetype: text/plain.
+    (closes: Bug#345711)
+  * uim-qt: Add uim inputcontext plugin.
+
+ -- Masahito Omote <omote@debian.org>  Sun,  9 Apr 2006 01:44:50 +0900
+
+uim (1:1.0.0-1.1) unstable; urgency=low
+
+  * NMU to fix problem when removing the package (Closes: #345253):
+    Migrated the behaviour of uim.postrm to be uim.prerm.
+    Thanks to Mike O'Connor <stew@vireo.org> for the solution.
+
+ -- Margarita Manterola <marga@debian.org>  Mon, 23 Jan 2006 15:54:30 -0300
+
+uim (1:1.0.0-1) unstable; urgency=low
+
+  * New upstream release
+  * uim-el: New package. This is a emacs frontend for uim. uim-el is in
+    officiall archive now. (closes: Bug#324966)
+  * Fix segv at startup in uim-xim. (closes: Bug#327711)
+  * uim-prime: I forgot to add /etc/X11/xinit/xinput.d/uim_prime.
+    (closes: Bug#339451)
+
+ -- Masahito Omote <omote@debian.org>  Sat, 24 Dec 2005 07:15:02 +0900
+
+uim (1:0.4.9.1-1) unstable; urgency=low
+
+  * New upstream release
+  * libuim0-nox, libuim-nox-dev, and libuim0-dbg-nox is now obsolete.
+    Because libuim0 does not depends on X11. They now become dummy package,
+    therefore you can safely remove them.
+  * Add --enable-debug in configure again.
+  * debian/patches/08_fix_privilage_escalation_CVE_2005_3149: disabled.
+  * Fix Error on purge because update-uim-config is not found.
+    (closes: Bug#339345)
+  * uim-qt: New package for Qt utilities for uim. qt-immodule does not
+    contained yet because of Debian's Qt3 does not support immodule and
+    because uim does not recognize libqt4-dev's headers properly.
+
+ -- Masahito Omote <omote@debian.org>  Sun,  4 Dec 2005 13:10:42 +0900
+
+uim (1:0.4.7-3) unstable; urgency=low
+
+  * Remove Build-Depends: pm-dev. Thanks to Benjamin Montgomery
+    <bmontgom@montynet.org>.
+  * Add Suggests: skkserv and dbskkserv-cdb. (closes: Bug#316045)
+  * Add Chinese, Korean, and the Vietnam language support of uim-m17nlib
+    in im-switch (closes: Bug#316632)
+
+ -- Masahito Omote <omote@debian.org>  Mon, 14 Nov 2005 04:11:48 +0900
+
+uim (1:0.4.7-2) unstable; urgency=high
+
+  * Added debian/patches/08_fix_privilage_escalation_CVE_2005_3149.
+    - CAN-2005-3149.
+    - [security] uim does not handle the LIBUIM_VANILLA environment variable
+      when a suid or sgid application is linked to libuim, such as immodule
+      for Qt and mlterm, which allows local users to gain privileges.
+      (closes Bug#331620).
+  * Fix typo in update-uim-config.
+
+ -- Masahito Omote <omote@debian.org>  Mon, 17 Oct 2005 13:40:01 +0900
+
+uim (1:0.4.7-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Masahito Omote <omote@debian.org>  Tue, 28 Jun 2005 10:47:04 +0900
+
+uim (1:0.4.6final1-4) unstable; urgency=low
+
+  * Support im-switch framework. (closes: Bug#314458)
+    You can switch uim-anthy, uim-canna, uim-skk, uim-m17nlib and so on by using
+    /usr/bin/im-switch. See /usr/share/doc/im-switch/README.Debian for more
+    details.
+  * Add French uim.mo. (closes: Bug#300184)
+
+ -- Masahito Omote <omote@debian.org>  Fri, 17 Jun 2005 21:41:33 +0900
+
+uim (1:0.4.6final1-3) unstable; urgency=low
+
+  * Rebuild with m17nlib-1.2.0. 07_build_with_m17nlib11.dpatch is no longer
+    needed now.
+  * Bug fix: "Several undeclared conflicts between binary packages from
+    this source package" (closes: #303321).
+  * Add uim-xim's manpage. Thanks to Wesley J. Landaker. (closes: Bug#300487)
+
+ -- Masahito Omote <omote@debian.org>  Sat, 16 Apr 2005 02:59:54 +0900
+
+uim (1:0.4.6final1-2) unstable; urgency=low
+
+  * Add Build-Depends: intltool and libtool.
+  * Add Confilcts uim-common < 0.4.6beta2-3 in IM packages. (closes: Bug#297823)
+  * Close obsolete bugs.
+    - uim.mo was already moved to libuim0 from 0.4.6beta2-1.
+      (closes: Bug#283550)
+    - Crash when staring eclipse with uim-gtk2.0 was already fixed in upstream.
+      (closes: Bug#222031)
+
+ -- Masahito Omote <omote@debian.org>  Fri, 18 Mar 2005 14:34:50 +0900
+
+uim (1:0.4.6final1-1) unstable; urgency=low
+
+  * New upstream release
+  * 07_build_with_m17nlib11.dpatch: Patch for support building with old
+    m17nlib.
+  * uim-gtk2.0: Add uim-dict-gtk.
+
+ -- Masahito Omote <omote@debian.org>  Fri, 18 Mar 2005 10:33:09 +0900
+
+uim (1:0.4.6beta2-3) unstable; urgency=high
+
+  * Urgency because CAN-2005-0503 is allocated and fix FTBFS.
+  * Add Build-Depends: prime.
+
+ -- Masahito Omote <omote@debian.org>  Sat, 26 Feb 2005 06:45:30 +0900
+
+uim (1:0.4.6beta2-2) unstable; urgency=low
+
+  * /usr/sbin/update-uim-config: New file for handling loader.scm and
+    installed-modules.scm.
+  * installed-modules.scm and loader.scm is moved to /etc/uim.
+  * uim-anthy.postinst,postrm: Run update-uim-config.
+  * uim-canna.postinst,postrm: Ditto.
+  * uim-prime.postinst,postrm: Ditto.
+  * uim-skk.postinst,postrm: Ditto.
+  * uim-m17nlib.postinst,postrm: Ditto.
+
+ -- Masahito Omote <omote@debian.org>  Wed, 23 Feb 2005 02:23:55 +0900
+
+uim (1:0.4.6beta2-1) unstable; urgency=high
+
+  * New upstream release
+  * From 0.4.6, uim supports plugin system and split Inputmethods(mainly for
+    Japanese IMs) into plugins which is needed to link shared library. If
+    you use following IMs, you have to install plugin packages.
+    .
+    Anthy: uim-anthy
+    Canna: uim-canna
+    SKK:   uim-skk
+    PRIME: uim-prime
+    m17nlibs: uim-m17nlib
+  * New package libuim0-nox, libuim-nox-dev, libuim-nox-dbg which built
+    without X11. This package is for those who want to use uim-fep only.
+  * Urgency set high, because of privilage escalation is found in libuim0.
+    This security hole only affects in setuid/setgid Qt apps using immodule
+    for Qt(native Qt does not affect) and using setuid/setgid-ed application
+    which linked against libuim installed by users from source. If you only
+    use Debian packages, this security hole does not affect your system.
+  * debian/uim-gtk2.0.menu: menu file for uim-im-switcher and uim-toolbar-gtk.
+    (closes: Bug#284159)
+
+ -- Masahito Omote <omote@debian.org>  Tue, 22 Feb 2005 03:44:09 +0900
+
+uim (1:0.4.5+r1576-2) unstable; urgency=low
+
+  * Fix libuim-dev to depend on libm17n-dev. (closes: Bug#283206)
+  * Close #260494. This was already fixed. (closes: Bug#260494)
+
+ -- Masahito Omote <omote@debian.org>  Mon, 29 Nov 2004 12:59:18 +0900
+
+uim (1:0.4.5+r1576-1) unstable; urgency=low
+
+  * New upstream release
+  * Re-enable m17nlibs again.
+    - debian/control: Build-Depends: libm17n-dev
+    - debian/rules: Enable --with-m17nlib.
+
+ -- Masahito Omote <omote@debian.org>  Sun,  7 Nov 2004 17:39:08 +0900
+
+uim (1:0.4.5-1) unstable; urgency=low
+
+  * New upstream release
+  * debian/patches/05_fix_uim_xim_crash.dpatch: disabled.
+  * debian/patches/06_fix_uim_applet_server_in_path_fix.dpatch: Ditto.
+
+ -- Masahito Omote <omote@debian.org>  Wed, 20 Oct 2004 18:41:30 +0900
+
+uim (1:0.4.4.1-3) unstable; urgency=high
+
+  * debian/uim-xim.files: Urgency high because I forgot to change
+    filename. This fix must stop consuming CPU up to 100%.
+
+ -- Masahito Omote <omote@debian.org>  Tue, 12 Oct 2004 05:51:13 +0900
+
+uim (1:0.4.4.1-2) unstable; urgency=low
+
+  * debian/NEWS: Oops, I mistook in a filename.
+
+ -- Masahito Omote <omote@debian.org>  Mon, 11 Oct 2004 01:27:02 +0900
+
+uim (1:0.4.4.1-1) unstable; urgency=low
+
+  * New upstream release
+  * New uim's gtk immodule 'uim' is added. By this change, other gtk immodule
+    will remove in next release (0.4.4.1-1 supports old style for transition).
+    If you want to switch input method, use gtk-im-switcher which is in
+    uim-gtk2.0. Read NEWS.Debian for more details.
+  * /usr/bin/uim-helper-server is moved to uim-utils, so you can safely
+    remove uim-helper-server. uim-helper-server will remove in 0.4.5-1.
+  * debian/patches/05_fix_uim_xim_crash: Fix bug for consuming CPU up to 100%.
+  * debian/patches/06_fix_uim_applet_server_in_path_fix.dpatch: Fix filename
+    mismatch in upstream.
+
+ -- Masahito Omote <omote@debian.org>  Mon, 11 Oct 2004 01:08:18 +0900
+
+uim (1:0.4.3-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Masahito Omote <omote@debian.org>  Wed, 15 Sep 2004 16:54:44 +0900
+
+uim (1:0.4.2.1-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Masahito Omote <omote@debian.org>  Sat, 31 Jul 2004 22:16:33 +0900
+
+uim (1:0.4.1-1) unstable; urgency=low
+
+  * New upstream release
+  * New package: uim-fep, uim-utils and libuim0-dbg.
+
+ -- Masahito Omote <omote@debian.org>  Tue, 13 Jul 2004 01:06:46 +0900
+
+uim (1:0.4.0-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Masahito Omote <omote@debian.org>  Mon, 12 Jul 2004 15:43:13 +0900
+
+uim (1:0.3.9-1) unstable; urgency=low
+
+  * New upstream release
+  * debian/rules: Add --without-m17nlib in configure.
+
+ -- Masahito Omote <omote@debian.org>  Fri, 18 Jun 2004 19:32:34 +0900
+
+uim (1:0.3.8-3) unstable; urgency=low
+
+  * debian/patches/04_fix_uim_canna_segv.dpatch:
+    - Fix segv when calling uim_quit() time and time.
+
+ -- Masahito Omote <omote@debian.org>  Thu, 10 Jun 2004 21:36:11 +0900
+
+uim (1:0.3.8-2) unstable; urgency=low
+
+  * Rebuild with new libgtk2.0-0.
+  * Remove Build-Depneds: libm1n7-dev.
+
+ -- Masahito Omote <omote@debian.org>  Sat, 22 May 2004 01:47:36 +0900
+
+uim (1:0.3.8-1) unstable; urgency=low
+
+  * New upstream release
+  * Add Build-Depends libm17n-dev.
+  * 03_fix-bug586-uim-crash.dpatch: disabled.
+
+ -- Masahito Omote <omote@debian.org>  Sat, 22 May 2004 01:35:57 +0900
+
+uim (1:0.3.5-2) unstable; urgency=low
+
+  * Because I misspelled in changelog on previous revision, I cannot close
+    Bug#246664. This bug was already fixed. (closes: Bug#246664)
+  * uim-gtk2.0 depends uim-helper-server. (closes: Bug#247235)
+  * uim-common: Add prime in Suggests.
+  * README.Debian: Add reminder for uim-prime.
+
+ -- Masahito Omote <omote@debian.org>  Tue,  4 May 2004 23:09:34 +0900
+
+uim (1:0.3.5-1) unstable; urgency=low
+
+  * New upstream release
+  * Depends libgtk2.0-bin. (close: Bug#246664)
+  * debian/rules: remove version hardcode of gtk2. If you want to use uim
+    under gtk2.4 in experimental, rebuild and install by yourself.
+  * 03_fix-bug586-uim-crash.dpatch: A patch to fix crash on IM change.
+    See also http://freedesktop.org/cgi-bin/bugzilla/show_bug.cgi?id=586.
+
+ -- Masahito Omote <omote@debian.org>  Sun,  2 May 2004 18:01:24 +0900
+
+uim (1:0.3.4.2-1) unstable; urgency=low
+
+  * New upstream release
+  * Add doc/* in uim-common. (closes: Bug#241628)
+  * debian/rules: Remove libtool hack.
+  * README.Debian: Add reminder when using uim.
+
+ -- Masahito Omote <omote@debian.org>  Wed,  7 Apr 2004 14:31:46 +0900
+
+uim (1:0.3.3-1) unstable; urgency=low
+
+  * New upstream release
+  * Sync with the change of upstream copyright. But this change does not
+    affect uim's entering in main.
+
+ -- Masahito Omote <omote@debian.org>  Mon, 22 Mar 2004 23:30:09 +0900
+
+uim (1:0.3.0.1-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Masahito Omote <omote@debian.org>  Tue, 24 Feb 2004 00:51:11 +0900
+
+uim (1:0.2.7-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Masahito Omote <omote@debian.org>  Fri, 30 Jan 2004 14:15:01 +0900
+
+uim (1:0.2.5.2-1) unstable; urgency=low
+
+  * New upstream release
+    - Fix crash on uim-xim.
+
+ -- Masahito Omote <omote@debian.org>  Sat, 24 Jan 2004 15:50:22 +0900
+
+uim (1:0.2.5.1-1) unstable; urgency=low
+
+  * New upstream release
+    - uim-skk: Change to proper conversion mark more.
+    - uim-skk: Commit candidate and input newline when return key is pressed.
+    - uim-skk: Selectable preedit drawing mode.
+    - uim-skk: Add checking when word registering.
+    - uim-anthy: Add preedit editing functions.
+    - uim-prime: Add word register functions.
+    - Support Canna.
+  * debian/control:
+    - Add Suggests: canna
+    - Add Build-Depends: libcanna1g-dev
+
+ -- Masahito Omote <omote@debian.org>  Sat, 24 Jan 2004 06:03:21 +0900
+
+uim (1:0.2.4-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Masahito Omote <omote@debian.org>  Sun, 11 Jan 2004 01:19:29 +0900
+
+uim (1:0.2.2-2) unstable; urgency=low
+
+  * Add Build-Depends: libxml-perl.
+
+ -- Masahito Omote <omote@debian.org>  Fri,  2 Jan 2004 15:28:17 +0900
+
+uim (1:0.2.2-1) unstable; urgency=low
+
+  * New upstream release
+  * 02_suppress_resetcalled.dpatch:
+    - Because upstream make a warning disabled, this patch no longer needed.
+
+ -- Masahito Omote <omote@debian.org>  Thu,  1 Jan 2004 20:53:53 +0900
+
+uim (1:0.2.1-1) unstable; urgency=low
+
+  * New upstream release
+  * Move uim.pc from libuim0 to libuim-dev. (closes: Bug#224345)
+
+ -- Masahito Omote <omote@debian.org>  Mon, 22 Dec 2003 00:41:00 +0900
+
+uim (1:0.2.0-2) unstable; urgency=low
+
+  * 02_suppress_resetcalled.dpatch:
+    - A fix to suppress a waring "reset called implement me" when using a
+      GTK+ 2.0 applications on uim. This is no need for users, this warning
+      is just a verification for upstream developers.
+
+ -- Masahito Omote <omote@debian.org>  Thu, 11 Dec 2003 17:38:10 +0900
+
+uim (1:0.2.0-1) unstable; urgency=low
+
+  * New upstream release
+  * Add suggests skkdic and anthy. (closes: Bug#222594)
+  * Use dpatch.
+  * uim-gtk2.0: Add uim-helper-toolbar-gtk.
+  * libuim0: Add uim.pc.
+
+ -- Masahito Omote <omote@debian.org>  Wed, 10 Dec 2003 01:38:29 +0900
+
+uim (1:0.1.5-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Masahito Omote <omote@debian.org>  Mon, 10 Nov 2003 22:14:05 +0900
+
+uim (1:0.1.4-1) unstable; urgency=low
+
+  * New upstream release
+  * Remove Build-Depends liblinc-dev.
+  * uim-xim: Support candidate window. uim-helper-candwin-gtk is added.
+
+ -- Masahito Omote <omote@debian.org>  Sun,  2 Nov 2003 14:52:07 +0900
+
+uim (1:0.1.2-2) unstable; urgency=low
+
+  * Add Build-Depends liblinc-dev.
+
+ -- Masahito Omote <omote@debian.org>  Sun, 19 Oct 2003 01:29:56 +0900
+
+uim (1:0.1.2-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Masahito Omote <omote@debian.org>  Sat, 18 Oct 2003 22:30:23 +0900
+
+uim (1:0.1.1-1) unstable; urgency=low
+
+  * New upstream release
+  * New package: uim-applet-gnome, uim-helper-server.
+  * README.Debian: cleanup.
+
+ -- Masahito Omote <omote@debian.org>  Sun, 12 Oct 2003 06:52:10 +0900
+
+uim (1:0.0.6-1) unstable; urgency=low
+
+  * New upstream release
+  * Initial Debian release (closes: Bug#210874)
+
+ -- Masahito Omote <omote@debian.org>  Mon, 15 Sep 2003 21:30:43 +0900
+
+uim (1:0.0.4-1) unstable; urgency=low
+
+  * New upstream release
+  * Upstream version numbering changed. So I use epoch.
+  * debian/control:
+    - libuim-gtk2.0 -> uim-gtk2.0
+    - Split scm files to uim-common.
+  * debian/compat: set 4.
+  * debina/rules: stop using DH_COMPAT.
+
+ -- Masahito Omote <omote@debian.org>  Sun,  7 Sep 2003 08:51:39 +0900
+
+uim (2010-3) unstable; urgency=low
+
+  * uim/anthy.c: load libanthy.so.0 and libanthydic.so.0 instead of
+                 libanthy.so and libanthydic.so.
+
+ -- Masahito Omote <omote@debian.org>  Tue, 12 Aug 2003 00:02:46 +0900
+
+uim (2010-2) unstable; urgency=low
+
+  * Oops, I forgot to include im-uim.so.
+
+ -- Masahito Omote <omote@debian.org>  Mon, 11 Aug 2003 03:05:44 +0900
+
+uim (2010-1) unstable; urgency=low
+
+  * New upstream release
+  * debian/control: Fix description, add Origin field and add uim-xim.
+  * Standards-Version: 3.6.0.
+
+ -- Masahito Omote <omote@debian.org>  Mon, 11 Aug 2003 02:24:35 +0900
+
+uim (1903-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Masahito Omote <omote@debian.org>  Fri, 11 Jul 2003 23:20:19 +0900
+
+uim (1806-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Masahito Omote <omote@debian.org>  Sat,  7 Jun 2003 00:04:46 +0900
+
+uim (1716-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Masahito Omote <omote@debian.org>  Sun, 18 May 2003 14:56:27 +0900
+
+uim (1713-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Masahito Omote <omote@debian.org>  Thu, 15 May 2003 19:04:53 +0900
+
+uim (1711-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Masahito Omote <omote@debian.org>  Tue, 13 May 2003 04:42:37 +0900
+
+uim (1528-2) unstable; urgency=low
+
+  * change libuim-dev section into libdevel.
+
+ -- Masahito Omote <omote@debian.org>  Tue,  1 Apr 2003 10:32:18 +0900
+
+uim (1528-1) unstable; urgency=low
+
+  * New upstream release
+  * anthy.c: load libanthy.so.0 and libanthydic.so.0 instead of
+             libanthy.so and libanthydic.so(see Debian BTS: Bug#186761)
+  * Change package name from libuim0-gtk into libuim-gtk2.0.
+  * disable canna.
+
+ -- Masahito Omote <omote@utyuuzin.net>  Mon, 31 Mar 2003 03:39:21 +0900
+
+uim (1327-1) unstable; urgency=low
+
+  * New upstream release
+  * split libuim0 into libuim0 and libuim0-gtk.
+  * Description: more comprehensibe.
+
+ -- Masahito Omote <omote@debian.org>  Wed, 12 Feb 2003 04:07:33 +0900
+
+uim (1307-2) unstable; urgency=low
+
+  * debian/rules: Add params to install immodule in proper directory.
+
+ -- Masahito Omote <omote@debian.org>  Mon, 20 Jan 2003 21:20:29 +0900
+
+uim (1307-1) unstable; urgency=low
+
+  * New upstream release
+    - 1305b: correct roma-kana conversion for SKK and Anthy
+    - 1305: applied Tokunaga-san's patch
+    - 1303: use dynamic loading for Anthy.
+    - 1302: add VIQR (Vietnamese) and IPA (International Phonetic Alphabet).
+
+ -- Masahito Omote <omote@utyuuzin.net>  Mon, 20 Jan 2003 19:31:59 +0900
+
+uim (1222-1) unstable; urgency=low
+
+  * New upstream release
+    - add prefix to input method names correctly.
+  * README.Debian: add prefix 'uim-' in each uim modules.
+
+ -- Masahito Omote <omote@utyuuzin.net>  Mon, 23 Dec 2002 17:28:51 +0900
+
+uim (1221-1) unstable; urgency=low
+
+  * New upstream release
+    - Fix incorrect window size on im-uim.
+  * Change maintainer address from debian.org to utyuuzin.net because
+    this package is not official.
+  * README.Debian: add usage and some comments.
+  * INSTALL and INSTALL.ja are no longer contained, NEWS and README.ja are
+    added instead.
+
+ -- Masahito Omote <omote@utyuuzin.net>  Sun, 22 Dec 2002 16:15:06 +0900
+
+uim (1215-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Masahito Omote <omote@debian.org>  Mon, 16 Dec 2002 20:00:00 +0900
+
+uim (1212-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Masahito Omote <omote@debian.org>  Fri, 13 Dec 2002 20:15:37 +0900
+
+uim (1203-1) unstable; urgency=low
+
+  * New upstream release
+  * Add Depends libgtk2.0-0, libgtk2.0-common.
+  * debian/rules: add libtool hack from Debian gtk+2.0 source package
+    to pass lintian check.
+
+ -- Masahito Omote <omote@debian.org>  Fri,  6 Dec 2002 11:15:22 +0900
+
+uim (1010-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Masahito Omote <omote@debian.org>  Sat, 12 Oct 2002 10:34:25 +0900
+
+uim (925-1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Masahito Omote <omote@debian.org>  Sun,  6 Oct 2002 17:21:21 +0900

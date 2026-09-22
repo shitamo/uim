@@ -1,0 +1,5 @@
+uim for Debian
+--------------
+
+This source package consists of a git pull coming from https://github.com/uim/uim.
+sigscheme/ and pixmaps/ direcitories copying from uim-1.8.6.tar.gz tarball.

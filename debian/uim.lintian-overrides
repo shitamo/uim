@@ -1,0 +1,6 @@
+uim: spelling-error-in-copyright "permit to" "permit one to"
+uim: binary-without-manpage usr/bin/uim-module-manager
+uim: binary-without-manpage usr/bin/uim-sh
+uim: binary-without-manpage usr/bin/uim-help
+uim: binary-without-manpage usr/bin/uim-m17nlib-relink-icons
+uim: package-contains-documentation-outside-usr-share-doc var/lib/uim/README

@@ -1,0 +1,4 @@
+# move automatically generated file from /etc/uim to /var/lib/uim.
+# see Bug#688233 and policy 10.7.3.
+mv_conffile /etc/uim/installed-modules.scm /var/lib/uim/installed-modules.scm 1:1.8.1-3~
+mv_conffile /etc/uim/loader.scm /var/lib/uim/loader.scm 1:1.8.1-3~

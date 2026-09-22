@@ -1,0 +1,19 @@
+Package: libuim-dev
+Source: uim
+Version: 1:1.9.6-1.1~dbus11
+Architecture: amd64
+Maintainer: NOKUBI Takatsugu <knok@daionet.gr.jp>
+Installed-Size: 578
+Depends: libuim8 (= 1:1.9.6-1.1~dbus11), libuim-custom2 (= 1:1.9.6-1.1~dbus11), libuim-scm0 (= 1:1.9.6-1.1~dbus11), libgcroots-dev
+Section: libdevel
+Priority: optional
+Multi-Arch: same
+Homepage: https://github.com/uim/uim/wiki
+Description: Universal Input Method - development files
+ Uim is an input method module library which supports various scripts and can
+ act as a front end for a range of input methods, including Anthy, Canna,
+ or SKK (for Japanese), Pinyin (for Chinese), Byeoru (for Korean), and
+ M17n (for many other languages). Most of its functions are implemented in
+ Scheme, so it's very simple and flexible.
+ .
+ This package contains header files and static libraries for uim development.

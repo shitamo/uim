@@ -1,0 +1,31 @@
+=====================================
+   uim 1.9.8: test2/test-suite.log
+=====================================
+
+# TOTAL: 4
+# PASS:  3
+# SKIP:  0
+# XFAIL: 1
+# FAIL:  0
+# XPASS: 0
+# ERROR: 0
+
+System information (uname -a): Linux 7.2.6+deb14-amd64 #1 SMP PREEMPT_DYNAMIC Debian 7.2.6-1 (2026-09-16) x86_64
+Distribution information (/etc/os-release):
+PRETTY_NAME="Debian GNU/Linux forky/sid"
+NAME="Debian GNU/Linux"
+VERSION_CODENAME=forky
+ID=debian
+HOME_URL="https://www.debian.org/"
+SUPPORT_URL="https://www.debian.org/support"
+BUG_REPORT_URL="https://bugs.debian.org/"
+
+.. contents:: :depth: 2
+
+XFAIL: test-fail.scm
+====================
+
+failed: unconditional failure #1
+FAILED: 1 tests, 1 assertions, 0 successes, 1 failures, 0 errors
+XFAIL test-fail.scm (exit status: 70)
+

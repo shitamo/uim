@@ -1,0 +1,13 @@
+Package: uim-gtk4-immodule-dbgsym
+Source: uim
+Version: 1:1.9.6-1.1~dbus11
+Auto-Built-Package: debug-symbols
+Architecture: amd64
+Maintainer: NOKUBI Takatsugu <knok@daionet.gr.jp>
+Installed-Size: 77
+Depends: uim-gtk4-immodule (= 1:1.9.6-1.1~dbus11)
+Section: debug
+Priority: optional
+Multi-Arch: same
+Description: debug symbols for uim-gtk4-immodule
+Build-Ids: 8478ae030bb5d8b2eb7ac08dab4701caa15a69b8

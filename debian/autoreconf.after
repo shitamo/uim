@@ -270,7 +270,7 @@ a0d1d79e538fb4e8c3218f3e58f4be2f  ./gtk4/dict/word.c
 da18d5357d33a9220fbf3bf6a0141177  ./gtk4/dict/word.h
 2a1fb5f22d3ad81868750e3efb44e09c  ./gtk4/dict/Makefile.in
 26faaeb9c9f440b33eae7af32dd0c45e  ./gtk4/pref/Makefile.am
-77ae15f14a9c7edec545387c649a0e55  ./gtk4/pref/gtk-custom-widgets-gtk4.c
+3cf0f67e794b5b91e873d7daa0e10df2  ./gtk4/pref/gtk-custom-widgets-gtk4.c
 b61b6ca5eb3469c8ad15ab95e0ef0a66  ./gtk4/pref/gtk-custom-widgets-gtk4.h
 f435f464d9527263ecb9f0694594eea0  ./gtk4/pref/gtk-keytab.h
 281185e6e625c8e569e52fd614d55e54  ./gtk4/pref/key-util-gtk4.h
@@ -698,7 +698,7 @@ e98a2d6b13297b7a0a5913560812a3e0  ./qt5/switcher/Makefile.in
 91ddf9618778642fddd3fbc26914fa13  ./qt5/toolbar/Makefile.am
 d2f267e4e57b1a6b95a33c2387780560  ./qt5/toolbar/uim-toolbar-qt5.pro.in
 92fd2b7145ae2caa437b9064d2b4ae1a  ./qt5/toolbar/Makefile.in
-158605cb2d62d0eb8003799dfdf7df08  ./qt5/applet.cmake/CMakeFiles/CMakeConfigureLog.yaml
+9106694867e2c99974763b40144f3a62  ./qt5/applet.cmake/CMakeFiles/CMakeConfigureLog.yaml
 881b5d9cb518c7912ec2c16c82fe592e  ./qt5/applet.cmake/CMakeFiles/4.3.4/CMakeSystem.cmake
 f72937f46b69abf36eed059d456d8594  ./qt5/applet.cmake/CMakeFiles/4.3.4/CompilerIdC/CMakeCCompilerId.c
 c594f16c01153480fd35a6982e711d88  ./qt5/applet.cmake/CMakeFiles/4.3.4/CompilerIdC/a.out
@@ -761,9 +761,9 @@ b87c1a59995177a38e7ed84e4c3e4e2f  ./qt5/applet.cmake/qtquick-plugin/CMakeFiles/u
 a0cd57f3bec246afe86ad90345a5b262  ./qt5/applet.cmake/qtquick-plugin/CMakeFiles/uim-qtquick-plugin_autogen.dir/DependInfo.cmake
 eef687aa8d9f346062122f3d8b196090  ./qt5/applet.cmake/qtquick-plugin/CMakeFiles/uim-qtquick-plugin_autogen.dir/ParseCache.txt
 cc5c8090626c5fcb3692e2895fdfb9e6  ./qt5/applet.cmake/qtquick-plugin/CMakeFiles/uim-qtquick-plugin_autogen.dir/AutogenUsed.txt
-d2fb62dcaada5fac489f65cbd6928724  ./qt5/applet.cmake/qtquick-plugin/CMakeFiles/uim-qtquick-plugin_autogen.dir/progress.make
 00802567226744f2b726032d0534a1ce  ./qt5/applet.cmake/qtquick-plugin/CMakeFiles/uim-qtquick-plugin_autogen.dir/compiler_depend.internal
 dc23472d94c159e17562552f26f9dc54  ./qt5/applet.cmake/qtquick-plugin/CMakeFiles/uim-qtquick-plugin_autogen.dir/compiler_depend.make
+d2fb62dcaada5fac489f65cbd6928724  ./qt5/applet.cmake/qtquick-plugin/CMakeFiles/uim-qtquick-plugin_autogen.dir/progress.make
 59f61fe14d4abedd22b7a1c87d58a1cf  ./qt5/applet.cmake/qtquick-plugin/CMakeFiles/uim-qtquick-plugin_autogen_timestamp_deps.dir/compiler_depend.make
 ad6cd9bcde96eeaa93142a326c1138c4  ./qt5/applet.cmake/qtquick-plugin/CMakeFiles/uim-qtquick-plugin_autogen_timestamp_deps.dir/compiler_depend.ts
 86d46811871eadd519a29faa6fa265b2  ./qt5/applet.cmake/qtquick-plugin/CMakeFiles/uim-qtquick-plugin_autogen_timestamp_deps.dir/cmake_clean.cmake
@@ -801,9 +801,9 @@ d41d8cd98f00b204e9800998ecf8427e  ./qt5/applet.cmake/qtquick-plugin/uim-qtquick-
 55efecf9261e23e61ceeed6f8f363897  ./qt5/applet.cmake/qtquick-plugin/cmake_install.cmake
 8ed566b244a8088bf6a3af7d4ff78d43  ./qt5/applet.cmake/qtquick-plugin/libuim-qtquick-plugin.so
 206dcefa114fce00b1ee3d889c9a0d76  ./qt5/applet.cmake/CMakeCache.txt
+d0133b45809ff7c5d9d25f6b66872e71  ./qt5/applet.cmake/install_manifest.txt
 880f9b6cde7114a521d4539872435a45  ./qt5/applet.cmake/Makefile
 0430e11ae3c6bd3d221cfca2bc431e29  ./qt5/applet.cmake/cmake_install.cmake
-d0133b45809ff7c5d9d25f6b66872e71  ./qt5/applet.cmake/install_manifest.txt
 01aeb3865c5f9dd2bb732fc3f835886b  ./qt5/Makefile.in
 aa7234275e3f4c42d71e39af28088e60  ./qt6/Makefile.am
 9d5e86ce50a14a28f40d9f480985bddd  ./qt6/candwin/Makefile.am

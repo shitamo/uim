@@ -1,0 +1,3 @@
+shlibs:Depends=libc6 (>= 2.38), libgcroots0 (>= 0.9.0)
+misc:Depends=
+misc:Pre-Depends=

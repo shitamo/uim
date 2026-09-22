@@ -1,0 +1,9 @@
+a85865826dd8c3865994c1550c7710d2  usr/bin/uim-im-switcher-gtk3
+ffcb12c822c990befaf9fea55eceab28  usr/bin/uim-input-pad-ja-gtk3
+ef115e7c2c7f67bc10c0cc62dcdbbe46  usr/bin/uim-pref-gtk3
+a1b6299a3ea3aac025dc7db23175ad08  usr/bin/uim-toolbar-gtk3
+025568831a6d7803cac8086724234662  usr/bin/uim-toolbar-gtk3-systray
+e8176bc34b5cf5d33234f18aff6803fe  usr/lib/uim/uim-candwin-gtk3
+5441553f9c7d11ae367cf3b3abeff860  usr/lib/uim/uim-candwin-horizontal-gtk3
+57a258f9919fe39287293930a1ca4981  usr/lib/uim/uim-candwin-tbl-gtk3
+ef9b397f1247690b50013c4df00117fa  usr/share/lintian/overrides/uim-gtk3

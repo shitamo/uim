@@ -1,0 +1,4 @@
+uim-gtk4: binary-without-manpage usr/bin/uim-im-switcher-gtk4
+uim-gtk4: binary-without-manpage usr/bin/uim-input-pad-ja-gtk4
+uim-gtk4: binary-without-manpage usr/bin/uim-pref-gtk4
+uim-gtk4: binary-without-manpage usr/bin/uim-toolbar-gtk4

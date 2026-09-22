@@ -1,0 +1,21 @@
+Package: libuim8
+Source: uim
+Version: 1:1.9.6-1.1~dbus11
+Architecture: amd64
+Maintainer: NOKUBI Takatsugu <knok@daionet.gr.jp>
+Installed-Size: 144
+Depends: libc6 (>= 2.38), libdbus-1-3 (>= 1.10), libuim-scm0 (>= 1:1.5.7)
+Breaks: uim (<< 1:1.8.8-9.4~), uim-common (<< 1:1.8.6+gh20161003.0.d63dadd-5~)
+Replaces: uim (<< 1:1.8.8-9.4~), uim-common (<< 1:1.8.6+gh20161003.0.d63dadd-5~)
+Section: libs
+Priority: optional
+Multi-Arch: same
+Homepage: https://github.com/uim/uim/wiki
+Description: Universal Input Method - uim library
+ Uim is an input method module library which supports various scripts and can
+ act as a front end for a range of input methods, including Anthy, Canna,
+ or SKK (for Japanese), Pinyin (for Chinese), Byeoru (for Korean), and
+ M17n (for many other languages). Most of its functions are implemented in
+ Scheme, so it's very simple and flexible.
+ .
+ This package contains the shared libraries for uim.

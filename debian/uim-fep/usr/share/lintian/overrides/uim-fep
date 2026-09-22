@@ -1,0 +1,3 @@
+uim-fep: binary-without-manpage usr/bin/uim-fep
+uim-fep: binary-without-manpage usr/bin/uim-fep-tick
+uim-fep: spelling-error-in-copyright "permit to" "permit one to"

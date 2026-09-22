@@ -1,0 +1,8 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/akira/src/uim/qt5/applet.cmake/cmake_install.cmake",
+		"/home/akira/src/uim/qt5/applet.cmake/qtquick-plugin/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

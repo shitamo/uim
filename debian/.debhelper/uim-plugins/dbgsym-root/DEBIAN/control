@@ -1,0 +1,13 @@
+Package: uim-plugins-dbgsym
+Source: uim
+Version: 1:1.9.6-1.1~dbus11
+Auto-Built-Package: debug-symbols
+Architecture: amd64
+Maintainer: NOKUBI Takatsugu <knok@daionet.gr.jp>
+Installed-Size: 239
+Depends: uim-plugins (= 1:1.9.6-1.1~dbus11)
+Section: debug
+Priority: optional
+Multi-Arch: same
+Description: debug symbols for uim-plugins
+Build-Ids: 019870ba9ffc2c660bfa965423874d63646e98c7 267a4cd639998ca8a58dec4f01ca7f5b7d7cef32 35b0b5d88e571b0017c6d7c3b080a2bd6771cd13 6d94da1b60e9333efa2c8c3f412832c5137de80c 74361ee21fc8e2fcb8ac10742f3e07f036d2eaf8 82fcf75e82bd6d87a322b0bfeb6d3046f0b2432d a66c1a92ad7ea4f3e4f9709f27f4ba8cb6fc8815 c036bd1430636cd2020622b86dba291db38b6826 c72af9afb3114f81ae0b668e90c1b8ac37aef55d d4ac64a2d240a7e5efaaa66645d0171ea2d39294 d85c916eb60f6e8a3916e3e2d539b61abf0538ec e780b104d9cb6768c84854e309bb0756728c89ea

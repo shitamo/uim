@@ -1,0 +1,13 @@
+Package: uim-qt6-immodule-dbgsym
+Source: uim
+Version: 1:1.9.6-1.1~dbus11
+Auto-Built-Package: debug-symbols
+Architecture: amd64
+Maintainer: NOKUBI Takatsugu <knok@daionet.gr.jp>
+Installed-Size: 1798
+Depends: uim-qt6-immodule (= 1:1.9.6-1.1~dbus11)
+Section: debug
+Priority: optional
+Multi-Arch: same
+Description: debug symbols for uim-qt6-immodule
+Build-Ids: 404b84e1586ea26924591b196e89ceaa8354546d

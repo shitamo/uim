@@ -1,0 +1,45 @@
+libuim-custom2-dbgsym_1.9.6-1.1~dbus11_amd64.deb debug optional automatic=yes
+libuim-custom2_1.9.6-1.1~dbus11_amd64.deb libs optional
+libuim-dev_1.9.6-1.1~dbus11_amd64.deb libdevel optional
+libuim-scm0-dbgsym_1.9.6-1.1~dbus11_amd64.deb debug optional automatic=yes
+libuim-scm0_1.9.6-1.1~dbus11_amd64.deb libs optional
+libuim8-dbgsym_1.9.6-1.1~dbus11_amd64.deb debug optional automatic=yes
+libuim8_1.9.6-1.1~dbus11_amd64.deb libs optional
+uim-anthy_1.9.6-1.1~dbus11_all.deb utils optional
+uim-byeoru_1.9.6-1.1~dbus11_all.deb utils optional
+uim-data_1.9.6-1.1~dbus11_all.deb utils optional
+uim-dbgsym_1.9.6-1.1~dbus11_amd64.deb debug optional automatic=yes
+uim-el-dbgsym_1.9.6-1.1~dbus11_amd64.deb debug optional automatic=yes
+uim-el_1.9.6-1.1~dbus11_amd64.deb lisp optional
+uim-fep-dbgsym_1.9.6-1.1~dbus11_amd64.deb debug optional automatic=yes
+uim-fep_1.9.6-1.1~dbus11_amd64.deb utils optional
+uim-gtk3-dbgsym_1.9.6-1.1~dbus11_amd64.deb debug optional automatic=yes
+uim-gtk3-immodule-dbgsym_1.9.6-1.1~dbus11_amd64.deb debug optional automatic=yes
+uim-gtk3-immodule_1.9.6-1.1~dbus11_amd64.deb x11 optional
+uim-gtk3_1.9.6-1.1~dbus11_amd64.deb x11 optional
+uim-gtk4-dbgsym_1.9.6-1.1~dbus11_amd64.deb debug optional automatic=yes
+uim-gtk4-immodule-dbgsym_1.9.6-1.1~dbus11_amd64.deb debug optional automatic=yes
+uim-gtk4-immodule_1.9.6-1.1~dbus11_amd64.deb x11 optional
+uim-gtk4_1.9.6-1.1~dbus11_amd64.deb x11 optional
+uim-ipa-x-sampa_1.9.6-1.1~dbus11_all.deb utils optional
+uim-latin_1.9.6-1.1~dbus11_all.deb utils optional
+uim-look_1.9.6-1.1~dbus11_all.deb utils optional
+uim-m17nlib_1.9.6-1.1~dbus11_all.deb utils optional
+uim-pinyin_1.9.6-1.1~dbus11_all.deb utils optional
+uim-plugins-dbgsym_1.9.6-1.1~dbus11_amd64.deb debug optional automatic=yes
+uim-plugins_1.9.6-1.1~dbus11_amd64.deb utils optional
+uim-qt5-dbgsym_1.9.6-1.1~dbus11_amd64.deb debug optional automatic=yes
+uim-qt5-immodule-dbgsym_1.9.6-1.1~dbus11_amd64.deb debug optional automatic=yes
+uim-qt5-immodule_1.9.6-1.1~dbus11_amd64.deb x11 optional
+uim-qt5_1.9.6-1.1~dbus11_amd64.deb x11 optional
+uim-qt6-dbgsym_1.9.6-1.1~dbus11_amd64.deb debug optional automatic=yes
+uim-qt6-immodule-dbgsym_1.9.6-1.1~dbus11_amd64.deb debug optional automatic=yes
+uim-qt6-immodule_1.9.6-1.1~dbus11_amd64.deb x11 optional
+uim-qt6_1.9.6-1.1~dbus11_amd64.deb x11 optional
+uim-skk_1.9.6-1.1~dbus11_all.deb utils optional
+uim-tcode_1.9.6-1.1~dbus11_all.deb utils optional
+uim-viqr_1.9.6-1.1~dbus11_all.deb utils optional
+uim-xim-dbgsym_1.9.6-1.1~dbus11_amd64.deb debug optional automatic=yes
+uim-xim_1.9.6-1.1~dbus11_amd64.deb x11 optional
+uim_1.9.6-1.1~dbus11_amd64.buildinfo libs optional
+uim_1.9.6-1.1~dbus11_amd64.deb utils optional

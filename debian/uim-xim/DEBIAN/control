@@ -1,0 +1,21 @@
+Package: uim-xim
+Source: uim
+Version: 1:1.9.6-1.1~dbus11
+Architecture: amd64
+Maintainer: NOKUBI Takatsugu <knok@daionet.gr.jp>
+Installed-Size: 211
+Depends: libc6 (>= 2.38), libgcc-s1 (>= 3.0), libstdc++6 (>= 5), libuim-scm0 (>= 1:1.5.7), libuim8 (= 1:1.9.6-1.1~dbus11), libx11-6, libxext6, libxft2 (>> 2.1.1), uim (>= 1:1.9.6-1.1~dbus11), uim-data (>= 1:1.9.6-1.1~dbus11)
+Suggests: uim-gtk3, uim-gtk4, uim-qt5, uim-qt6
+Section: x11
+Priority: optional
+Multi-Arch: foreign
+Homepage: https://github.com/uim/uim/wiki
+Description: Universal Input Method - XIM compatibility interface
+ Uim is an input method module library which supports various scripts and can
+ act as a front end for a range of input methods, including Anthy, Canna,
+ or SKK (for Japanese), Pinyin (for Chinese), Byeoru (for Korean), and
+ M17n (for many other languages). Most of its functions are implemented in
+ Scheme, so it's very simple and flexible.
+ .
+ This package provides a bridge allowing software that can only interface
+ with the X Input Method to work with uim.

@@ -1,0 +1,74 @@
+uim for Debian
+--------------
+* Related packages
+  - You have to install conversion engines and interface packages to
+    make uim useful for Japanese, etc..
+    Japanese:
+      anthy: anthy, uim-anthy.
+      skk: skkdic, uim-skk.
+      t-code: t-code, uim-tcode.
+    Others:
+      m17nlib: libm17n-0, m17n-db, m17n-lib-bin, uim-m17nlib
+      look: wordlist, uim-look.
+
+* Configuration (easy way)
+  - im-config package will do for you.
+    For user configuration, execute as:
+      $ im-config
+    For system wide default, execute as:
+      $ sudo im-config
+    You can enable GUI menu by right-clicking menu under GNOME -> "Edit Menu" and
+    check menu entry to be activated.  Then you can use this GUI menu for user
+    configuration as "System" -> "Preferences" -> "Input Method" which runs
+    "im-config".
+    "System" -> "Preferences" -> "Input Method" and select
+    "universal input method (uim)"
+    This will enable first found status display dialogue from the following.
+      - "uim-toolbar-gtk-systray"     for systray (GTK+).
+      - "uim-toolbar-gtk"             for toolbar (GTK+).
+      - "uim-toolbar-qt"              for toolbar (Qt).
+    Relogin to user account to refresh X session.
+
+  - Use GUI tool, e.g., uim-pref-gtk which comes in uim-gtk2.0
+    to set up uim (choice between conversion engines etc.):
+      Desktop -> Preferences -> Preference of uim
+
+    Right clicking toolbar will also get you to "Preference".
+
+* Configuration (manual way)
+  - You have to set environmental variable as following for
+    classic X applications to use uim:
+      XMODIFIERS=@im=uim; export XMODIFIERS
+
+  - You may set environmental variable as following if you 
+    wish to use uim via XIM for GTK applications as the default. 
+
+      GTK_IM_MODULE=xim; export GTK_IM_MODULE
+
+    Choosing XIM is considered to be less problematic.  You can 
+    change IM by right clicking the GTK applications too.
+
+  - You may set environmental variable as following if you 
+    wish to use uim IM module for GTK applications as the default.
+
+      GTK_IM_MODULE=uim; export GTK_IM_MODULE
+
+  - Deprecated method of uim configuration: 
+      * Write down default IM in ~/.uim. 
+        e.g)  Set Anthy as default input method.
+           (define default-im-name 'anthy)
+    This is not compatible with GUI configuration described above.
+
+* Using uim-fep
+  - You cannot input "shift-space" as generic-on-key and generic-off-key.
+    But they are default global key settings.
+    So you have to change generic-on-key and generic-off-key by uim-pref-*.
+    See http://code.google.com/p/uim-doc-ja/wiki/UimFep
+
+ -- Masahito Omote <omote@utyuuzin.net>, Sun,  6 Oct 2002 17:21:21 +0900
+ -- Osamu Aoki <osamu@debian.org>, Fri, 16 Jun 2006 10:16:34 +0900
+ -- HIGUCHI Daisuke (VDR dai) <debian@vdr.jp>, Mon, 6 Jun 2011 13:18:50 +0900
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Wed, 08 May 2013 09:28:47 +0900
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sun, 15 Sep 2013 02:04:17 +0900
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Wed, 02 Apr 2014 20:57:16 +0900
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Fri, 05 Jun 2015 19:22:39 +0900

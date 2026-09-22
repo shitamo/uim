@@ -1,0 +1,13 @@
+Package: uim-gtk3-immodule-dbgsym
+Source: uim
+Version: 1:1.9.6-1.1~dbus11
+Auto-Built-Package: debug-symbols
+Architecture: amd64
+Maintainer: NOKUBI Takatsugu <knok@daionet.gr.jp>
+Installed-Size: 160
+Depends: uim-gtk3-immodule (= 1:1.9.6-1.1~dbus11)
+Section: debug
+Priority: optional
+Multi-Arch: same
+Description: debug symbols for uim-gtk3-immodule
+Build-Ids: ac5c92848627cdaf61079f8c3a980bf27ab9a699

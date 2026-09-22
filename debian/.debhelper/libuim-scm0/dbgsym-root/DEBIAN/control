@@ -1,0 +1,13 @@
+Package: libuim-scm0-dbgsym
+Source: uim
+Version: 1:1.9.6-1.1~dbus11
+Auto-Built-Package: debug-symbols
+Architecture: amd64
+Maintainer: NOKUBI Takatsugu <knok@daionet.gr.jp>
+Installed-Size: 206
+Depends: libuim-scm0 (= 1:1.9.6-1.1~dbus11)
+Section: debug
+Priority: optional
+Multi-Arch: same
+Description: debug symbols for libuim-scm0
+Build-Ids: 4227b39b5862bf1cb52fead58d04df8eb2cdc8b3

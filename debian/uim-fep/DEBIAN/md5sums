@@ -1,0 +1,10 @@
+862fead81df27f42089efc34d58d679f  usr/bin/uim-fep
+1e2ff9c66c8738081aaac243331bb48d  usr/bin/uim-fep-tick
+54b90bf542a3cacd34cbd538190de556  usr/share/doc/uim-fep/README.Debian.uim-fep
+c7a152af39a49fb686ce81975e224ffa  usr/share/doc/uim-fep/README.gz
+38e2eb3649e348c342da66ba44b85110  usr/share/doc/uim-fep/README.ja.gz
+0b626be58efdd7595b9dd1d3f3540194  usr/share/doc/uim-fep/README.key.gz
+8e973d39056f978a5a580cd93bc4c555  usr/share/doc/uim-fep/changelog.Debian.gz
+cdd47234271330dbe38b7d3fb75c2259  usr/share/doc/uim-fep/changelog.gz
+5f46d9ff755738cb10917118daddef6b  usr/share/doc/uim-fep/copyright
+5bd30ca2f2c12c28017902dcebee5146  usr/share/lintian/overrides/uim-fep

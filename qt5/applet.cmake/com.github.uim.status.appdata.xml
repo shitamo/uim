@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component>
+    <id>com.github.uim.status</id>
+    <name>Uim Status</name>
+    <summary>Input Method Indicator (uim)</summary>
+    <summary xml:lang="ja">入力メソッドインジケータ (uim)</summary>
+    <url type="homepage">https://github.com/uim/uim</url>
+    <developer_name>The uim developers &lt;uim-en@googlegroups.com&gt;</developer_name>
+    <icon type="stock">/usr/share/uim/pixmaps/uim-icon64.png</icon>
+    <project_license>BSD-2-Clause</project_license>
+    <metadata_license>CC0-1.0</metadata_license>
+</component>

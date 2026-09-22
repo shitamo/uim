@@ -1,0 +1,15 @@
+2f2c07fdfad9512e9f3e10fba5933b65  usr/include/uim/dynlib.h
+019d5b4756cde55603b2a00936158573  usr/include/uim/uim-custom.h
+4172cd5ccb8595ecb9557273c8f5232f  usr/include/uim/uim-helper.h
+81eac1da54f754fc17e4362d7c674e0a  usr/include/uim/uim-im-switcher.h
+0bca29a836c7efa21581cfc94be4461c  usr/include/uim/uim-notify.h
+2c7deb4a560644fc3c473ce38baf006b  usr/include/uim/uim-posix.h
+4b37215f116b9657932ab94a4389fbc3  usr/include/uim/uim-scm-abbrev.h
+bd55db4b5acf1c0630c089e83f28d731  usr/include/uim/uim-scm.h
+d46ec6fe79e55e530741ed5c2727b4b0  usr/include/uim/uim-util.h
+8315b7bd5dc272fcb7fd5bb184eb3f63  usr/include/uim/uim.h
+b4c1c96cd308fae43df503b5240da083  usr/include/uim/version.h
+a3f7ed5867bb914cbc0c9111240bd373  usr/lib/x86_64-linux-gnu/libuim-custom.a
+1f1e28f593a073ba05ea6768dc360f73  usr/lib/x86_64-linux-gnu/libuim-scm.a
+1a9509266c0a1892cc323f1ee41cd592  usr/lib/x86_64-linux-gnu/libuim.a
+590d775e55fd562bc4795e7f9c6ae42e  usr/lib/x86_64-linux-gnu/pkgconfig/uim.pc

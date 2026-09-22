@@ -529,6 +529,22 @@ candidates_view_index_changed_cb(UIMCandidatesView *view, gpointer data)
   uim_im_context_ensure_page_candidates(uic, new_page);
 }
 
+/* A user clicked the "<"/">" page button on the candidates view.
+ * Pre-fetch the target page's candidates before the view actually
+ * shifts to it (in page_button_clicked_cb()), so the popover
+ * doesn't render an empty page while waiting on the uim backend. */
+static void
+candidates_view_shift_page_requested_cb(UIMCandidatesView *view,
+                                        gboolean forward,
+                                        gpointer data)
+{
+  UIMIMContext *uic = data;
+
+  guint new_page =
+    uim_candidates_view_query_new_page_by_shift_page(view, forward);
+  uim_im_context_ensure_page_candidates(uic, new_page);
+}
+
 static void
 cand_activate_cb(void *ptr, int n_candidates, int display_limit)
 {
@@ -1159,6 +1175,10 @@ uim_im_context_init(UIMIMContext *uic)
   g_signal_connect(uic->candidates_view,
                    "index-changed",
                    G_CALLBACK(candidates_view_index_changed_cb),
+                   uic);
+  g_signal_connect(uic->candidates_view,
+                   "shift-page-requested",
+                   G_CALLBACK(candidates_view_shift_page_requested_cb),
                    uic);
   uim_im_context_update_candwin_pos_type(uic);
   uic->preedit_segments = g_array_new(FALSE, TRUE, sizeof(preedit_segment));

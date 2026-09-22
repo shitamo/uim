@@ -1,0 +1,6 @@
+uim-gtk3: binary-without-manpage usr/bin/uim-im-switcher-gtk3
+uim-gtk3: binary-without-manpage usr/bin/uim-input-pad-ja-gtk3
+uim-gtk3: binary-without-manpage usr/bin/uim-pref-gtk3
+uim-gtk3: binary-without-manpage usr/bin/uim-toolbar-gtk3
+uim-gtk3: binary-without-manpage usr/bin/uim-toolbar-gtk3-systray
+

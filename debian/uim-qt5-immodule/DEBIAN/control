@@ -1,0 +1,21 @@
+Package: uim-qt5-immodule
+Source: uim
+Version: 1:1.9.6-1.1~dbus11
+Architecture: amd64
+Maintainer: NOKUBI Takatsugu <knok@daionet.gr.jp>
+Installed-Size: 178
+Depends: uim (= 1:1.9.6-1.1~dbus11), libc6 (>= 2.14), libgcc-s1 (>= 3.0), libqt5core5t64 (>= 5.15.1), libqt5gui5t64 (>= 5.6.0~beta) | libqt5gui5-gles (>= 5.6.0~beta), libqt5widgets5t64 (>= 5.6.0~beta), libqt5x11extras5 (>= 5.6.0), libstdc++6 (>= 5), libuim-scm0 (>= 1:1.5.7), libuim8 (= 1:1.9.6-1.1~dbus11), qtbase-abi-5-15-19
+Breaks: uim-qt5 (<< 1:1.8.6+gh20161003.0.d63dadd-5~)
+Replaces: uim-qt5 (<< 1:1.8.6+gh20161003.0.d63dadd-5~)
+Section: x11
+Priority: optional
+Multi-Arch: same
+Homepage: https://github.com/uim/uim/wiki
+Description: Universal Input Method - Qt 5.x IM module
+ Uim is an input method module library which supports various scripts and can
+ act as a front end for a range of input methods, including Anthy, Canna,
+ PRIME, or SKK (for Japanese), Pinyin (for Chinese), Byeoru (for Korean), and
+ M17n (for many other languages). Most of its functions are implemented in
+ Scheme, so it's very simple and flexible.
+ .
+ This package contains an IM-module to support the use of uim on Qt 5.x.

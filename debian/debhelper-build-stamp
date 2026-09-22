@@ -5,8 +5,6 @@ libuim8
 libuim-scm0
 libuim-custom2
 libuim-dev
-uim-gtk2.0
-uim-gtk2.0-immodule
 uim-gtk3
 uim-gtk3-immodule
 uim-gtk4

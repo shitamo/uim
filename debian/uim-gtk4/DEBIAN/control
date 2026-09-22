@@ -1,0 +1,22 @@
+Package: uim-gtk4
+Source: uim
+Version: 1:1.9.6-1.1~dbus11
+Architecture: amd64
+Maintainer: NOKUBI Takatsugu <knok@daionet.gr.jp>
+Installed-Size: 328
+Depends: uim (= 1:1.9.6-1.1~dbus11), libc6 (>= 2.38), libgdk-pixbuf-2.0-0 (>= 2.22.0), libglib2.0-0t64 (>= 2.80.0), libgtk-4-1 (>= 4.12.0), libpango-1.0-0 (>= 1.14.0), libuim-custom2 (>= 1:1.7.0), libuim-scm0 (>= 1:1.5.7), libuim8 (= 1:1.9.6-1.1~dbus11), libx11-6, uim-gtk4-immodule (= 1:1.9.6-1.1~dbus11), uim-data (>= 1:1.9.6-1.1~dbus11)
+Section: x11
+Priority: optional
+Multi-Arch: foreign
+Homepage: https://github.com/uim/uim/wiki
+Description: Universal Input Method - GTK 4.x front end
+ Uim is an input method module library which supports various scripts and can
+ act as a front end for a range of input methods, including Anthy, Canna,
+ or SKK (for Japanese), Pinyin (for Chinese), Byeoru (for Korean), and
+ M17n (for many other languages). Most of its functions are implemented in
+ Scheme, so it's very simple and flexible.
+ .
+ This package contains GTK 4.x front-end applications for uim: the input
+ style toolbar, the input method switcher, the preference editor, the
+ input pad, and the standalone candidate window helpers, all driven purely
+ by uim's generic helper protocol.

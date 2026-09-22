@@ -1,0 +1,21 @@
+Package: uim-data
+Source: uim
+Version: 1:1.9.6-1.1~dbus11
+Architecture: all
+Maintainer: NOKUBI Takatsugu <knok@daionet.gr.jp>
+Installed-Size: 4719
+Depends: m17n-db
+Breaks: libuim-data (<< 1:1.8.6+gh20161003.0.d63dadd-5~), uim-anthy (<< 1:1.8.6+gh20161003.0.d63dadd-5~), uim-byeoru (<< 1:1.8.6+gh20161003.0.d63dadd-5~), uim-common (<< 1:1.8.6+gh20161003.0.d63dadd-5~), uim-ipa-x-sampa (<< 1:1.8.6+gh20161003.0.d63dadd-5~), uim-latin (<< 1:1.8.6+gh20161003.0.d63dadd-5~), uim-look (<< 1:1.8.6+gh20161003.0.d63dadd-5~), uim-m17nlib (<< 1:1.8.6+gh20161003.0.d63dadd-5~), uim-pinyin (<< 1:1.8.6+gh20161003.0.d63dadd-5~), uim-viqr (<< 1:1.8.6+gh20161003.0.d63dadd-5~)
+Replaces: libuim-data (<< 1:1.8.6+gh20161003.0.d63dadd-5~), uim-anthy (<< 1:1.8.6+gh20161003.0.d63dadd-5~), uim-byeoru (<< 1:1.8.6+gh20161003.0.d63dadd-5~), uim-common (<< 1:1.8.6+gh20161003.0.d63dadd-5~), uim-ipa-x-sampa (<< 1:1.8.6+gh20161003.0.d63dadd-5~), uim-latin (<< 1:1.8.6+gh20161003.0.d63dadd-5~), uim-look (<< 1:1.8.6+gh20161003.0.d63dadd-5~), uim-m17nlib (<< 1:1.8.6+gh20161003.0.d63dadd-5~), uim-pinyin (<< 1:1.8.6+gh20161003.0.d63dadd-5~), uim-viqr (<< 1:1.8.6+gh20161003.0.d63dadd-5~)
+Section: utils
+Priority: optional
+Multi-Arch: foreign
+Homepage: https://github.com/uim/uim/wiki
+Description: Universal Input Method - data files
+ Uim is an input method module library which supports various scripts and can
+ act as a front end for a range of input methods, including Anthy, Canna,
+ or SKK (for Japanese), Pinyin (for Chinese), Byeoru (for Korean), and
+ M17n (for many other languages). Most of its functions are implemented in
+ Scheme, so it's very simple and flexible.
+ .
+ This package contains the data files for uim.

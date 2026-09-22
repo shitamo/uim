@@ -1,0 +1,2 @@
+misc:Depends=uim-data (= ${binary:Version})
+misc:Pre-Depends=

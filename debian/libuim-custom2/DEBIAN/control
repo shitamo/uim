@@ -1,0 +1,21 @@
+Package: libuim-custom2
+Source: uim
+Version: 1:1.9.6-1.1~dbus11
+Architecture: amd64
+Maintainer: NOKUBI Takatsugu <knok@daionet.gr.jp>
+Installed-Size: 65
+Depends: libc6 (>= 2.38), libuim-scm0 (>= 1:1.5.7), libuim8 (= 1:1.9.6-1.1~dbus11)
+Breaks: uim-common (<< 1:1.8.6+gh20161003.0.d63dadd-5~)
+Replaces: uim-common (<< 1:1.8.6+gh20161003.0.d63dadd-5~)
+Section: libs
+Priority: optional
+Multi-Arch: same
+Homepage: https://github.com/uim/uim/wiki
+Description: Universal Input Method - uim-custom API library
+ Uim is an input method module library which supports various scripts and can
+ act as a front end for a range of input methods, including Anthy, Canna,
+ or SKK (for Japanese), Pinyin (for Chinese), Byeoru (for Korean), and
+ M17n (for many other languages). Most of its functions are implemented in
+ Scheme, so it's very simple and flexible.
+ .
+ This package contains the shared library for uim-custom API.

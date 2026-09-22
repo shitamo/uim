@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = configure ]; then
+	update-alternatives --install /usr/bin/uim-toolbar uim-toolbar \
+		/usr/bin/uim-toolbar-qt5 40
+fi
+
+
+
+exit 0

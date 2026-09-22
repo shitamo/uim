@@ -840,7 +840,9 @@ AC_ARG_WITH(gtk4,
   [with_gtk4=yes])
 
 if test "x$with_gtk4" != xno; then
-  PKG_CHECK_MODULES(GTK4, gtk4, with_gtk4=yes, with_gtk4=no)
+  dnl >= 4.12 for gtk_popover_present()/GtkListBox-based menus used by
+  dnl the GTK 4 candidate view and toolbar.
+  PKG_CHECK_MODULES(GTK4, [gtk4 >= 4.12], with_gtk4=yes, with_gtk4=no)
 fi
 
 AM_CONDITIONAL(GTK4, test "x$with_gtk4" = xyes)
@@ -851,6 +853,17 @@ if test "x$with_gtk4" = xyes; then
   GTK4_LIBDIR=`$PKG_CONFIG gtk4 --variable=libdir`
   AC_SUBST(GTK4_BINARY_VERSION)
   AC_SUBST(GTK4_LIBDIR)
+
+  dnl gtk4-layer-shell is optional: it lets the GTK 4 toolbar anchor
+  dnl itself to a screen edge on Wayland compositors that support the
+  dnl wlr-layer-shell protocol. Without it the toolbar still runs as a
+  dnl normal (undecorated) toplevel window.
+  PKG_CHECK_MODULES(GTK4_LAYER_SHELL, gtk4-layer-shell-0,
+    [have_gtk4_layer_shell=yes], [have_gtk4_layer_shell=no])
+  if test "x$have_gtk4_layer_shell" = xyes; then
+    AC_DEFINE(HAVE_GTK4_LAYER_SHELL, 1,
+      [use gtk4-layer-shell for the GTK 4 toolbar])
+  fi
 fi
 
 dnl ***********************************************
@@ -1970,7 +1983,13 @@ AC_CONFIG_FILES([Makefile
                  gtk3/test/test.sh
                  gtk3/toolbar/Makefile
                  gtk4/Makefile
+                 gtk4/candwin/Makefile
+                 gtk4/dict/Makefile
                  gtk4/immodule/Makefile
+                 gtk4/pad/Makefile
+                 gtk4/pref/Makefile
+                 gtk4/switcher/Makefile
+                 gtk4/toolbar/Makefile
                  qt3/Makefile
                  qt3/candwin/Makefile
                  qt3/chardict/Makefile

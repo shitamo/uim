@@ -1,0 +1,21 @@
+Package: uim-viqr
+Source: uim
+Version: 1:1.9.6-1.1~dbus11
+Architecture: all
+Maintainer: NOKUBI Takatsugu <knok@daionet.gr.jp>
+Installed-Size: 9
+Depends: uim-data (= 1:1.9.6-1.1~dbus11), uim (>= 1:1.9.6-1.1~dbus11)
+Section: utils
+Priority: optional
+Multi-Arch: foreign
+Homepage: https://github.com/uim/uim/wiki
+Description: Universal Input Method - Vietnamese Quoted-Readable support metapackage
+ Uim is an input method module library which supports various scripts and can
+ act as a front end for a range of input methods, including Anthy, Canna,
+ or SKK (for Japanese), Pinyin (for Chinese), Byeoru (for Korean), and
+ M17n (for many other languages). Most of its functions are implemented in
+ Scheme, so it's very simple and flexible.
+ .
+ This package provides uim support for VIQR (Vietnamese Quoted-Readable)
+ input. VIQR is a mnemonic encoding of Vietnamese characters into US ASCII
+ for use on 7-bit systems - see RFC1456.

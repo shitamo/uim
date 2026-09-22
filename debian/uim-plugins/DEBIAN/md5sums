@@ -1,0 +1,16 @@
+9293f0365c9f825603797c51934c3616  usr/lib/x86_64-linux-gnu/uim/plugin/libuim-anthy-utf8.so
+3bf06654d1f6170c275b0b6e30f34305  usr/lib/x86_64-linux-gnu/uim/plugin/libuim-anthy.so
+5a40248d7182e5fc0953b45faef0240e  usr/lib/x86_64-linux-gnu/uim/plugin/libuim-custom-enabler.so
+bd4f846f3749ac39c03c7ed7881cc166  usr/lib/x86_64-linux-gnu/uim/plugin/libuim-editline.so
+b34bdc7099116af5a10320cfb4269b99  usr/lib/x86_64-linux-gnu/uim/plugin/libuim-expat.so
+ec4c9bddd43579c36b8dee11bc92e326  usr/lib/x86_64-linux-gnu/uim/plugin/libuim-fileio.so
+c1888fcb10f84670bb7211001072ca12  usr/lib/x86_64-linux-gnu/uim/plugin/libuim-lolevel.so
+200b562593de2a5c3e05c6dbc19dbd47  usr/lib/x86_64-linux-gnu/uim/plugin/libuim-look.so
+6298da8c79673ade17714c52074223a6  usr/lib/x86_64-linux-gnu/uim/plugin/libuim-m17nlib.so
+ba8e10132f626a078d1976d13b99fddc  usr/lib/x86_64-linux-gnu/uim/plugin/libuim-process.so
+0c1712f5e74182f816b240ebd77059dd  usr/lib/x86_64-linux-gnu/uim/plugin/libuim-skk.so
+93494f2cafd95b69010883cfce3d5007  usr/lib/x86_64-linux-gnu/uim/plugin/libuim-socket.so
+817929cdc4dfdefb2fb2f6c29e13f636  usr/share/doc/uim-plugins/changelog.Debian.gz
+cdd47234271330dbe38b7d3fb75c2259  usr/share/doc/uim-plugins/changelog.gz
+5f46d9ff755738cb10917118daddef6b  usr/share/doc/uim-plugins/copyright
+b6f0a043e5e1082185d14b3dde3af863  usr/share/lintian/overrides/uim-plugins

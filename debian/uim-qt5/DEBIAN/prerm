@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = remove ] || [ "$1" = deconfigure ]; then
+	update-alternatives --remove uim-toolbar \
+		/usr/bin/uim-toolbar-qt5
+fi
+
+
+
+exit 0

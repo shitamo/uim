@@ -1,0 +1,7 @@
+81b483d1584f2666d350fc00d24a5692  usr/bin/uim-xim
+ffc68207deb66df53ead9f4d43c3aa43  usr/share/doc/uim-xim/README.gz
+35e2b8122a566e1e52f7c476434c68fd  usr/share/doc/uim-xim/changelog.Debian.gz
+cdd47234271330dbe38b7d3fb75c2259  usr/share/doc/uim-xim/changelog.gz
+5f46d9ff755738cb10917118daddef6b  usr/share/doc/uim-xim/copyright
+559a26098997b9db6d6db5b9a9373ae2  usr/share/lintian/overrides/uim-xim
+69e90b5c79ba1f26e5a060a4fce5eb66  usr/share/man/man1/uim-xim.1.gz

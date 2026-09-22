@@ -1,0 +1,12 @@
+Package: uim-el-dbgsym
+Source: uim
+Version: 1:1.9.6-1.1~dbus11
+Auto-Built-Package: debug-symbols
+Architecture: amd64
+Maintainer: NOKUBI Takatsugu <knok@daionet.gr.jp>
+Installed-Size: 94
+Depends: uim-el (= 1:1.9.6-1.1~dbus11)
+Section: debug
+Priority: optional
+Description: debug symbols for uim-el
+Build-Ids: 025a52ef37f94b58d94aa9a6d13f130f4717591d e074184b0b1afe31c13d37c13b6374055569790b

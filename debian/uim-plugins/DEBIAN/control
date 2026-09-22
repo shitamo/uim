@@ -1,0 +1,21 @@
+Package: uim-plugins
+Source: uim
+Version: 1:1.9.6-1.1~dbus11
+Architecture: amd64
+Maintainer: NOKUBI Takatsugu <knok@daionet.gr.jp>
+Installed-Size: 281
+Depends: libanthy2 (>= 1:0.3), libc6 (>= 2.38), libedit2 (>= 2.11-20080614-0), libexpat1 (>= 2.0.1), libm17n-0 (>= 1.5.5), libuim-custom2 (>= 1:1.5.7), libuim-scm0 (>= 1:1.7.0), libuim8 (= 1:1.9.6-1.1~dbus11)
+Breaks: libuim-plugins (<< 1:1.8.6+gh20161003.0.d63dadd-5~), uim-anthy (<< 1:1.8.6+gh20161003.0.d63dadd-5~)
+Replaces: libuim-plugins (<< 1:1.8.6+gh20161003.0.d63dadd-5~), uim-anthy (<< 1:1.8.6+gh20161003.0.d63dadd-5~)
+Section: utils
+Priority: optional
+Multi-Arch: same
+Homepage: https://github.com/uim/uim/wiki
+Description: Universal Input Method - plugin files
+ Uim is an input method module library which supports various scripts and can
+ act as a front end for a range of input methods, including Anthy, Canna,
+ or SKK (for Japanese), Pinyin (for Chinese), Byeoru (for Korean), and
+ M17n (for many other languages). Most of its functions are implemented in
+ Scheme, so it's very simple and flexible.
+ .
+ This package contains the plugin files for uim.

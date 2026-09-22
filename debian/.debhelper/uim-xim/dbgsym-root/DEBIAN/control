@@ -1,0 +1,12 @@
+Package: uim-xim-dbgsym
+Source: uim
+Version: 1:1.9.6-1.1~dbus11
+Auto-Built-Package: debug-symbols
+Architecture: amd64
+Maintainer: NOKUBI Takatsugu <knok@daionet.gr.jp>
+Installed-Size: 754
+Depends: uim-xim (= 1:1.9.6-1.1~dbus11)
+Section: debug
+Priority: optional
+Description: debug symbols for uim-xim
+Build-Ids: 8214af949b3f5560b58e1d9b0a4a0279ad6a037d

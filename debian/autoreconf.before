@@ -269,7 +269,7 @@ a0d1d79e538fb4e8c3218f3e58f4be2f  ./gtk4/dict/word.c
 da18d5357d33a9220fbf3bf6a0141177  ./gtk4/dict/word.h
 2a1fb5f22d3ad81868750e3efb44e09c  ./gtk4/dict/Makefile.in
 26faaeb9c9f440b33eae7af32dd0c45e  ./gtk4/pref/Makefile.am
-77ae15f14a9c7edec545387c649a0e55  ./gtk4/pref/gtk-custom-widgets-gtk4.c
+3cf0f67e794b5b91e873d7daa0e10df2  ./gtk4/pref/gtk-custom-widgets-gtk4.c
 b61b6ca5eb3469c8ad15ab95e0ef0a66  ./gtk4/pref/gtk-custom-widgets-gtk4.h
 f435f464d9527263ecb9f0694594eea0  ./gtk4/pref/gtk-keytab.h
 281185e6e625c8e569e52fd614d55e54  ./gtk4/pref/key-util-gtk4.h
@@ -414,7 +414,6 @@ c23c024a5eff731e46d485b50c4b6f17  ./pixmaps/baidu-olime-jp.svg
 9313c8f16692867bf6cf4a5d3dfc06ac  ./pixmaps/anthy.png
 11a95a3156a8db7278ecd232fd3ac2fb  ./pixmaps/canna.png
 a96e2996d096fc8b56357f6b6973288d  ./pixmaps/uim-icon.png
-38c9bc9729b73af167ed6dd47a301780  ./pixmaps/Makefile.in
 5e524913112a930b47706f5d2cc10ec5  ./pixmaps/unknown.png
 2bc652bc63e9f950f4a0c61b8196212a  ./pixmaps/direct.png
 265bd4aa63b977ef05ffd4eadb573e7d  ./pixmaps/skk.png
@@ -486,6 +485,7 @@ ed2e5323d1700f75b7be5b82ab0c7969  ./pixmaps/ja_halfkana_dark_background.png
 f6bed49fb6a32ff1dd2c0f33c80ad665  ./pixmaps/ja_act_dark_background.png
 ff3965496826795762a845da551da961  ./pixmaps/ja_kzik_dark_background.png
 9313c8f16692867bf6cf4a5d3dfc06ac  ./pixmaps/anthy-utf8.png
+38c9bc9729b73af167ed6dd47a301780  ./pixmaps/Makefile.in
 8a343d96a083afd9652d740c8d397a5b  ./po/ChangeLog
 23dddb6bcfd37a03d9b1a0dc7c8e3175  ./po/LINGUAS
 ae76b3c8b2e44b989258411b17b96db2  ./po/Makefile.am
@@ -696,7 +696,7 @@ e98a2d6b13297b7a0a5913560812a3e0  ./qt5/switcher/Makefile.in
 91ddf9618778642fddd3fbc26914fa13  ./qt5/toolbar/Makefile.am
 d2f267e4e57b1a6b95a33c2387780560  ./qt5/toolbar/uim-toolbar-qt5.pro.in
 92fd2b7145ae2caa437b9064d2b4ae1a  ./qt5/toolbar/Makefile.in
-158605cb2d62d0eb8003799dfdf7df08  ./qt5/applet.cmake/CMakeFiles/CMakeConfigureLog.yaml
+9106694867e2c99974763b40144f3a62  ./qt5/applet.cmake/CMakeFiles/CMakeConfigureLog.yaml
 881b5d9cb518c7912ec2c16c82fe592e  ./qt5/applet.cmake/CMakeFiles/4.3.4/CMakeSystem.cmake
 f72937f46b69abf36eed059d456d8594  ./qt5/applet.cmake/CMakeFiles/4.3.4/CompilerIdC/CMakeCCompilerId.c
 c594f16c01153480fd35a6982e711d88  ./qt5/applet.cmake/CMakeFiles/4.3.4/CompilerIdC/a.out
@@ -759,9 +759,9 @@ b87c1a59995177a38e7ed84e4c3e4e2f  ./qt5/applet.cmake/qtquick-plugin/CMakeFiles/u
 a0cd57f3bec246afe86ad90345a5b262  ./qt5/applet.cmake/qtquick-plugin/CMakeFiles/uim-qtquick-plugin_autogen.dir/DependInfo.cmake
 eef687aa8d9f346062122f3d8b196090  ./qt5/applet.cmake/qtquick-plugin/CMakeFiles/uim-qtquick-plugin_autogen.dir/ParseCache.txt
 cc5c8090626c5fcb3692e2895fdfb9e6  ./qt5/applet.cmake/qtquick-plugin/CMakeFiles/uim-qtquick-plugin_autogen.dir/AutogenUsed.txt
-d2fb62dcaada5fac489f65cbd6928724  ./qt5/applet.cmake/qtquick-plugin/CMakeFiles/uim-qtquick-plugin_autogen.dir/progress.make
 00802567226744f2b726032d0534a1ce  ./qt5/applet.cmake/qtquick-plugin/CMakeFiles/uim-qtquick-plugin_autogen.dir/compiler_depend.internal
 dc23472d94c159e17562552f26f9dc54  ./qt5/applet.cmake/qtquick-plugin/CMakeFiles/uim-qtquick-plugin_autogen.dir/compiler_depend.make
+d2fb62dcaada5fac489f65cbd6928724  ./qt5/applet.cmake/qtquick-plugin/CMakeFiles/uim-qtquick-plugin_autogen.dir/progress.make
 59f61fe14d4abedd22b7a1c87d58a1cf  ./qt5/applet.cmake/qtquick-plugin/CMakeFiles/uim-qtquick-plugin_autogen_timestamp_deps.dir/compiler_depend.make
 ad6cd9bcde96eeaa93142a326c1138c4  ./qt5/applet.cmake/qtquick-plugin/CMakeFiles/uim-qtquick-plugin_autogen_timestamp_deps.dir/compiler_depend.ts
 86d46811871eadd519a29faa6fa265b2  ./qt5/applet.cmake/qtquick-plugin/CMakeFiles/uim-qtquick-plugin_autogen_timestamp_deps.dir/cmake_clean.cmake
@@ -799,9 +799,9 @@ d41d8cd98f00b204e9800998ecf8427e  ./qt5/applet.cmake/qtquick-plugin/uim-qtquick-
 55efecf9261e23e61ceeed6f8f363897  ./qt5/applet.cmake/qtquick-plugin/cmake_install.cmake
 8ed566b244a8088bf6a3af7d4ff78d43  ./qt5/applet.cmake/qtquick-plugin/libuim-qtquick-plugin.so
 206dcefa114fce00b1ee3d889c9a0d76  ./qt5/applet.cmake/CMakeCache.txt
+d0133b45809ff7c5d9d25f6b66872e71  ./qt5/applet.cmake/install_manifest.txt
 880f9b6cde7114a521d4539872435a45  ./qt5/applet.cmake/Makefile
 0430e11ae3c6bd3d221cfca2bc431e29  ./qt5/applet.cmake/cmake_install.cmake
-d0133b45809ff7c5d9d25f6b66872e71  ./qt5/applet.cmake/install_manifest.txt
 01aeb3865c5f9dd2bb732fc3f835886b  ./qt5/Makefile.in
 aa7234275e3f4c42d71e39af28088e60  ./qt6/Makefile.am
 9d5e86ce50a14a28f40d9f480985bddd  ./qt6/candwin/Makefile.am
@@ -981,9 +981,9 @@ e188fe4d1698e1e3a48e57490f2c722c  ./scm/wnn-custom.scm
 32d758da6d43fad276990f69ee855e48  ./scm/xkb.scm
 e8482f04b478dfd3a00cc2ec39e10f27  ./scm/xmload.scm
 4674fe48a38f95b6269d809256be0cf3  ./scm/zm.scm
+dd9bc25ab7be079138cc991c7f134073  ./scm/Makefile.in
 f6ed52e5985065980ff547f274d205dc  ./scm/skk-custom.scm
 a3adb8c4a864da5dc32dc63995c3c04d  ./scm/tutcode-custom.scm
-dd9bc25ab7be079138cc991c7f134073  ./scm/Makefile.in
 4fc6633daea007527ce8c605edf4a4c0  ./setup.sh
 686ddc3c3acba117961a07b630dc7aab  ./sigscheme/.git
 4334132ba6bcd78670bf574b6b4236f4  ./sigscheme/.github/dependabot.yml
@@ -1644,13 +1644,6 @@ d7aed41f16435782458bfad8e1f387b9  ./m4.generated/libtool.m4
 745573d4ade77f732c94e809302c0a30  ./m4.generated/ltversion.m4
 b5626d6f2f3e445b532713bd6a3fd606  ./m4.generated/lt~obsolete.m4
 75adb12e1a7d9c52ca2ba0ec191ea45b  ./configure.ac
-26ab0db90d72e28ad0ba1e22ee510510  ./.pc/.version
-266f9759f56277b2751b24d1eb17c50f  ./.pc/.quilt_patches
-e8a673d5d4d69a5fd11c880fd4c3c481  ./.pc/.quilt_series
-db779fac5cef72440fc03b23ae3b2b2a  ./.pc/applied-patches
-d41d8cd98f00b204e9800998ecf8427e  ./.pc/.dpkg-source-unapply
-fe592be0930cddbc7db7bd41891ac859  ./.pc/support_skk_alternatives.patch/scm/skk-custom.scm
-907f0cb8179f69a83c95992a360365f8  ./.pc/fix_t-code_mazegaki_location.patch/scm/tutcode-custom.scm
 808b383c49b92d98ef1b364c7c211bda  ./ltmain.sh
 2f05b4190a6159bc42575705ff961954  ./aclocal.m4
 ebc8343f6d76cd07b003ad147979299d  ./configure
@@ -1659,5 +1652,12 @@ ebc8343f6d76cd07b003ad147979299d  ./configure
 60cf8edb35e7092ccb43fc13b62e8ea1  ./missing
 099ec4f8be9b5b1fdcba3f96d7d9b456  ./test-driver
 77a6e8242d255461ddc3f31b5c8aa9de  ./depcomp
+26ab0db90d72e28ad0ba1e22ee510510  ./.pc/.version
+266f9759f56277b2751b24d1eb17c50f  ./.pc/.quilt_patches
+e8a673d5d4d69a5fd11c880fd4c3c481  ./.pc/.quilt_series
+db779fac5cef72440fc03b23ae3b2b2a  ./.pc/applied-patches
+d41d8cd98f00b204e9800998ecf8427e  ./.pc/.dpkg-source-unapply
+fe592be0930cddbc7db7bd41891ac859  ./.pc/support_skk_alternatives.patch/scm/skk-custom.scm
+907f0cb8179f69a83c95992a360365f8  ./.pc/fix_t-code_mazegaki_location.patch/scm/tutcode-custom.scm
 11714d3cd0a013dc3a7fd350d3a67066  ./config.guess
 cf258f914ddb13bb4cfa8a5d60f951b5  ./config.sub

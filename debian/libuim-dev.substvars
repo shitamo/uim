@@ -1,0 +1,2 @@
+misc:Depends=libuim8 (= ${binary:Version})
+misc:Pre-Depends=

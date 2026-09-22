@@ -1,0 +1,4 @@
+uim-qt5: binary-without-manpage usr/bin/uim-chardict-qt5
+uim-qt5: binary-without-manpage usr/bin/uim-im-switcher-qt5
+uim-qt5: binary-without-manpage usr/bin/uim-pref-qt5
+uim-qt5: binary-without-manpage usr/bin/uim-toolbar-qt5

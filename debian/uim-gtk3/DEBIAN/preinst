@@ -1,0 +1,27 @@
+#! /bin/sh
+# preinst script for uim
+#
+# see: dh_installdeb(1)
+
+set -e
+
+case "$1" in
+    upgrade)
+	if dpkg --compare-versions "$2" le-nl "1:1.8.6+gh20161003.0.d63dadd-5~"; then
+		update-alternatives --remove uim-toolbar \
+			/usr/bin/uim-toolbar-gtk3-systray
+	fi
+    ;;
+
+    install|abort-upgrade)
+    ;;
+
+    *)
+        echo "preinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+
+
+exit 0

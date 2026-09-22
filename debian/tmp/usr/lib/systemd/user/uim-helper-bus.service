@@ -1,9 +1,0 @@
-[Unit]
-Description=uim helper bus (D-Bus session service)
-PartOf=graphical-session.target
-
-[Service]
-Type=dbus
-BusName=org.uim.HelperBus
-ExecStart=/usr/lib/uim/uim-helper-server
-Slice=session.slice

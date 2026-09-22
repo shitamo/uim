@@ -1,7 +1,0 @@
-debian/tmp/usr/lib/uim/uim-candwin-gtk4
-debian/tmp/usr/lib/uim/uim-candwin-horizontal-gtk4
-debian/tmp/usr/lib/uim/uim-candwin-tbl-gtk4
-debian/tmp/usr/bin/uim-toolbar-gtk4
-debian/tmp/usr/bin/uim-im-switcher-gtk4
-debian/tmp/usr/bin/uim-pref-gtk4
-debian/tmp/usr/bin/uim-input-pad-ja-gtk4

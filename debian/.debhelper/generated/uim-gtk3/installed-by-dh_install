@@ -1,8 +1,0 @@
-debian/tmp/usr/lib/uim/uim-candwin-gtk3
-debian/tmp/usr/lib/uim/uim-candwin-horizontal-gtk3
-debian/tmp/usr/lib/uim/uim-candwin-tbl-gtk3
-debian/tmp/usr/bin/uim-toolbar-gtk3
-debian/tmp/usr/bin/uim-toolbar-gtk3-systray
-debian/tmp/usr/bin/uim-im-switcher-gtk3
-debian/tmp/usr/bin/uim-pref-gtk3
-debian/tmp/usr/bin/uim-input-pad-ja-gtk3

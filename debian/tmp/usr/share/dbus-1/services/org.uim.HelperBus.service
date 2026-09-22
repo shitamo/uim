@@ -1,4 +1,0 @@
-[D-BUS Service]
-Name=org.uim.HelperBus
-Exec=/usr/lib/uim/uim-helper-server
-SystemdService=uim-helper-bus.service

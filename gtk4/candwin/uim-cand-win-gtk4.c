@@ -232,7 +232,10 @@ uim_cand_win_gtk_dispose (GObject *obj)
     cwin->stores = NULL;
   }
 
-  g_clear_pointer(&cwin->sub_window.window, gtk_window_destroy);
+  if (cwin->sub_window.window) {
+    gtk_window_destroy(GTK_WINDOW(cwin->sub_window.window));
+    cwin->sub_window.window = NULL;
+  }
   cwin->sub_window.scrolled_window = NULL;
   cwin->sub_window.text_view       = NULL;
 

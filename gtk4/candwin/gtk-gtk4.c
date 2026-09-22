@@ -57,6 +57,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "cand-win-x11-util.h"
 #include "caret-state-indicator-gtk4.h"
 #include "uim-cand-win-gtk4.h"
 #ifdef UIM_CANDWIN_STYLE_TABLE

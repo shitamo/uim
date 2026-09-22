@@ -29,9 +29,12 @@
   OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
   SUCH DAMAGE.
 
-  GTK 4 note: gtk_main()/gtk_dialog_run()/GtkContainer/GtkButtonBox/
-  GTK_STOCK_*/GdkEventKey/GdkScreen/GTK_WIN_POS_* are all gone. The event
-  loop is now a GtkApplication; blocking confirmation dialogs are now
+  GTK 4 note: gtk_main(), gtk_dialog_run(), GtkContainer, GtkButtonBox,
+  GTK_STOCK_*, GdkEventKey, GdkScreen, and GTK_WIN_POS_* are all gone.
+  (Careful: a literal "GTK_STOCK_*" immediately followed by "/" closes
+  this comment early, so identifiers here are separated by commas, not
+  slashes.) The event loop is now a GtkApplication; blocking
+  confirmation dialogs are now
   async GtkAlertDialog callbacks; "container add" calls became the
   type-specific setters (gtk_window_set_child, gtk_scrolled_window_set_child,
   gtk_frame_set_child); the button box at the bottom of the window is a

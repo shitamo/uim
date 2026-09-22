@@ -472,7 +472,10 @@ static void create_sub_group_widgets(GtkWidget *parent_widget, const char *paren
 
 	if (strcmp(*sgrp_sym, "main")) {
 	  frame = gtk_frame_new(sgrp->label);
-	  gtk_frame_set_label_align(GTK_FRAME(frame), 0.02, 0.5);
+	  /* GTK4's gtk_frame_set_label_align() dropped the yalign
+	   * parameter (the label is always vertically centered on the
+	   * frame's top border), so only xalign is passed here. */
+	  gtk_frame_set_label_align(GTK_FRAME(frame), 0.02);
 	  gtk_box_append(GTK_BOX(parent_widget), frame);
 
 	  gtk_frame_set_child(GTK_FRAME(frame), vbox);

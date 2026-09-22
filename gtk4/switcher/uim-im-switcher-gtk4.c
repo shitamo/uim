@@ -320,12 +320,15 @@ labeled_button(const gchar *label, const gchar *css_class)
 }
 
 static void
-create_switcher(void)
+create_switcher(GtkApplication *app)
 {
   GtkWidget *vbox, *hbox, *coverage_box, *frame, *button_box, *scrolled;
   GtkWidget *radio0, *radio1, *radio2, *button;
 
-  switcher_window = gtk_window_new();
+  /* Must be registered with the GtkApplication: otherwise GApplication
+   * sees zero held windows the instant activate_cb() returns and quits
+   * the whole process immediately (window flashes and disappears). */
+  switcher_window = gtk_application_window_new(app);
   gtk_window_set_title(GTK_WINDOW(switcher_window),
                        _("uim input method switcher"));
   gtk_window_set_icon_name(GTK_WINDOW(switcher_window), "uim");
@@ -511,7 +514,7 @@ check_helper_connection(void)
 static void
 activate_cb(GtkApplication *app, gpointer user_data)
 {
-  create_switcher();
+  create_switcher(app);
 }
 
 int

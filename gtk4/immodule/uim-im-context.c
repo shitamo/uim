@@ -540,9 +540,33 @@ candidates_view_shift_page_requested_cb(UIMCandidatesView *view,
 {
   UIMIMContext *uic = data;
 
+  /* Mirror cand_shift_page_cb() (the keyboard/backend-driven page
+   * shift) exactly: pre-fetch the target page, shift while
+   * "index-changed" is blocked (so uim_set_candidate_index() below
+   * isn't invoked a second time through it), then explicitly
+   * re-show the popover. That last call is what the mouse-driven
+   * "<"/">" buttons were missing: whenever syncing the new page's
+   * candidate index caused the uim backend to refresh the candidate
+   * list out from under us, nothing re-asserted the popover
+   * afterward, leaving it hidden/empty. */
   guint new_page =
     uim_candidates_view_query_new_page_by_shift_page(view, forward);
   uim_im_context_ensure_page_candidates(uic, new_page);
+
+  g_signal_handlers_block_by_func(
+    view,
+    (gpointer)(uintptr_t)candidates_view_index_changed_cb,
+    uic);
+  uim_candidates_view_shift_page(view, forward);
+  gint index = uim_candidates_view_get_index(view);
+  if (index != -1)
+    uim_set_candidate_index(uic->uc, index);
+  g_signal_handlers_unblock_by_func(
+    view,
+    (gpointer)(uintptr_t)candidates_view_index_changed_cb,
+    uic);
+
+  uim_im_context_show_candidates(uic);
 }
 
 static void

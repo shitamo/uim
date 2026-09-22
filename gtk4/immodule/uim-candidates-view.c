@@ -273,20 +273,13 @@ page_button_clicked_cb(GtkButton *button, gpointer data)
   UIMCandidatesView *view = data;
   gboolean forward = button == GTK_BUTTON(view->next_page_button);
 
-  /* Give the IM context a chance to pre-fetch the target page's
-   * candidates before shift_page() below renders it; otherwise the
-   * popover can render an empty page if the candidates for it
-   * haven't been fetched from the uim backend yet. */
+  /* Delegate entirely to a "shift-page-requested" listener
+   * (uim-im-context.c), which pre-fetches the target page and
+   * performs the actual shift + backend index sync + re-show, using
+   * exactly the same sequence as the keyboard-driven page-shift path
+   * (cand_shift_page_cb). The view itself no longer shifts pages or
+   * emits "index-changed" here. */
   g_signal_emit(view, signals[SHIFT_PAGE_REQUESTED], 0, forward);
-
-  if (view->candidate_index < 0) {
-    /* Select the first candidate of the current page so that the
-     * "index-changed" signal is emitted below. */
-    view->candidate_index = view->page_index * view->display_limit;
-  }
-  uim_candidates_view_shift_page(view, forward);
-  if (view->candidate_index >= 0)
-    g_signal_emit(view, signals[INDEX_CHANGED], 0);
 }
 
 static void

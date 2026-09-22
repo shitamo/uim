@@ -1,0 +1,144 @@
+uim (1:1.8.8-8) unstable; urgency=medium
+
+  drop to register anthy (EUC-JP) again. but you can still use anthy (EUC-JP).
+  if you want to use anthy (EUC-JP), you run below command with root privilege.
+
+    uim-module-manager --register anthy --path /var/lib/uim
+
+  if you want to stop using anthy (EUC-JP), you run below command with root
+  privilege.
+
+    uim-module-manager --unregister anthy --path /var/lib/uim
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sat, 27 Feb 2021 11:33:18 +0900
+
+uim (1:1.8.8-7) unstable; urgency=medium
+
+  resurrect anthy (EUC-JP). but please use anthy-utf8 instead of it.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Tue, 22 Dec 2020 21:07:53 +0900
+
+uim (1:1.8.6+gh20161003.0.d63dadd-5) unstable; urgency=medium
+
+  drop applet packages.
+
+  - uim-applet-gnome
+  - plasma-widget-uim
+
+  drop dict packages.
+
+  - uim-dict-gtk
+  - uim-dict-gtk3
+
+  drop anthy (EUC-JP). please use anthy-utf8 instead of it.
+
+  drop Qt4 support due to Qt4 removal. please use uim-xim for Qt4 apps.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Sat, 30 Sep 2017 12:42:05 +0900
+
+uim (1:1.8.6-10) unstable; urgency=medium
+
+  drop low-popcon packages.
+
+  - uim-yahoo-jp
+  - uim-social-ime
+  - uim-ajax-ime
+  - uim-google-cgiapi-jp
+  - uim-baidu-olime-jp
+
+  but you still use them including canna that dropped previously.
+  for example, if you want to use canna, you run below command with root
+  privilege.
+
+    uim-module-manager --register canna --path /var/lib/uim
+
+  if you want to stop using canna, you run below command with root privilege.
+
+    uim-module-manager --unregister canna --path /var/lib/uim
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Fri, 05 Jun 2015 19:22:39 +0900
+
+uim (1:1.8.6-9) unstable; urgency=medium
+
+  drop uim-canna. please use another packages.
+  e.g. uim-anthy, uim-skk, uim-tcode and so on.
+
+ -- HIGUCHI Daisuke (VDR dai) <dai@debian.org>  Mon, 01 Jun 2015 21:20:59 +0900
+
+uim (1:1.3.1-2) experimental; urgency=low
+
+  uim-tutcode and uim-trycode are merged into uim-tcode. Therefore, split
+  packages of uim-common are as follows,
+
+  - uim-byeoru: The Byeoru Hangul input suite for uim
+  - uim-hangul: Hangul input method for uim (2-beol/3-beol/Romaja)
+  - uim-latin: Latin and Germanic languages input style for uim
+  - uim-pinyin: Pinyin input method for uim
+  - uim-tcode: T-Code/TUT-Code/Try-Code input style for uim
+  - uim-viqr: Vietnamese Quoted-Readable input style for uim
+  - uim-ipa-x-sampa: International Phonetic Alphabet (X-SAMPA) input style
+    for uim
+
+ -- Masahito Omote <omote@debian.org>  Sat,  3 Feb 2007 17:36:49 +0900
+
+uim (1:1.3.1-1) experimental; urgency=low
+
+  From this version, IMs in uim-common are split into each packages.
+  You have to install them if you keep to use them. Split packages are
+  as follows,
+
+  - uim-byeoru: The Byeoru Hangul input suite for uim
+  - uim-hangul: Hangul input method for uim (2-beol/3-beol/Romaja)
+  - uim-latin: Latin and Germanic languages input style for uim
+  - uim-pinyin: Pinyin input method for uim
+  - uim-tcode: T-Code input style for uim
+  - uim-tutcode: TUT-Code input style for uim
+  - uim-trycode: Try-Code input style for uim
+  - uim-viqr: Vietnamese Quoted-Readable input style for uim
+  - uim-ipa-x-sampa: International Phonetic Alphabet (X-SAMPA) input style
+    for uim
+
+  Change environment settings in im-switch from xim to uim.
+
+ -- Masahito Omote <omote@debian.org>  Thu,  4 Jan 2007 01:22:48 +0900
+
+uim (1:0.4.6beta2-1) unstable; urgency=high
+
+  From 0.4.6, uim supports plugin system and split Inputmethods (mainly for
+  Japanese IMs) into plugins which is needed to link shared library. If you
+  use following IMs, you have to install plugin packages.
+
+  - Anthy: uim-anthy
+  - Canna: uim-canna
+  - SKK:   uim-skk
+  - PRIME: uim-prime
+  - m17nlib: uim-m17nlib
+
+ -- Masahito Omote <omote@debian.org>  Tue, 22 Feb 2005 03:44:09 +0900
+
+uim (1:0.4.5-1) unstable; urgency=low
+
+  Gtk immodule 'uim' is added and other gtk immodule is removed in this
+  release. If you want to switch input method, use gtk-im-switcher which is
+  in uim-gtk2.0. Read README.Debian for more details.
+
+ -- Masahito Omote <omote@debian.org>  Wed, 20 Oct 2004 18:41:30 +0900
+
+uim (1:0.4.4.1-1) unstable; urgency=low
+
+  New uim's gtk immodule 'uim' is added. By this change, other gtk immodule
+  will remove in next release (0.4.4.1-1 supports old style for transition).
+  If you want to switch input method, use gtk-im-switcher which is in
+  uim-gtk2.0.
+
+  So, change environment variable as following,
+      GTK_IM_MODULE=uim; export GTK_IM_MODULE
+      XMODIFIERS=@im=uim; export XMODIFIERS
+  And write down default IM in ~/.uim.
+    e.g) Set Anthy as default input method.
+      (define default-im-name 'anthy)
+
+  uim-helper-server is moved to uim-utils, so you can safely remove
+  uim-helper-server. uim-helper-server will remove in 0.4.5-1.
+
+ -- Masahito Omote <omote@debian.org>  Sun,  6 Oct 2002 17:21:21 +0900

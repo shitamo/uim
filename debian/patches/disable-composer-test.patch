@@ -1,0 +1,20 @@
+Origin: vendor
+Bug-Debian: https://bugs.debian.org/973459
+Forwarded: https://github.com/uim/uim/issues/167
+Last-Update: 2020-12-13
+Description: Disable test-composer.scm
+ Sometime test-composer.scm failed, especially in a slow machines.
+ composer.scm is used only the test in the source.
+ https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=973459#53
+ The patch is skipping it.
+
+--- uim-1.8.8.orig/test2/Makefile.am
++++ uim-1.8.8/test2/Makefile.am
+@@ -1,7 +1,6 @@
+ # Type 'make check' to run all tests.
+ 
+ uim_tests = \
+-        test-composer.scm \
+         test-fail.scm \
+         test-light-record.scm \
+         test-template.scm \

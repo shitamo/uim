@@ -1,0 +1,14 @@
+prefix=/usr
+exec_prefix=/usr
+includedir=${prefix}/include
+libdir=/usr/lib/x86_64-linux-gnu
+datarootdir=${prefix}/share
+datadir=${datarootdir}
+uim_datadir=${datarootdir}/uim
+uim_scmdir=${datarootdir}/uim
+
+Name: uim
+Description: multilingual input method library
+Version: 1.9.8
+Cflags: -I${includedir}/uim
+Libs: -L${libdir} -luim-scm -luim  

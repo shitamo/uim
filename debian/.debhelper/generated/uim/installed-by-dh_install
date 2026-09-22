@@ -1,0 +1,7 @@
+debian/tmp/usr/bin/uim-sh
+debian/tmp/usr/bin/uim-module-manager
+debian/tmp/usr/bin/uim-help
+debian/tmp/usr/lib/uim/uim-helper-server
+debian/tmp/usr/bin/uim-m17nlib-relink-icons
+debian/tmp/usr/share/dbus-1/services/org.uim.HelperBus.service
+debian/tmp/usr/lib/systemd/user/uim-helper-bus.service

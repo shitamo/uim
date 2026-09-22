@@ -1,0 +1,3 @@
+uim-el: binary-without-manpage usr/bin/uim-el-agent
+uim-el: binary-without-manpage usr/bin/uim-el-helper-agent
+uim-el: spelling-error-in-copyright "permit to" "permit one to"

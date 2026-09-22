@@ -1,0 +1,13 @@
+usr/share/emacs/site-lisp/uim-el/uim-candidate.el
+usr/share/emacs/site-lisp/uim-el/uim-debug.el
+usr/share/emacs/site-lisp/uim-el/uim-key.el
+usr/share/emacs/site-lisp/uim-el/uim-keymap.el
+usr/share/emacs/site-lisp/uim-el/uim-leim.el
+usr/share/emacs/site-lisp/uim-el/uim-preedit.el
+usr/share/emacs/site-lisp/uim-el/uim-util.el
+usr/share/emacs/site-lisp/uim-el/uim-var.el
+usr/share/emacs/site-lisp/uim-el/uim-version.el
+usr/share/emacs/site-lisp/uim-el/uim.el
+usr/share/emacs/site-lisp/uim-el/uim-helper.el
+usr/bin/uim-el-agent
+usr/bin/uim-el-helper-agent

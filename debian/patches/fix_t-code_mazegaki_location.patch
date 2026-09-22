@@ -1,0 +1,20 @@
+Description: Add support to mazegaki conversion
+Author: Kiwamu Okabe <kiwamu@debian.or.jp>
+Bug-Debian: https://bugs.debian.org/507996
+Origin: vendor
+Forwarded: not-needed
+Last-Update: 2010-06-24
+
+Index: uim/scm/tutcode-custom.scm
+===================================================================
+--- uim.orig/scm/tutcode-custom.scm
++++ uim/scm/tutcode-custom.scm
+@@ -60,7 +60,7 @@
+ ;;
+ 
+ (define-custom 'tutcode-dic-filename (string-append (sys-datadir)
+-						 "/tc/mazegaki.dic")
++						 "/t-code/mazegaki.dic")
+   '(tutcode tutcode-dict)
+   '(pathname regular-file)
+   (N_ "Mazegaki dictionary file")

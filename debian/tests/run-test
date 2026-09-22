@@ -1,0 +1,25 @@
+#!/bin/sh
+
+set -e
+
+LIBUIM_SYSTEM_SCM_FILES="/usr/share/sigscheme/lib"
+LIBUIM_SCM_FILES="/usr/share/uim"
+
+for i in \
+	test-light-record.scm \
+	test-template.scm \
+	test-trec.scm \
+	test-wlos.scm \
+	;
+do
+	echo $i
+	/usr/bin/uim-sh $(pwd)/test2/${i} ;
+done
+
+for i in \
+	test-fail.scm \
+	;
+do
+	echo $i
+	! /usr/bin/uim-sh $(pwd)/test2/${i} ;
+done

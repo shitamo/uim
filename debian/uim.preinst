@@ -1,0 +1,37 @@
+#! /bin/sh
+# preinst script for uim
+#
+# see: dh_installdeb(1)
+
+set -e
+
+case "$1" in
+    upgrade)
+	if which uim-module-manager >/dev/null 2>&1; then
+		if dpkg --compare-versions "$2" lt-nl "1:1.8.8-3.1" && \
+		   dpkg --compare-versions "$2" gt "1:1.8.6+gh20161003.0.d63dadd-3~exp1"; then
+			cat <<EOF
+Unregistering the following input methods ...
+byeoru, ipa-x-sampa, latin, look, m17nlib, pinyin, viqr
+If you are using some of the input methods above, you have to manually
+install the respective package(s). Sorry for any inconvenience.
+EOF
+			for i in byeoru ipa-x-sampa latin elatin look m17nlib pyload viqr; do
+				uim-module-manager --unregister $i --path /var/lib/uim
+			done
+		fi
+	fi
+    ;;
+
+    install|abort-upgrade)
+    ;;
+
+    *)
+        echo "preinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+#DEBHELPER#
+
+exit 0

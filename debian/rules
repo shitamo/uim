@@ -113,7 +113,6 @@ override_dh_installdocs:
 		-puim-tcode -puim-viqr -puim-ipa-x-sampa -puim-look
 	# arch:any
 	dh_installdocs --link-doc uim \
-		-puim-gtk2.0 -puim-gtk2.0-immodule \
 		-puim-gtk3 -puim-gtk3-immodule \
 		-puim-gtk4 -puim-gtk4-immodule \
 		-puim-qt5 -puim-qt5-immodule \

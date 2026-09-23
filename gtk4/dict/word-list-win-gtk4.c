@@ -319,8 +319,18 @@ build_popup_menu(WordListWindow *window)
 
   window->popup_menu = gtk_popover_menu_new_from_model(G_MENU_MODEL(popup));
   g_object_unref(popup);
-  gtk_widget_set_parent(window->popup_menu,
-			GTK_WIDGET(WORD_LIST_VIEW(window->word_list)->view));
+
+  /* Anchor the popover to word_list (our own plain GtkWidget, built
+   * with a modern layout manager -- see word-list-view-gtk4.c) rather
+   * than to its internal GtkTreeView: GtkTreeView keeps its own
+   * private bookkeeping for headers/children and doesn't reliably
+   * support an *extra* widget being attached to it via
+   * gtk_widget_set_parent(), which was corrupting its CSS node
+   * ordering ("gtk_css_node_insert_after" critical warning) as soon
+   * as the popup menu was built. word_list_click_pressed_cb()
+   * translates the click position into word_list's own coordinate
+   * space accordingly. */
+  gtk_widget_set_parent(window->popup_menu, window->word_list);
   gtk_popover_set_has_arrow(GTK_POPOVER(window->popup_menu), FALSE);
 }
 
@@ -706,7 +716,15 @@ word_list_click_pressed_cb(GtkGestureClick *gesture, gint n_press,
   if (button == GDK_BUTTON_MIDDLE && n_press == 1) {
     ACTIVATE_ACTION(window, ACTION_EDIT_WORD);
   } else if (button == GDK_BUTTON_SECONDARY) {
-    GdkRectangle rect = { (int)x, (int)y, 1, 1 };
+    GtkWidget *view = GTK_WIDGET(WORD_LIST_VIEW(window->word_list)->view);
+    double tx = x, ty = y;
+    GdkRectangle rect;
+
+    /* x/y arrive in the treeview's own coordinate space (the gesture
+     * is attached to it); the popover is anchored to word_list
+     * instead (see build_popup_menu()), so translate accordingly. */
+    gtk_widget_translate_coordinates(view, window->word_list, x, y, &tx, &ty);
+    rect = (GdkRectangle){ (int)tx, (int)ty, 1, 1 };
 
     gtk_popover_set_pointing_to(GTK_POPOVER(window->popup_menu), &rect);
     gtk_popover_popup(GTK_POPOVER(window->popup_menu));

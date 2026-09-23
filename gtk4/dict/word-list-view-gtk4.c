@@ -45,7 +45,7 @@
 static void word_list_view_class_init   (WordListViewClass *klass);
 static void word_list_view_init         (WordListView *view);
 static void word_list_view_finalize     (GObject *object);
-static void word_list_view_destroy      (GtkWidget *object);
+static void word_list_view_dispose      (GObject *object);
 
 static void word_list_view_set_property (GObject *object,
 					 guint prop_id,
@@ -61,7 +61,7 @@ static void word_list_view_callback_cell_edited (GtkCellRendererText *renderer,
 						 const gchar *new_text,
 						 WordListView *view);
 
-static GtkScrolledWindowClass *parent_class = NULL;
+static GtkWidgetClass *parent_class = NULL;
 
 enum {
     PROP_0,
@@ -102,7 +102,7 @@ word_list_view_get_type(void)
 	    0, /* n_preallocs */
 	    (GInstanceInitFunc)word_list_view_init /* instance_init */
 	};
-	type = g_type_register_static(GTK_TYPE_SCROLLED_WINDOW,
+	type = g_type_register_static(GTK_TYPE_WIDGET,
 				      "WordListView", &info, 0);
     }
     return type;
@@ -119,7 +119,13 @@ word_list_view_class_init(WordListViewClass *klass)
     gobject_class->get_property = word_list_view_get_property;
     gobject_class->set_property = word_list_view_set_property;
     gobject_class->finalize = word_list_view_finalize;
-    object_class->destroy = word_list_view_destroy;
+    gobject_class->dispose = word_list_view_dispose;
+
+    /* WordListView wraps a single GtkScrolledWindow child (see the
+     * header comment) instead of being one; BinLayout gives that one
+     * child the widget's whole allocation, matching how
+     * GtkScrolledWindow itself lays out when it *was* the base class. */
+    gtk_widget_class_set_layout_manager_type(object_class, GTK_TYPE_BIN_LAYOUT);
 
     g_object_class_install_property
 	(gobject_class,
@@ -173,18 +179,21 @@ word_list_view_init(WordListView *view)
     GtkCellRenderer *renderer;
     GtkListStore *store;
 
-    gtk_widget_set_can_focus(GTK_WIDGET(view), TRUE);
+    gtk_widget_set_focusable(GTK_WIDGET(view), TRUE);
     gtk_widget_set_receives_default(GTK_WIDGET(view), TRUE);
-    gtk_scrolled_window_set_policy(&view->container,
+
+    view->scrolled_window = gtk_scrolled_window_new();
+    gtk_widget_set_parent(view->scrolled_window, GTK_WIDGET(view));
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(view->scrolled_window),
 				   GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-    gtk_scrolled_window_set_has_frame(GTK_SCROLLED_WINDOW(&view->container), TRUE);
+    gtk_scrolled_window_set_has_frame(GTK_SCROLLED_WINDOW(view->scrolled_window), TRUE);
 
     treeview = gtk_tree_view_new();
     view->view = GTK_TREE_VIEW(treeview);
 
     /* GtkContainer is gone in GTK 4; a GtkScrolledWindow now takes its
      * single child directly. */
-    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(&view->container),
+    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(view->scrolled_window),
                                   treeview);
 
     view->selection = gtk_tree_view_get_selection(view->view);
@@ -330,7 +339,7 @@ word_list_view_finalize(GObject *object)
 }
 
 static void
-word_list_view_destroy(GtkWidget *object)
+word_list_view_dispose(GObject *object)
 {
    WordListView *view = WORD_LIST_VIEW(object);
 
@@ -339,9 +348,13 @@ word_list_view_destroy(GtkWidget *object)
      view->dict = NULL;
    }
 
-   if (GTK_WIDGET_CLASS(parent_class)->destroy) {
-     GTK_WIDGET_CLASS(parent_class)->destroy(object);
-   }
+   /* GtkWidgetClass has no "destroy" vfunc in GTK 4; a custom widget
+    * unparents its own children from dispose() instead (dispose can
+    * run more than once, so g_clear_pointer's NULL-then-skip is what
+    * makes that safe here). */
+   g_clear_pointer(&view->scrolled_window, gtk_widget_unparent);
+
+   G_OBJECT_CLASS(parent_class)->dispose(object);
 }
 
 GtkWidget *

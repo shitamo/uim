@@ -31,7 +31,14 @@
  *
  *  GTK 4 note: GtkTreeView/GtkTreeViewColumn/GtkListStore were not
  *  removed in GTK 4 (only soft-deprecated since 4.10), so this widget
- *  keeps using them; only the now-gone GtkContainer API needed a fix.
+ *  keeps using them. GtkScrolledWindow, however, is a *final* class in
+ *  GTK 4 (G_DECLARE_FINAL_TYPE) and its instance struct is opaque, so
+ *  it can no longer be subclassed by embedding "GtkScrolledWindow
+ *  container;" as the first field the way the GTK 3 version did.
+ *  WordListView is instead a plain GtkWidget with a GtkBinLayout,
+ *  holding the real GtkScrolledWindow as its one child widget -- the
+ *  standard GTK 4 replacement for "is-a" subclassing of a final
+ *  widget class.
  */
 
 #ifndef UIM_DICT_WORD_LIST_VIEW_H
@@ -61,8 +68,10 @@ typedef struct _WordListViewClass WordListViewClass;
 typedef struct _WordListInfo WordListInfo;
 
 struct _WordListView {
-    GtkScrolledWindow container;
+    GtkWidget parent_instance;
 
+    GtkWidget    *scrolled_window; /* the real GtkScrolledWindow; this
+                                     * widget's single BinLayout child */
     GtkTreeView  *view;
     GtkTreeModel *model;
 
@@ -89,7 +98,7 @@ struct _WordListView {
 };
 
 struct _WordListViewClass {
-    GtkScrolledWindowClass parent_class;
+    GtkWidgetClass parent_class;
 };
 
 GType      word_list_view_get_type            (void);

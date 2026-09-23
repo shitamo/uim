@@ -44,16 +44,44 @@
       available (HAVE_GTK4_LAYER_SHELL) -- this is the same mechanism
       panels/docks use, and it is what lets the toolbar float above
       normal windows and survive workspace switches;
-    * on X11, falls back to moving its own top-level surface directly
-      via Xlib (GDK_WINDOWING_X11), which still works because X11
-      itself (unlike the Wayland protocol) has always allowed a
-      client to reposition its own window;
     * otherwise, simply lets the window manager place a normal,
       decorated toplevel, which is the safe and portable degradation.
 
-  Dragging the bar with the primary mouse button uses the same
-  X11-only path; on a pure-Wayland session without layer-shell the
-  window is still fully usable, just not draggable/anchored.
+  Dragging note
+  -------------
+  An earlier version of this file moved the toplevel itself, one
+  gdk_surface reposition per pointer-motion event (via raw Xlib
+  XMoveWindow() on X11). That fights the window manager/compositor,
+  which owns interactive moves for every *other* window on the
+  desktop: every self-issued move round-trips through the display
+  server and comes back as an externally-initiated ConfigureNotify,
+  which GDK resyncs its frame clock for, so the toolbar dragged
+  noticeably behind a normal window no matter how much that path was
+  throttled.
+
+  Instead, once the pointer has moved a few pixels while the primary
+  button is held, this calls gdk_toplevel_begin_move(): the same
+  request GTK's own window/header drag areas use, and the same
+  protocol a window manager honors when *it* drags a titlebar
+  (_NET_WM_MOVERESIZE on X11, xdg_toplevel::move on Wayland). The
+  compositor drives the whole interactive move itself from then on --
+  this process does no per-motion-event work at all -- so it now
+  feels exactly like dragging any other window, and it works
+  identically on X11 and Wayland (layer-shell surfaces aside; see
+  above).
+
+  Distinguishing a click from a drag by *movement*, not by *where the
+  press landed*, matters here: the bar's buttons are packed edge to
+  edge with essentially no empty background behind them, so "start a
+  move only when the press isn't on a button" (an earlier version of
+  this fix) left almost nowhere to grab the bar from at all. Waiting
+  for actual motion means a plain click anywhere -- including on a
+  button -- still reaches that button normally (nothing here claims
+  the sequence, so it is free to also let the button's own click
+  gesture recognize the click), while press-and-drag from *anywhere*,
+  a button included, moves the window, matching how a user who misses
+  the small bar and grabs a button instead still expects a drag to
+  work.
 */
 
 #include <config.h>
@@ -66,88 +94,81 @@
 
 #include "uim-toolbar-widget.h"
 
-#ifdef GDK_WINDOWING_X11
-#include <gdk/x11/gdkx.h>
-#endif
-
 #ifdef HAVE_GTK4_LAYER_SHELL
 #include <gtk4-layer-shell.h>
 #endif
 
 typedef struct {
   GtkWidget *window;
-  gboolean dragging;
-  double drag_start_win_x, drag_start_win_y;
-  double drag_start_ptr_x, drag_start_ptr_y;
+
+  /* set on drag-begin, consumed (at most once per press) by the first
+   * drag-update that clears GTK's own drag threshold; see
+   * drag_update_cb(). */
+  double press_x, press_y;
+  gboolean move_started;
 } StandaloneShell;
-
-#if defined(GDK_WINDOWING_X11)
-static gboolean
-get_x11_window_origin(GtkWidget *window, int *x, int *y)
-{
-  GdkSurface *surface = gtk_native_get_surface(GTK_NATIVE(window));
-  Display *xdisplay;
-  Window xwindow, root, child;
-  int rx, ry, wx, wy;
-  unsigned int mask;
-
-  if (!surface || !GDK_IS_X11_SURFACE(surface))
-    return FALSE;
-
-  xdisplay = GDK_SURFACE_XDISPLAY(surface);
-  xwindow = GDK_SURFACE_XID(surface);
-  if (!XQueryPointer(xdisplay, xwindow, &root, &child,
-                     &rx, &ry, &wx, &wy, &mask))
-    return FALSE;
-
-  *x = rx - wx;
-  *y = ry - wy;
-  return TRUE;
-}
-
-static void
-move_x11_window(GtkWidget *window, int x, int y)
-{
-  GdkSurface *surface = gtk_native_get_surface(GTK_NATIVE(window));
-
-  if (!surface || !GDK_IS_X11_SURFACE(surface))
-    return;
-
-  XMoveWindow(GDK_SURFACE_XDISPLAY(surface), GDK_SURFACE_XID(surface), x, y);
-}
-#endif
 
 static void
 drag_begin_cb(GtkGestureDrag *gesture, double start_x, double start_y,
              gpointer data)
 {
-#if defined(GDK_WINDOWING_X11)
   StandaloneShell *shell = data;
-  int wx = 0, wy = 0;
 
-  get_x11_window_origin(shell->window, &wx, &wy);
-  shell->drag_start_win_x = wx;
-  shell->drag_start_win_y = wy;
-  shell->drag_start_ptr_x = start_x;
-  shell->drag_start_ptr_y = start_y;
-  shell->dragging = TRUE;
-#endif
+  shell->press_x = start_x;
+  shell->press_y = start_y;
+  shell->move_started = FALSE;
 }
 
 static void
 drag_update_cb(GtkGestureDrag *gesture, double offset_x, double offset_y,
               gpointer data)
 {
-#if defined(GDK_WINDOWING_X11)
   StandaloneShell *shell = data;
+  GtkWidget *widget;
+  GtkNative *native;
+  GdkSurface *surface;
+  double nx, ny;
+  guint button;
 
-  if (!shell->dragging)
+  /* GtkGestureDrag itself only starts emitting drag-update once the
+   * pointer has cleared GTK's built-in drag threshold (the same one
+   * every click-vs-drag distinction in GTK uses), so simply reacting
+   * to the first update -- rather than to the initial press, as an
+   * earlier version of this fix did -- is what lets a plain click
+   * pass through untouched to whatever is under the pointer (a
+   * button included): nothing here ever claims the sequence until a
+   * real drag is already underway. Fire the actual move only once
+   * per press. */
+  if (shell->move_started)
+    return;
+  shell->move_started = TRUE;
+
+  widget = gtk_event_controller_get_widget(GTK_EVENT_CONTROLLER(gesture));
+  native = gtk_widget_get_native(widget);
+  surface = native ? gtk_native_get_surface(native) : NULL;
+
+  if (!surface || !GDK_IS_TOPLEVEL(surface))
     return;
 
-  move_x11_window(shell->window,
-                  (int)(shell->drag_start_win_x + offset_x),
-                  (int)(shell->drag_start_win_y + offset_y));
-#endif
+  /* gdk_toplevel_begin_move() wants the position in the surface's own
+   * coordinate system, but the gesture reports it relative to
+   * `widget'; translate widget -> native surface the same way GTK's
+   * own drag areas (e.g. GtkWindowHandle) do. Use the original press
+   * point (not the current, already-offset point): that is what the
+   * compositor expects as "where the drag started". */
+  gtk_native_get_surface_transform(native, &nx, &ny);
+
+  button = gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(gesture));
+
+  gdk_toplevel_begin_move(GDK_TOPLEVEL(surface),
+                          gtk_gesture_get_device(GTK_GESTURE(gesture)),
+                          (int)button,
+                          shell->press_x + nx, shell->press_y + ny,
+                          gtk_event_controller_get_current_event_time(
+                            GTK_EVENT_CONTROLLER(gesture)));
+
+  /* the compositor now owns the drag. */
+  gtk_gesture_set_state(GTK_GESTURE(gesture), GTK_EVENT_SEQUENCE_CLAIMED);
 }
 
 static void
@@ -156,7 +177,7 @@ drag_end_cb(GtkGestureDrag *gesture, double offset_x, double offset_y,
 {
   StandaloneShell *shell = data;
 
-  shell->dragging = FALSE;
+  shell->move_started = FALSE;
 }
 
 static void

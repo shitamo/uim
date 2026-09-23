@@ -62,24 +62,36 @@ typedef struct {
   const gchar *desc;                     /* tooltip / menu text */
   const gchar *label;                    /* fallback text when no icon */
   const gchar *icon;                     /* uim pixmap base name, or NULL */
-  const gchar *command;                  /* helper binary to spawn */
+  const gchar *command;                  /* compiled-in default command */
   const gchar *custom_button_show_symbol;/* uim-custom boolean gating it */
+  const gchar *custom_command_symbol;    /* uim-custom string overriding
+                                           * `command', or NULL if this
+                                           * entry isn't user-configurable */
   gboolean show_button;
+  gchar *resolved_command;               /* custom_command_symbol's value,
+                                           * or `command' as a fallback;
+                                           * refreshed by
+                                           * helper_toolbar_check_custom() */
 } UimToolbarCommand;
 
 static UimToolbarCommand uim_toolbar_command_table[] = {
   { N_("Switch input method"), NULL, "im_switcher",
-    "uim-im-switcher-gtk4", "toolbar-show-switcher-button?", FALSE },
+    "uim-im-switcher-gtk4", "toolbar-show-switcher-button?",
+    "toolbar-switcher-command", FALSE, NULL },
   { N_("Preference"), NULL, "preferences-desktop",
-    "uim-pref-gtk4", "toolbar-show-pref-button?", FALSE },
+    "uim-pref-gtk4", "toolbar-show-pref-button?",
+    "toolbar-pref-command", FALSE, NULL },
   { N_("Japanese dictionary editor"), NULL, "uim-dict",
-    "uim-dict-gtk4", "toolbar-show-dict-button?", FALSE },
+    "uim-dict-gtk4", "toolbar-show-dict-button?",
+    "toolbar-dict-command", FALSE, NULL },
   { N_("Input pad"), NULL, "input-keyboard",
-    "uim-input-pad-ja-gtk4", "toolbar-show-input-pad-button?", FALSE },
+    "uim-input-pad-ja-gtk4", "toolbar-show-input-pad-button?",
+    "toolbar-input-pad-command", FALSE, NULL },
   { N_("Handwriting input pad"), "H", "accessories-text-editor",
-    "uim-tomoe-gtk", "toolbar-show-handwriting-input-pad-button?", FALSE },
+    "uim-tomoe-gtk", "toolbar-show-handwriting-input-pad-button?",
+    "toolbar-handwriting-input-pad-command", FALSE, NULL },
   { N_("Help"), NULL, "help-browser",
-    "uim-help", "toolbar-show-help-button?", FALSE },
+    "uim-help", "toolbar-show-help-button?", NULL, FALSE, NULL },
 };
 
 static const guint uim_toolbar_command_table_len =
@@ -106,6 +118,12 @@ struct _UimToolbar {
   GPtrArray *tool_buttons;  /* of GtkWidget*, the launcher row */
 
   GtkWidget *app_menu_popover; /* right-click / long-press menu */
+
+  GtkWidget *main_button; /* the placeholder "current state" button shown
+                            * before uim answers with any branch/leaf;
+                            * unparented (once) by the first
+                            * prop_list_update() and NULLed out here so
+                            * it is never touched again. */
 
   GHashTable *icon_cache;  /* name (+dark) -> GdkTexture* */
   gboolean with_dark_bg;
@@ -443,8 +461,15 @@ prop_group_free(gpointer data)
 {
   PropGroup *group = data;
 
+  /* Detach both widgets right here, rather than leaving group->button
+   * for the caller to sweep up separately: a blanket "remove every
+   * child of the box" sweep in prop_list_update() used to do that
+   * job, but it could not tell a branch button apart from unrelated
+   * widgets that are also parented to the box without being box
+   * children (e.g. app_menu_popover, main_button), unparenting those
+   * too and leaving their struct fields as dangling pointers. */
+  gtk_widget_unparent(group->button);
   gtk_widget_unparent(group->popover);
-  /* group->button is owned by the box; caller removes it separately. */
   g_free(group);
 }
 
@@ -514,7 +539,7 @@ rebuild_app_menu(UimToolbar *self)
   for (i = 0; i < uim_toolbar_command_table_len; i++) {
     UimToolbarCommand *entry = &uim_toolbar_command_table[i];
     gtk_list_box_append(GTK_LIST_BOX(list_box),
-      build_app_menu_row(_(entry->desc), entry->icon, entry->command));
+      build_app_menu_row(_(entry->desc), entry->icon, entry->resolved_command));
   }
 
   child = build_app_menu_row(_("Quit this toolbar"), "application-exit", NULL);
@@ -588,7 +613,8 @@ rebuild_tool_buttons(UimToolbar *self)
     set_button_style(self, button);
     gtk_widget_set_tooltip_text(button, _(entry->desc));
     gtk_size_group_add_widget(self->size_group, button);
-    g_object_set_data(G_OBJECT(button), "uim-command", (gpointer)entry->command);
+    g_object_set_data_full(G_OBJECT(button), "uim-command",
+                           g_strdup(entry->resolved_command), g_free);
     g_signal_connect(button, "clicked",
                      G_CALLBACK(tool_button_clicked_cb), self);
 
@@ -624,10 +650,24 @@ helper_toolbar_check_custom(void)
 {
   guint i;
 
-  for (i = 0; i < uim_toolbar_command_table_len; i++)
-    uim_toolbar_command_table[i].show_button =
-      uim_scm_symbol_value_bool(
-        uim_toolbar_command_table[i].custom_button_show_symbol);
+  for (i = 0; i < uim_toolbar_command_table_len; i++) {
+    UimToolbarCommand *entry = &uim_toolbar_command_table[i];
+
+    entry->show_button =
+      uim_scm_symbol_value_bool(entry->custom_button_show_symbol);
+
+    g_clear_pointer(&entry->resolved_command, g_free);
+    if (entry->custom_command_symbol) {
+      char *custom_command =
+        uim_scm_symbol_value_str(entry->custom_command_symbol);
+
+      if (custom_command && *custom_command)
+        entry->resolved_command = g_strdup(custom_command);
+      free(custom_command);
+    }
+    if (!entry->resolved_command)
+      entry->resolved_command = g_strdup(entry->command);
+  }
 }
 
 static void
@@ -639,15 +679,22 @@ prop_list_update(UimToolbar *self, gchar **lines)
   gboolean is_hidden;
   guint i;
 
-  g_ptr_array_set_size(self->prop_groups, 0); /* frees old groups+buttons */
+  g_ptr_array_set_size(self->prop_groups, 0); /* frees old groups+buttons,
+                                                * see prop_group_free() */
   clear_widget_list(self->tool_buttons, GTK_WIDGET(self));
 
-  {
-    /* remove any leftover branch buttons from the box (tool buttons
-     * were already removed above) */
-    GtkWidget *child;
-    while ((child = gtk_widget_get_first_child(GTK_WIDGET(self))))
-      gtk_box_remove(GTK_BOX(self), child);
+  /* The very first prop_list_update() replaces the placeholder
+   * "current state" button with the real branch/leaf buttons; later
+   * calls are no-ops here since main_button is NULL from then on.
+   * (This used to be done by unconditionally removing every child of
+   * the box, on the assumption that only leftover branch buttons
+   * could still be attached -- but app_menu_popover and main_button
+   * are *also* children of the box, just parented directly instead of
+   * being box children, and that swept them up too without clearing
+   * their struct fields, leaving dangling pointers behind.) */
+  if (self->main_button) {
+    gtk_widget_unparent(self->main_button);
+    self->main_button = NULL;
   }
 
   display_time = uim_scm_c_symbol(uim_scm_symbol_value("toolbar-display-time"));
@@ -733,6 +780,8 @@ helper_str_received(UimToolbar *self, gchar *str)
       self->with_dark_bg =
         uim_scm_symbol_value_bool("toolbar-icon-for-dark-background?");
       reset_icon_cache(self);
+      rebuild_tool_buttons(self);
+      rebuild_app_menu(self);
     }
   }
   g_strfreev(lines);
@@ -839,7 +888,6 @@ GtkWidget *
 uim_toolbar_new(UimToolbarKind kind)
 {
   UimToolbar *self = g_object_new(UIM_TYPE_TOOLBAR, NULL);
-  GtkWidget *main_button;
 
   install_css();
 
@@ -855,15 +903,17 @@ uim_toolbar_new(UimToolbarKind kind)
 
   rebuild_app_menu(self);
 
-  /* the always-present "current state" button, shown before uim
-   * answers with any branch/leaf; a secondary click on it (or anywhere
-   * else on the bar) opens the application menu. */
-  main_button = gtk_button_new();
-  gtk_button_set_child(GTK_BUTTON(main_button),
+  /* the placeholder "current state" button, shown before uim answers
+   * with any branch/leaf; the first prop_list_update() unparents and
+   * NULLs this out again (see there), so it is never touched twice. A
+   * secondary click on it (or anywhere else on the bar) opens the
+   * application menu. */
+  self->main_button = gtk_button_new();
+  gtk_button_set_child(GTK_BUTTON(self->main_button),
                        make_icon_or_label(self, "uim-icon", " x"));
-  set_button_style(self, main_button);
-  gtk_size_group_add_widget(self->size_group, main_button);
-  gtk_box_append(GTK_BOX(self), main_button);
+  set_button_style(self, self->main_button);
+  gtk_size_group_add_widget(self->size_group, self->main_button);
+  gtk_box_append(GTK_BOX(self), self->main_button);
 
   {
     GtkGesture *secondary = gtk_gesture_click_new();

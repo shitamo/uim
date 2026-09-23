@@ -214,7 +214,25 @@ uim_helper_read_proc(int fd)
   int rc;
 
   if (uim_helper_client_fd_is_dbus(fd)) {
+    char *msg;
+
     uim_helper_dbus_read_proc(fd);
+
+    /* uim_helper_dbus_read_proc() only pumps newly arrived D-Bus
+     * signals into client_incoming_buf, a buffer private to
+     * uim-helper-dbus.c; it does not by itself make those messages
+     * visible to uim_helper_get_message(), which every caller
+     * (uim-toolbar-widget.c among others) actually polls, and which
+     * only ever looks at uim_read_buf. Drain every complete message
+     * already sitting in the D-Bus buffer and requeue it into
+     * uim_read_buf via the same queuing entry point the rest of this
+     * file uses, so the two transports are indistinguishable from
+     * uim_helper_get_message()'s point of view. */
+    while ((msg = uim_helper_dbus_get_message())) {
+      uim_helper_client_queue_incoming_message(msg);
+      free(msg);
+    }
+
     return;
   }
 

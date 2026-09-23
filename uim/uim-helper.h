@@ -58,6 +58,7 @@ char *uim_helper_buffer_append(char *buf,
 			       const char *fragment, size_t fragment_size);
 void uim_helper_buffer_shift(char *buf, int count);
 char *uim_helper_buffer_get_message(char *buf);
+void uim_helper_client_queue_incoming_message(const char *terminated_message);
 
 void uim_set_uim_fd(uim_context uc, int fd);
 void uim_unset_uim_fd(uim_context uc);

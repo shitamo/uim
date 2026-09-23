@@ -559,6 +559,36 @@
   (N_ "help")
   (N_ "long description will be here."))
 
+(define-custom 'toolbar-switcher-command "uim-im-switcher-gtk4"
+  '(toolbar buttons)
+  '(string ".*")
+  (N_ "Command for full-featured input method switcher")
+  (N_ "The command line launched by the toolbar's input method switcher button/menu item."))
+
+(define-custom 'toolbar-pref-command "uim-pref-gtk4"
+  '(toolbar buttons)
+  '(string ".*")
+  (N_ "Command for preference tool")
+  (N_ "The command line launched by the toolbar's preference button/menu item."))
+
+(define-custom 'toolbar-dict-command "uim-dict-gtk4"
+  '(toolbar buttons)
+  '(string ".*")
+  (N_ "Command for Japanese dictionary tool")
+  (N_ "The command line launched by the toolbar's dictionary button/menu item."))
+
+(define-custom 'toolbar-input-pad-command "uim-input-pad-ja-gtk4"
+  '(toolbar buttons)
+  '(string ".*")
+  (N_ "Command for input pad")
+  (N_ "The command line launched by the toolbar's input pad button/menu item."))
+
+(define-custom 'toolbar-handwriting-input-pad-command "uim-tomoe-gtk"
+  '(toolbar buttons)
+  '(string ".*")
+  (N_ "Command for handwriting-input pad")
+  (N_ "The command line launched by the toolbar's handwriting-input pad button/menu item."))
+
 (define-custom 'toolbar-help-browser 'system
   '(toolbar toolbar-help)
   (list 'choice

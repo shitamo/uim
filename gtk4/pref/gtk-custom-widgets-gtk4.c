@@ -411,9 +411,21 @@ sync_value_string(GtkEntry *entry)
   gtk_widget_set_sensitive(gtk_widget_get_parent(GTK_WIDGET(entry)),
       custom->is_active);
   if (custom->type == UCustom_Str) {
-    gtk_editable_set_text(GTK_EDITABLE(entry), custom->value->as_str);
+    /* Avoid a redundant set_text() when the value hasn't actually
+     * changed: unlike GTK3's gtk_entry_set_text(), GTK4's
+     * gtk_editable_set_text() always resets the cursor to the start,
+     * even when re-setting identical text. Since this function is
+     * invoked as this very entry's own change-notification callback
+     * (see custom_entry_changed_cb -> uim_custom_set ->
+     * update_custom_type_string_cb), setting the text unconditionally
+     * would move the cursor to column 0 after every keystroke. */
+    if (g_strcmp0(gtk_editable_get_text(GTK_EDITABLE(entry)),
+                  custom->value->as_str) != 0)
+      gtk_editable_set_text(GTK_EDITABLE(entry), custom->value->as_str);
   } else if (custom->type == UCustom_Pathname) {
-    gtk_editable_set_text(GTK_EDITABLE(entry), custom->value->as_pathname->str);
+    if (g_strcmp0(gtk_editable_get_text(GTK_EDITABLE(entry)),
+                  custom->value->as_pathname->str) != 0)
+      gtk_editable_set_text(GTK_EDITABLE(entry), custom->value->as_pathname->str);
   }
 
   uim_custom_free(custom);

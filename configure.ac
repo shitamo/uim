@@ -1359,10 +1359,23 @@ AC_ARG_ENABLE(dict,
   [enable_dict=no])
 
 if test "x$enable_dict" != xno; then
-  PKG_CHECK_MODULES(DICT, gtk+-3.0, enable_dict=yes, enable_dict=no)
+  dnl gtk3/dict and gtk4/dict each build only under their own toolkit's
+  dnl own "if GTK3"/"if GTK4" guard (see gtk3/dict/Makefile.am and
+  dnl gtk4/dict/Makefile.am), so this overall DICT gate only needs
+  dnl *some* usable toolkit -- it used to hard-require gtk+-3.0 (via a
+  dnl PKG_CHECK_MODULES whose DICT_CFLAGS/DICT_LIBS output was actually
+  dnl unused; both per-toolkit Makefile.am's link against
+  dnl @GTK3_LIBS@/@GTK4_LIBS@ instead), which silently disabled
+  dnl --enable-dict on a GTK4-only system even though gtk4/dict is
+  dnl fully ported and ready to build.
+  if test "x$with_gtk3" = xyes || test "x$with_gtk4" = xyes; then
+    enable_dict=yes
+  else
+    enable_dict=no
+  fi
 
   if test "x$enable_dict" = xno; then
-    AC_MSG_WARN([dict needs GTK+ 3. dict disabled...])
+    AC_MSG_WARN([dict needs GTK+ 3 or GTK 4. dict disabled...])
   fi
 
   dnl Tests for -lcanna for dict

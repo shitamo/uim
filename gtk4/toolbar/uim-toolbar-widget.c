@@ -107,6 +107,12 @@ struct _UimToolbar {
 
   GtkWidget *app_menu_popover; /* right-click / long-press menu */
 
+  GtkWidget *main_button; /* the placeholder "current state" button shown
+                            * before uim answers with any branch/leaf;
+                            * unparented (once) by the first
+                            * prop_list_update() and NULLed out here so
+                            * it is never touched again. */
+
   GHashTable *icon_cache;  /* name (+dark) -> GdkTexture* */
   gboolean with_dark_bg;
   gboolean custom_enabled;
@@ -443,8 +449,15 @@ prop_group_free(gpointer data)
 {
   PropGroup *group = data;
 
+  /* Detach both widgets right here, rather than leaving group->button
+   * for the caller to sweep up separately: a blanket "remove every
+   * child of the box" sweep in prop_list_update() used to do that
+   * job, but it could not tell a branch button apart from unrelated
+   * widgets that are also parented to the box without being box
+   * children (e.g. app_menu_popover, main_button), unparenting those
+   * too and leaving their struct fields as dangling pointers. */
+  gtk_widget_unparent(group->button);
   gtk_widget_unparent(group->popover);
-  /* group->button is owned by the box; caller removes it separately. */
   g_free(group);
 }
 
@@ -639,15 +652,22 @@ prop_list_update(UimToolbar *self, gchar **lines)
   gboolean is_hidden;
   guint i;
 
-  g_ptr_array_set_size(self->prop_groups, 0); /* frees old groups+buttons */
+  g_ptr_array_set_size(self->prop_groups, 0); /* frees old groups+buttons,
+                                                * see prop_group_free() */
   clear_widget_list(self->tool_buttons, GTK_WIDGET(self));
 
-  {
-    /* remove any leftover branch buttons from the box (tool buttons
-     * were already removed above) */
-    GtkWidget *child;
-    while ((child = gtk_widget_get_first_child(GTK_WIDGET(self))))
-      gtk_box_remove(GTK_BOX(self), child);
+  /* The very first prop_list_update() replaces the placeholder
+   * "current state" button with the real branch/leaf buttons; later
+   * calls are no-ops here since main_button is NULL from then on.
+   * (This used to be done by unconditionally removing every child of
+   * the box, on the assumption that only leftover branch buttons
+   * could still be attached -- but app_menu_popover and main_button
+   * are *also* children of the box, just parented directly instead of
+   * being box children, and that swept them up too without clearing
+   * their struct fields, leaving dangling pointers behind.) */
+  if (self->main_button) {
+    gtk_widget_unparent(self->main_button);
+    self->main_button = NULL;
   }
 
   display_time = uim_scm_c_symbol(uim_scm_symbol_value("toolbar-display-time"));
@@ -839,7 +859,6 @@ GtkWidget *
 uim_toolbar_new(UimToolbarKind kind)
 {
   UimToolbar *self = g_object_new(UIM_TYPE_TOOLBAR, NULL);
-  GtkWidget *main_button;
 
   install_css();
 
@@ -858,12 +877,12 @@ uim_toolbar_new(UimToolbarKind kind)
   /* the always-present "current state" button, shown before uim
    * answers with any branch/leaf; a secondary click on it (or anywhere
    * else on the bar) opens the application menu. */
-  main_button = gtk_button_new();
-  gtk_button_set_child(GTK_BUTTON(main_button),
+  self->main_button = gtk_button_new();
+  gtk_button_set_child(GTK_BUTTON(self->main_button),
                        make_icon_or_label(self, "uim-icon", " x"));
-  set_button_style(self, main_button);
-  gtk_size_group_add_widget(self->size_group, main_button);
-  gtk_box_append(GTK_BOX(self), main_button);
+  set_button_style(self, self->main_button);
+  gtk_size_group_add_widget(self->size_group, self->main_button);
+  gtk_box_append(GTK_BOX(self), self->main_button);
 
   {
     GtkGesture *secondary = gtk_gesture_click_new();

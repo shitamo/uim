@@ -44,7 +44,7 @@ confflags += \
 	--with-qt6 \
 	--with-qt6-immodule \
 	--with-expat \
-	--disable-dict \
+	--enable-dict \
 	--disable-gnome-applet \
 	--disable-gnome3-applet \
 	--disable-kde4-applet \

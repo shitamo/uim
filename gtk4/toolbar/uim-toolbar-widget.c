@@ -467,9 +467,20 @@ prop_group_free(gpointer data)
    * job, but it could not tell a branch button apart from unrelated
    * widgets that are also parented to the box without being box
    * children (e.g. app_menu_popover, main_button), unparenting those
-   * too and leaving their struct fields as dangling pointers. */
-  gtk_widget_unparent(group->button);
+   * too and leaving their struct fields as dangling pointers.
+   *
+   * Order matters here: group->popover is parented onto group->button
+   * (see prop_group_new()), so button is the last owner of a ref on
+   * it. Unparenting button from the toolbar box *first* can drop
+   * button's own last ref and finalize it while popover is still
+   * attached as its child -- GTK4 requires a widget to have no
+   * children left when it finalizes, so that ordering produced
+   * "Finalizing <button>, but it still has children left: GtkPopover"
+   * plus a cascade of GTK_IS_ACCESSIBLE/G_IS_OBJECT CRITICALs from
+   * code that kept using the half-torn-down widget afterwards.
+   * Detach the child (popover) before detaching its parent (button). */
   gtk_widget_unparent(group->popover);
+  gtk_widget_unparent(group->button);
   g_free(group);
 }
 

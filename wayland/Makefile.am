@@ -1,4 +1,8 @@
-EXTRA_DIST = uim-wayland.desktop.in
+EXTRA_DIST =				\
+	test/run.rb			\
+	test/surrounding-text.scm	\
+	test/test-uim-wayland.rb	\
+	uim-wayland.desktop.in
 
 if WAYLAND
 
@@ -13,7 +17,9 @@ bin_PROGRAMS = uim-wayland
 uim_wayland_SOURCES = \
 	uim-wayland.c uim-wayland.h \
 	key.c \
-	candwin.c
+	candwin.c \
+	helper.c \
+	text.c
 nodist_uim_wayland_SOURCES = $(PROTOCOL_SOURCES)
 uim_wayland_CPPFLAGS = $(AM_CPPFLAGS)
 uim_wayland_CFLAGS = @WAYLAND_CFLAGS@ -Wall
@@ -45,5 +51,24 @@ desktop_DATA = uim-wayland.desktop
 uim-wayland.desktop: uim-wayland.desktop.in
 	sed -e 's|@bindir[@]|$(bindir)|g' \
 	    -e 's|@uim_pixmapsdir[@]|$(uim_pixmapsdir)|g' $< > $@
+
+# A compositor that drives uim-wayland over a socketpair. It needs no
+# display and no compositor, so it can run unattended. It reads the
+# wire format out of the same protocol descriptions wayland-scanner
+# uses, so it needs no library of its own.
+if WAYLAND_TEST
+
+TESTS_ENVIRONMENT = \
+	UIM_WAYLAND="$(abs_builddir)/uim-wayland" \
+	WAYLAND_XML="$(WAYLAND_CORE_XML)" \
+	INPUT_METHOD_XML="$(INPUT_METHOD_XML)" \
+	LIBUIM_SYSTEM_SCM_FILES="$(abs_top_srcdir)/sigscheme/lib" \
+	LIBUIM_SCM_FILES="$(abs_top_builddir)/scm:$(abs_top_srcdir)/scm" \
+	LIBUIM_PLUGIN_LIB_DIR="$(abs_top_builddir)/uim/.libs"
+TEST_EXTENSIONS = .rb
+RB_LOG_COMPILER = $(RUBY)
+TESTS = test/run.rb
+
+endif
 
 endif

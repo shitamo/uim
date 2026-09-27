@@ -54,6 +54,14 @@
 
 #define UIM_WAYLAND_PROGRAM_NAME "uim-wayland"
 
+/* wl_surface.preferred_buffer_scale needs version 6, and headers from
+ * wayland 1.22 or later. */
+#ifdef WL_SURFACE_PREFERRED_BUFFER_SCALE_SINCE_VERSION
+#define UIM_WAYLAND_COMPOSITOR_VERSION 6
+#else
+#define UIM_WAYLAND_COMPOSITOR_VERSION 4
+#endif
+
 /* zwp_input_method_context_v1.preedit_styling refers to the
  * preedit_style enum of zwp_text_input_v1. */
 enum uim_wayland_preedit_style {
@@ -104,6 +112,9 @@ struct uim_wayland {
   struct wl_shm *shm;
   struct zwp_input_method_v1 *input_method;
   struct zwp_input_panel_v1 *input_panel;
+  /* For the pointer on the candidate window. */
+  struct wl_seat *seat;
+  struct wl_pointer *pointer;
 
   /* The active context. NULL while no text field is focused. */
   struct zwp_input_method_context_v1 *context;
@@ -161,6 +172,8 @@ void uim_wayland_candwin_select(struct uim_wayland_candwin *cw, int index);
 void uim_wayland_candwin_shift_page(struct uim_wayland_candwin *cw,
                                     bool forward);
 void uim_wayland_candwin_deactivate(struct uim_wayland_candwin *cw);
+/* Its user data is the struct uim_wayland. */
+extern const struct wl_pointer_listener uim_wayland_candwin_pointer_listener;
 
 /* text.c */
 void uim_wayland_text_set_surrounding(struct uim_wayland *uw,

@@ -45,6 +45,7 @@
 #endif
 #include <errno.h>
 #include <fcntl.h>
+#include <linux/input-event-codes.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -52,15 +53,20 @@
 #include <unistd.h>
 
 #include <cairo.h>
+#include <gio/gio.h>
 #include <pango/pangocairo.h>
 
 #include "uim-wayland.h"
 
+/* Used when the desktop has no font-name, as GTK does. */
 #define CANDWIN_FONT "sans 11"
+#define DESKTOP_INTERFACE_SCHEMA "org.gnome.desktop.interface"
 #define CANDWIN_PADDING 6
 #define CANDWIN_COLUMN_GAP 8
 #define CANDWIN_ROW_GAP 2
 #define CANDWIN_N_BUFFERS 2
+/* Axis distance per page: a wheel notch is 10 in Weston, 15 in KWin. */
+#define CANDWIN_SCROLL_STEP 10.0
 
 struct candidate {
   char *heading;
@@ -96,6 +102,21 @@ struct uim_wayland_candwin {
   struct candidate *candidates; /* current page */
   int n_candidates;
 
+  /* Row geometry of the last draw, for hit testing. */
+  int rows_top;
+  int row_height;
+
+  bool pointer_inside;
+  double pointer_y;
+  double scroll;
+
+  /* The buffer scale the compositor asks for. */
+  int scale;
+
+  /* The desktop's interface font, which GTK uses too. Plasma copies
+   * its own font here. NULL without the schema. */
+  GSettings *desktop_settings;
+  char *font_name;
   PangoFontDescription *font;
 };
 
@@ -362,6 +383,7 @@ draw(struct uim_wayland_candwin *cw)
    * the text. */
   scratch = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, 1, 1);
   cr = cairo_create(scratch);
+  cairo_scale(cr, cw->scale, cw->scale);
   layout = pango_cairo_create_layout(cr);
   pango_layout_set_font_description(layout, cw->font);
 
@@ -407,7 +429,7 @@ draw(struct uim_wayland_candwin *cw)
   cairo_destroy(cr);
   cairo_surface_destroy(scratch);
 
-  b = get_buffer(cw, width, height, &all_busy);
+  b = get_buffer(cw, width * cw->scale, height * cw->scale, &all_busy);
   if (!b) {
     cw->dirty = all_busy;
     return;
@@ -418,6 +440,7 @@ draw(struct uim_wayland_candwin *cw)
                                                 b->width, b->height,
                                                 b->stride);
   cr = cairo_create(surface);
+  cairo_scale(cr, cw->scale, cw->scale);
   layout = pango_cairo_create_layout(cr);
   pango_layout_set_font_description(layout, cw->font);
 
@@ -430,6 +453,9 @@ draw(struct uim_wayland_candwin *cw)
   cairo_stroke(cr);
 
   y = CANDWIN_PADDING;
+  /* A row is highlighted from half a gap above its text. */
+  cw->rows_top = y - CANDWIN_ROW_GAP / 2;
+  cw->row_height = row_height;
   for (i = 0; i < cw->n_candidates; i++) {
     struct candidate *c = &cw->candidates[i];
     int x = CANDWIN_PADDING;
@@ -468,6 +494,9 @@ draw(struct uim_wayland_candwin *cw)
   cairo_surface_destroy(surface);
 
   b->busy = true;
+  if (wl_surface_get_version(cw->surface) >=
+      WL_SURFACE_SET_BUFFER_SCALE_SINCE_VERSION)
+    wl_surface_set_buffer_scale(cw->surface, cw->scale);
   wl_surface_attach(cw->surface, b->buffer, 0, 0);
   wl_surface_damage(cw->surface, 0, 0, width, height);
   wl_surface_commit(cw->surface);
@@ -485,6 +514,110 @@ hide(struct uim_wayland_candwin *cw)
   cw->dirty = false;
 }
 
+/* surface */
+
+#ifdef WL_SURFACE_PREFERRED_BUFFER_SCALE_SINCE_VERSION
+static void
+surface_enter(void *data, struct wl_surface *surface, struct wl_output *output)
+{
+  (void)data;
+  (void)surface;
+  (void)output;
+}
+
+static void
+surface_leave(void *data, struct wl_surface *surface, struct wl_output *output)
+{
+  (void)data;
+  (void)surface;
+  (void)output;
+}
+
+static void
+surface_preferred_buffer_scale(void *data,
+                               struct wl_surface *surface,
+                               int32_t factor)
+{
+  struct uim_wayland_candwin *cw = data;
+  (void)surface;
+
+  if (factor < 1 || factor == cw->scale)
+    return;
+  cw->scale = factor;
+  if (cw->shown)
+    draw(cw);
+}
+
+static void
+surface_preferred_buffer_transform(void *data,
+                                   struct wl_surface *surface,
+                                   uint32_t transform)
+{
+  (void)data;
+  (void)surface;
+  (void)transform;
+}
+
+static const struct wl_surface_listener surface_listener = {
+  surface_enter,
+  surface_leave,
+  surface_preferred_buffer_scale,
+  surface_preferred_buffer_transform
+};
+#endif
+
+/* font */
+
+static GSettings *
+desktop_settings_new(void)
+{
+  GSettingsSchemaSource *source = g_settings_schema_source_get_default();
+  GSettingsSchema *schema;
+  GSettings *settings = NULL;
+
+  /* g_settings_new() aborts on a missing schema. */
+  if (!source)
+    return NULL;
+  schema = g_settings_schema_source_lookup(source, DESKTOP_INTERFACE_SCHEMA,
+                                           TRUE);
+  if (!schema)
+    return NULL;
+  if (g_settings_schema_has_key(schema, "font-name"))
+    settings = g_settings_new_full(schema, NULL, NULL);
+  g_settings_schema_unref(schema);
+  return settings;
+}
+
+/* Read on every activation: without a GLib main loop there is no
+ * change notification. */
+static void
+update_font(struct uim_wayland_candwin *cw)
+{
+  char *name = NULL;
+
+  if (cw->desktop_settings) {
+    /* GSettings queues work for the default main context. */
+    while (g_main_context_iteration(NULL, FALSE))
+      ;
+    name = g_settings_get_string(cw->desktop_settings, "font-name");
+    if (name[0] == '\0') {
+      g_free(name);
+      name = NULL;
+    }
+  }
+  if (!name)
+    name = g_strdup(CANDWIN_FONT);
+  if (cw->font && g_strcmp0(name, cw->font_name) == 0) {
+    g_free(name);
+    return;
+  }
+  g_free(cw->font_name);
+  cw->font_name = name;
+  if (cw->font)
+    pango_font_description_free(cw->font);
+  cw->font = pango_font_description_from_string(name);
+}
+
 /* public API */
 
 struct uim_wayland_candwin *
@@ -499,17 +632,14 @@ uim_wayland_candwin_new(struct uim_wayland *uw)
   memset(cw, 0, sizeof(*cw));
   cw->uw = uw;
   cw->index = -1;
-  cw->font = pango_font_description_from_string(CANDWIN_FONT);
+  cw->scale = 1;
+  cw->desktop_settings = desktop_settings_new();
+  update_font(cw);
 
   cw->surface = wl_compositor_create_surface(uw->compositor);
-  /* Candidates are chosen from the keyboard and this process binds no
-   * wl_seat, so an empty input region keeps the panel from swallowing
-   * clicks meant for the application underneath. */
-  {
-    struct wl_region *region = wl_compositor_create_region(uw->compositor);
-    wl_surface_set_input_region(cw->surface, region);
-    wl_region_destroy(region);
-  }
+#ifdef WL_SURFACE_PREFERRED_BUFFER_SCALE_SINCE_VERSION
+  wl_surface_add_listener(cw->surface, &surface_listener, cw);
+#endif
   cw->panel_surface =
     zwp_input_panel_v1_get_input_panel_surface(uw->input_panel, cw->surface);
   /* An overlay panel is positioned by the compositor next to the
@@ -535,6 +665,9 @@ uim_wayland_candwin_free(struct uim_wayland_candwin *cw)
     wl_surface_destroy(cw->surface);
   if (cw->font)
     pango_font_description_free(cw->font);
+  g_free(cw->font_name);
+  if (cw->desktop_settings)
+    g_object_unref(cw->desktop_settings);
   free(cw);
 }
 
@@ -549,6 +682,7 @@ uim_wayland_candwin_activate(struct uim_wayland_candwin *cw,
   cw->display_limit = display_limit;
   cw->page = 0;
   cw->index = -1;
+  update_font(cw);
   fetch_page(cw);
   draw(cw);
 }
@@ -615,3 +749,182 @@ uim_wayland_candwin_deactivate(struct uim_wayland_candwin *cw)
   cw->index = -1;
   cw->page = 0;
 }
+
+/* pointer */
+
+static struct uim_wayland_candwin *
+pointer_candwin(struct uim_wayland *uw)
+{
+  struct uim_wayland_candwin *cw = uw->candwin;
+
+  if (!cw || !cw->pointer_inside || !cw->shown || !uw->context)
+    return NULL;
+  return cw;
+}
+
+static void
+pointer_enter(void *data,
+              struct wl_pointer *pointer,
+              uint32_t serial,
+              struct wl_surface *surface,
+              wl_fixed_t x,
+              wl_fixed_t y)
+{
+  struct uim_wayland *uw = data;
+  struct uim_wayland_candwin *cw = uw->candwin;
+  (void)pointer;
+  (void)serial;
+  (void)x;
+
+  if (!cw)
+    return;
+  cw->pointer_inside = surface == cw->surface;
+  cw->pointer_y = wl_fixed_to_double(y);
+  cw->scroll = 0;
+}
+
+static void
+pointer_leave(void *data,
+              struct wl_pointer *pointer,
+              uint32_t serial,
+              struct wl_surface *surface)
+{
+  struct uim_wayland *uw = data;
+  (void)pointer;
+  (void)serial;
+  (void)surface;
+
+  if (uw->candwin)
+    uw->candwin->pointer_inside = false;
+}
+
+static void
+pointer_motion(void *data,
+               struct wl_pointer *pointer,
+               uint32_t time,
+               wl_fixed_t x,
+               wl_fixed_t y)
+{
+  struct uim_wayland *uw = data;
+  (void)pointer;
+  (void)time;
+  (void)x;
+
+  if (uw->candwin)
+    uw->candwin->pointer_y = wl_fixed_to_double(y);
+}
+
+/* A click selects without committing, as in the GTK and Qt windows. */
+static void
+pointer_button(void *data,
+               struct wl_pointer *pointer,
+               uint32_t serial,
+               uint32_t time,
+               uint32_t button,
+               uint32_t state)
+{
+  struct uim_wayland_candwin *cw = pointer_candwin(data);
+  int row, index;
+  (void)pointer;
+  (void)serial;
+  (void)time;
+
+  if (!cw || button != BTN_LEFT || state != WL_POINTER_BUTTON_STATE_PRESSED)
+    return;
+  if (cw->row_height <= 0 || cw->pointer_y < cw->rows_top)
+    return;
+  row = (int)((cw->pointer_y - cw->rows_top) / cw->row_height);
+  if (row >= cw->n_candidates)
+    return;
+  index = cw->page * page_size(cw) + row;
+  if (index >= cw->nr)
+    return;
+
+  cw->index = index;
+  /* uim may re-enter the selector callbacks and close the window. */
+  uim_set_candidate_index(cw->uw->uc, index);
+  if (cw->nr > 0)
+    draw(cw);
+}
+
+static void
+pointer_axis(void *data,
+             struct wl_pointer *pointer,
+             uint32_t time,
+             uint32_t axis,
+             wl_fixed_t value)
+{
+  struct uim_wayland_candwin *cw = pointer_candwin(data);
+  bool forward;
+  (void)pointer;
+  (void)time;
+
+  if (!cw || axis != WL_POINTER_AXIS_VERTICAL_SCROLL)
+    return;
+  cw->scroll += wl_fixed_to_double(value);
+  if (cw->nr <= 0 ||
+      (cw->scroll < CANDWIN_SCROLL_STEP && cw->scroll > -CANDWIN_SCROLL_STEP))
+    return;
+  /* One page per event, dropping the rest: a KWin notch of 15 would
+   * otherwise leave 5 behind and turn two pages every other notch. */
+  forward = cw->scroll > 0;
+  cw->scroll = 0;
+  /* Otherwise uim isn't told about the page, as in GTK. */
+  if (cw->index < 0)
+    cw->index = cw->page * page_size(cw);
+  uim_wayland_candwin_shift_page(cw, forward);
+}
+
+static void
+pointer_frame(void *data, struct wl_pointer *pointer)
+{
+  (void)data;
+  (void)pointer;
+}
+
+static void
+pointer_axis_source(void *data,
+                    struct wl_pointer *pointer,
+                    uint32_t axis_source)
+{
+  (void)data;
+  (void)pointer;
+  (void)axis_source;
+}
+
+static void
+pointer_axis_stop(void *data,
+                  struct wl_pointer *pointer,
+                  uint32_t time,
+                  uint32_t axis)
+{
+  (void)data;
+  (void)pointer;
+  (void)time;
+  (void)axis;
+}
+
+static void
+pointer_axis_discrete(void *data,
+                      struct wl_pointer *pointer,
+                      uint32_t axis,
+                      int32_t discrete)
+{
+  (void)data;
+  (void)pointer;
+  (void)axis;
+  (void)discrete;
+}
+
+/* Up to wl_seat version 5. */
+const struct wl_pointer_listener uim_wayland_candwin_pointer_listener = {
+  pointer_enter,
+  pointer_leave,
+  pointer_motion,
+  pointer_button,
+  pointer_axis,
+  pointer_frame,
+  pointer_axis_source,
+  pointer_axis_stop,
+  pointer_axis_discrete
+};

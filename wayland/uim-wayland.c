@@ -34,6 +34,7 @@
 #endif
 
 #include <errno.h>
+#include <fcntl.h>
 #include <locale.h>
 #include <poll.h>
 #include <signal.h>
@@ -52,6 +53,9 @@
 
 
 static volatile sig_atomic_t terminate_requested = 0;
+/* The handler may run on a GLib thread, so it wakes up poll() in the
+ * main thread through this pipe. */
+static int terminate_pipe[2] = {-1, -1};
 static bool debug_enabled = false;
 
 static void debug(const char *format, ...)
@@ -74,7 +78,28 @@ debug(const char *format, ...)
 static void
 terminate_handler(int sig)
 {
+  int saved_errno = errno;
+
   terminate_requested = sig;
+  if (terminate_pipe[1] >= 0 && write(terminate_pipe[1], "", 1) < 0) {
+    /* Full already: poll() wakes up anyway. */
+  }
+  errno = saved_errno;
+}
+
+static bool
+open_terminate_pipe(void)
+{
+  int i;
+
+  if (pipe(terminate_pipe) < 0)
+    return false;
+  for (i = 0; i < 2; i++) {
+    fcntl(terminate_pipe[i], F_SETFD, FD_CLOEXEC);
+    fcntl(terminate_pipe[i], F_SETFL,
+          fcntl(terminate_pipe[i], F_GETFL) | O_NONBLOCK);
+  }
+  return true;
 }
 
 /* pressed key bookkeeping */
@@ -732,6 +757,48 @@ static const struct zwp_input_method_v1_listener input_method_listener = {
   input_method_deactivate
 };
 
+/* seat */
+
+static void
+release_pointer(struct uim_wayland *uw)
+{
+  if (!uw->pointer)
+    return;
+  if (wl_pointer_get_version(uw->pointer) >= WL_POINTER_RELEASE_SINCE_VERSION)
+    wl_pointer_release(uw->pointer);
+  else
+    wl_pointer_destroy(uw->pointer);
+  uw->pointer = NULL;
+}
+
+static void
+seat_capabilities(void *data, struct wl_seat *seat, uint32_t capabilities)
+{
+  struct uim_wayland *uw = data;
+  bool has_pointer = (capabilities & WL_SEAT_CAPABILITY_POINTER) != 0;
+
+  if (has_pointer && !uw->pointer) {
+    uw->pointer = wl_seat_get_pointer(seat);
+    wl_pointer_add_listener(uw->pointer,
+                            &uim_wayland_candwin_pointer_listener, uw);
+  } else if (!has_pointer) {
+    release_pointer(uw);
+  }
+}
+
+static void
+seat_name(void *data, struct wl_seat *seat, const char *name)
+{
+  (void)data;
+  (void)seat;
+  (void)name;
+}
+
+static const struct wl_seat_listener seat_listener = {
+  seat_capabilities,
+  seat_name
+};
+
 /* registry */
 
 static void
@@ -744,9 +811,10 @@ registry_global(void *data,
   struct uim_wayland *uw = data;
 
   if (strcmp(interface, wl_compositor_interface.name) == 0) {
+    if (version > UIM_WAYLAND_COMPOSITOR_VERSION)
+      version = UIM_WAYLAND_COMPOSITOR_VERSION;
     uw->compositor = wl_registry_bind(registry, name,
-                                      &wl_compositor_interface,
-                                      version < 4 ? version : 4);
+                                      &wl_compositor_interface, version);
   } else if (strcmp(interface, wl_shm_interface.name) == 0) {
     uw->shm = wl_registry_bind(registry, name, &wl_shm_interface, 1);
   } else if (strcmp(interface, zwp_input_method_v1_interface.name) == 0) {
@@ -757,6 +825,11 @@ registry_global(void *data,
   } else if (strcmp(interface, zwp_input_panel_v1_interface.name) == 0) {
     uw->input_panel = wl_registry_bind(registry, name,
                                        &zwp_input_panel_v1_interface, 1);
+  } else if (strcmp(interface, wl_seat_interface.name) == 0 && !uw->seat) {
+    /* Only the first seat. */
+    uw->seat = wl_registry_bind(registry, name, &wl_seat_interface,
+                                version < 5 ? version : 5);
+    wl_seat_add_listener(uw->seat, &seat_listener, uw);
   }
 }
 
@@ -782,8 +855,8 @@ run(struct uim_wayland *uw)
 
   uw->running = true;
   while (uw->running && !terminate_requested) {
-    struct pollfd fds[2];
-    int nfds = 1;
+    struct pollfd fds[3];
+    int nfds = 2;
     short flush_events;
     int ret;
 
@@ -808,11 +881,14 @@ run(struct uim_wayland *uw)
     fds[0].fd = display_fd;
     fds[0].events = flush_events;
     fds[0].revents = 0;
+    fds[1].fd = terminate_pipe[0];
+    fds[1].events = POLLIN;
+    fds[1].revents = 0;
     if (uw->helper_fd >= 0) {
-      fds[1].fd = uw->helper_fd;
-      fds[1].events = POLLIN;
-      fds[1].revents = 0;
-      nfds = 2;
+      fds[2].fd = uw->helper_fd;
+      fds[2].events = POLLIN;
+      fds[2].revents = 0;
+      nfds = 3;
     }
     ret = poll(fds, nfds, -1);
     if (ret < 0) {
@@ -833,8 +909,8 @@ run(struct uim_wayland *uw)
     if (wl_display_dispatch_pending(uw->display) < 0)
       break;
 
-    if (nfds == 2 && fds[1].revents) {
-      if (fds[1].revents & (POLLERR | POLLNVAL))
+    if (nfds == 3 && fds[2].revents) {
+      if (fds[2].revents & (POLLERR | POLLNVAL))
         uim_wayland_helper_disconnect(uw);
       else
         uim_wayland_helper_dispatch(uw);
@@ -961,6 +1037,11 @@ main(int argc, char **argv)
 
   uw->candwin = uim_wayland_candwin_new(uw);
 
+  if (!open_terminate_pipe()) {
+    fprintf(stderr, "%s: cannot create a pipe: %s\n",
+            UIM_WAYLAND_PROGRAM_NAME, strerror(errno));
+    return EXIT_FAILURE;
+  }
   memset(&action, 0, sizeof(action));
   sigemptyset(&action.sa_mask);
   action.sa_handler = terminate_handler;
@@ -980,6 +1061,13 @@ main(int argc, char **argv)
   uim_quit();
   free(uw->segments);
   free(uw->surrounding_text);
+  release_pointer(uw);
+  if (uw->seat) {
+    if (wl_seat_get_version(uw->seat) >= WL_SEAT_RELEASE_SINCE_VERSION)
+      wl_seat_release(uw->seat);
+    else
+      wl_seat_destroy(uw->seat);
+  }
   if (uw->input_panel)
     zwp_input_panel_v1_destroy(uw->input_panel);
   zwp_input_method_v1_destroy(uw->input_method);

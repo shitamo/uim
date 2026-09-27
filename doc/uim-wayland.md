@@ -12,9 +12,15 @@ focus. Key events arrive through a keyboard grab, go through libuim,
 and the results are sent back as preedit and committed text. Keys uim
 doesn't consume are forwarded to the focused application. Candidates
 are drawn on a `zwp_input_panel_v1` overlay panel, which the
-compositor places next to the text cursor. uim-helper-server is used
-as in the other bridges, so the toolbar, `uim-im-switcher-cli` and
-input method changes made by other uim processes all work.
+compositor places next to the text cursor. A click on a candidate
+selects it, as the arrow keys would, and the wheel turns the page.
+The candidates use the desktop's interface font, the `font-name` key
+of `org.gnome.desktop.interface` that GTK uses too and that Plasma
+keeps in step with its own font setting. Without that schema they use
+`sans 11`.
+uim-helper-server is used as in the other bridges, so the toolbar,
+`uim-im-switcher-cli` and input method changes made by other uim
+processes all work.
 
 The text around the cursor is passed to uim, so input methods that
 look at what has already been typed work. Fields that take no composed
@@ -28,7 +34,8 @@ protocol, so `uim-wayland` can't be used there.
 ## Build
 
 `uim-wayland` is built when `wayland-client`, `wayland-protocols`,
-`wayland-scanner`, `xkbcommon`, `cairo` and `pangocairo` are found.
+`wayland-scanner`, `xkbcommon`, `cairo`, `pangocairo` and `gio-2.0`
+are found.
 Pass `--without-wayland` to `configure` to disable it.
 
 ## KWin
@@ -106,9 +113,13 @@ If the input method doesn't start, look there first.
   application relies on compositor-side repeat, and asks the input
   method to do the repeating otherwise, in which case keys don't
   repeat.
-- The candidate window has no pointer support; candidates are chosen
-  from the keyboard. It is drawn at scale 1, so it looks blurry on a
-  scaled output.
+- The candidate window is drawn at the integer scale the compositor
+  asks for with `wl_surface.preferred_buffer_scale`. A compositor
+  without it, or a build against wayland older than 1.22, gets scale
+  1, which looks blurry on a scaled output. On a fractional scale the
+  compositor scales the buffer down, so it is slightly soft. It
+  doesn't set a cursor image, so what the pointer looks like over it
+  is up to the compositor.
 - `text-input-v3` has no preedit styling, so applications using it,
   Chromium among them, show the preedit without underlines. KWin does
   turn the highlighted segment into a selection range, so the segment

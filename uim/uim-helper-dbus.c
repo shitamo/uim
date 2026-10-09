@@ -225,6 +225,17 @@ uim_helper_dbus_send_message(int fd, const char *message)
     dbus_message_set_no_reply(m, 1);
     dbus_connection_send(client_conn, m, NULL);
     dbus_message_unref(m);
+
+    /* This connection is driven by hand (the caller polls its fd for
+     * readability only, and we never install libdbus watch functions),
+     * so dbus_connection_send() merely queues the message: nothing
+     * writes it out until a later dbus_connection_read_write_dispatch()
+     * or flush -- i.e. until some *incoming* traffic wakes the caller's
+     * poll loop. A click on a toolbar menu item (prop_activate) then
+     * only took effect when the next unrelated message happened to
+     * arrive. The old Unix-socket path write()s synchronously; flush
+     * here to match. */
+    dbus_connection_flush(client_conn);
   }
 
   free(terminated);

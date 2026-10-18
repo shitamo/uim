@@ -17,17 +17,17 @@
      may be used to endorse or promote products derived from this software
      without specific prior written permission.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' AND
-  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE LIABLE
-  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
-  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-  SUCH DAMAGE.
+  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.
 
   GTK 4 note: gtk_main()/gtk_main_quit() are gone; the event loop is now
   driven by GtkApplication. gtk_window_set_default_icon_list() is gone
@@ -80,8 +80,7 @@ parse_arg(int argc, char *argv[])
 
   ae_mode = MODE_EDIT;
 
-  while ((ch = getopt(argc, argv, "aehi:")) != -1)
-  {
+  while ((ch = getopt(argc, argv, "aehi:")) != -1) {
     switch (ch) {
     case 'a':
       ae_mode = MODE_ADD;
@@ -91,22 +90,23 @@ parse_arg(int argc, char *argv[])
       break;
     case 'i':
       if (!strcmp(optarg, "anthy"))
-	g_startup_dictionary = DICT_ENUM_DICTIONARY_TYPE_ANTHY;
+        g_startup_dictionary = DICT_ENUM_DICTIONARY_TYPE_ANTHY;
       else if (!strcmp(optarg, "canna"))
-	g_startup_dictionary = DICT_ENUM_DICTIONARY_TYPE_CANNA;
+        g_startup_dictionary = DICT_ENUM_DICTIONARY_TYPE_CANNA;
       else if (!strcmp(optarg, "prime"))
-	g_startup_dictionary = DICT_ENUM_DICTIONARY_TYPE_PRIME;
+        g_startup_dictionary = DICT_ENUM_DICTIONARY_TYPE_PRIME;
       else if (!strcmp(optarg, "skk"))
-	g_startup_dictionary = DICT_ENUM_DICTIONARY_TYPE_SKK;
+        g_startup_dictionary = DICT_ENUM_DICTIONARY_TYPE_SKK;
       else
-	g_startup_dictionary = DICT_ENUM_DICTIONARY_TYPE_ANTHY;
+        g_startup_dictionary = DICT_ENUM_DICTIONARY_TYPE_ANTHY;
       break;
     case 'h':
       fprintf(stderr, "Usage: uim-dict-gtk4 [OPTION...]\n");
       fprintf(stderr, "\n");
       fprintf(stderr, "Options:\n");
       fprintf(stderr, " -h            Show this help\n");
-      fprintf(stderr, " -i [IM]       Open a dictionary for IM [anthy, canna]\n");
+      fprintf(stderr,
+              " -i [IM]       Open a dictionary for IM [anthy, canna]\n");
       fprintf(stderr, " -e            Start with editing mode (default)\n");
       fprintf(stderr, " -a            Start with adding mode\n");
       exit(1);
@@ -231,8 +231,7 @@ create_window(GtkApplication *app)
   if (!window)
     return -1;
 
-  g_signal_connect(window, "destroy",
-		   G_CALLBACK(dict_window_destroy_cb), NULL);
+  g_signal_connect(window, "destroy", G_CALLBACK(dict_window_destroy_cb), NULL);
 
   return 0;
 }

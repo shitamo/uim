@@ -17,17 +17,17 @@
      may be used to endorse or promote products derived from this software
      without specific prior written permission.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' AND
-  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE LIABLE
-  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
-  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-  SUCH DAMAGE.
+  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.
 
   GTK 4 note: GtkUIManager/GtkActionGroup/GtkAction/GtkRadioAction do not
   exist in GTK 4. The menu bar and the word-list popup menu are now built
@@ -44,35 +44,44 @@
 
 #include <gtk/gtk.h>
 
-void dict_window_destroy_cb(GtkWidget *widget, gpointer data);
+void
+dict_window_destroy_cb(GtkWidget *widget, gpointer data);
 
 G_BEGIN_DECLS
 
-#define WORD_LIST_WINDOW_TYPE		(word_list_window_get_type())
-#define WORD_LIST_WINDOW(obj)		(G_TYPE_CHECK_INSTANCE_CAST((obj), WORD_LIST_WINDOW_TYPE, WordListWindow))
-#define WORD_LIST_WINDOW_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST((klass), WORD_LIST_WINDOW_TYPE, WordListWindowClass))
-#define IS_WORD_LIST_WINDOW(obj)	(G_TYPE_CHECK_INSTANCE_TYPE((obj), WORD_LIST_WINDOW_TYPE))
+#define WORD_LIST_WINDOW_TYPE (word_list_window_get_type())
+#define WORD_LIST_WINDOW(obj)                                                  \
+  (G_TYPE_CHECK_INSTANCE_CAST((obj), WORD_LIST_WINDOW_TYPE, WordListWindow))
+#define WORD_LIST_WINDOW_CLASS(klass)                                          \
+  (G_TYPE_CHECK_CLASS_CAST((klass), WORD_LIST_WINDOW_TYPE, WordListWindowClass))
+#define IS_WORD_LIST_WINDOW(obj)                                               \
+  (G_TYPE_CHECK_INSTANCE_TYPE((obj), WORD_LIST_WINDOW_TYPE))
 #define IS_WORD_LIST_WINDOW_CLASS(klass)(G_TYPE_CHECK_CLASS_TYPE((klass), WORD_LIST_WINDOW_TYPE)
-#define WORD_LIST_WINDOW_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), WORD_LIST_WINDOW_TYPE, WordListWindowClass))
+#define WORD_LIST_WINDOW_GET_CLASS(obj)                                        \
+  (G_TYPE_INSTANCE_GET_CLASS((obj), WORD_LIST_WINDOW_TYPE, WordListWindowClass))
 
-typedef struct _WordListWindow      WordListWindow;
+typedef struct _WordListWindow WordListWindow;
 typedef struct _WordListWindowClass WordListWindowClass;
 
-struct _WordListWindow {
-  GtkWindow           parent;
-  GtkWidget          *word_list;
-  GtkWidget          *statusbar;
-  GtkWidget          *popup_menu;      /* GtkPopoverMenu, parented on the word list */
-  GSimpleActionGroup *actions;         /* "win" action group */
+struct _WordListWindow
+{
+  GtkWindow parent;
+  GtkWidget *word_list;
+  GtkWidget *statusbar;
+  GtkWidget *popup_menu;       /* GtkPopoverMenu, parented on the word list */
+  GSimpleActionGroup *actions; /* "win" action group */
   DictEnumDictionaryType dictionary_type;
 };
 
-struct _WordListWindowClass {
+struct _WordListWindowClass
+{
   GtkWindowClass parent_class;
 };
 
-GType      word_list_window_get_type (void);
-GtkWidget *word_list_window_new      (int type);
+GType
+word_list_window_get_type(void);
+GtkWidget *
+word_list_window_new(int type);
 
 G_END_DECLS
 
@@ -82,9 +91,11 @@ enum {
   PROP_LAST
 };
 
-GType dict_enum_dictionary_type_get_type (void);
-#define DICT_TYPE_ENUM_DICTIONARY_TYPE dict_enum_dictionary_type_get_type ()
+GType
+dict_enum_dictionary_type_get_type(void);
+#define DICT_TYPE_ENUM_DICTIONARY_TYPE dict_enum_dictionary_type_get_type()
 
-DictEnumDictionaryType dict_get_dictionary_type(GtkWidget *window);
+DictEnumDictionaryType
+dict_get_dictionary_type(GtkWidget *window);
 
 #endif /* UIM_DICT_ANTHY_WORD_LIST_GTK_H */

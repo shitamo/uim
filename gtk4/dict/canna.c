@@ -16,17 +16,17 @@
  *     may be used to endorse or promote products derived from this software
  *     without specific prior written permission.
  *
- *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' AND
- *  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- *  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE LIABLE
- *  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- *  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- *  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- *  SUCH DAMAGE.
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
+ * IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include <config.h>
@@ -48,29 +48,36 @@
 #include "canna.h"
 #include "canna-cclass.h"
 
-extern int RkGetWordTextDic(int, unsigned char *, unsigned char *,
-			    unsigned char *, int);
-extern int RkCreateDic(int, unsigned char *, int);
+extern int
+RkGetWordTextDic(int, unsigned char *, unsigned char *, unsigned char *, int);
+extern int
+RkCreateDic(int, unsigned char *, int);
 
 static char *g_cannaserver;
 
 /* Canna support */
-static uim_dict *uim_dict_canna_open(const char *identifier);
-static void uim_dict_canna_close(uim_dict *dict);
-static int uim_dict_canna_add_word(uim_dict *dict, uim_word *word);
-static int uim_dict_canna_change_word(uim_dict *dict, uim_word *word);
-static int uim_dict_canna_remove_word(uim_dict *dict, uim_word *word);
-static void uim_dict_canna_refresh(uim_dict *dict);
+static uim_dict *
+uim_dict_canna_open(const char *identifier);
+static void
+uim_dict_canna_close(uim_dict *dict);
+static int
+uim_dict_canna_add_word(uim_dict *dict, uim_word *word);
+static int
+uim_dict_canna_change_word(uim_dict *dict, uim_word *word);
+static int
+uim_dict_canna_remove_word(uim_dict *dict, uim_word *word);
+static void
+uim_dict_canna_refresh(uim_dict *dict);
 
 uim_dict_class uim_dict_class_canna = {
-  "Canna",	/* type */
+  "Canna", /* type */
   NULL,
   NULL,
 
   NULL,
   NULL,
 
-  uim_dict_canna_open,	/* open */
+  uim_dict_canna_open, /* open */
 
   NULL,
   NULL,
@@ -120,8 +127,8 @@ dict_canna_get_priv_dic_dir(char *dirname, size_t len)
 }
 
 static void
-canna_word_append(uim_word **head, char *phon, char *cclass_native, char *desc,
-		  int freq)
+canna_word_append(
+  uim_word **head, char *phon, char *cclass_native, char *desc, int freq)
 {
   int pos;
   const char *cclass_code = NULL;
@@ -130,16 +137,24 @@ canna_word_append(uim_word **head, char *phon, char *cclass_native, char *desc,
     for (pos = 0; pos < NR_POS; pos++) {
       cclass_code = find_desc_from_code_with_type(cclass_native, pos);
       if (cclass_code)
-	break;
+        break;
     }
 
-    word_append(head, WORD_TYPE_CANNA, "EUC-JP",
-		phon, desc, cclass_code, cclass_native,
-		freq, 0, NULL);
+    word_append(head,
+                WORD_TYPE_CANNA,
+                "EUC-JP",
+                phon,
+                desc,
+                cclass_code,
+                cclass_native,
+                freq,
+                0,
+                NULL);
   }
 }
 
-static void parse_canna_priv_dic_buf(char *buf, uim_word **head)
+static void
+parse_canna_priv_dic_buf(char *buf, uim_word **head)
 {
   char *p, *q, *r, *s;
   char *phon, *desc, *cclass_native;
@@ -170,9 +185,9 @@ static void parse_canna_priv_dic_buf(char *buf, uim_word **head)
       r = strdup(p);
       s = strchr(r, '*');
       if (s != NULL) {
-	*s = '\0';
-	s++;
-	freq = atoi(s);
+        *s = '\0';
+        s++;
+        freq = atoi(s);
       }
       cclass_native = r;
     } else {
@@ -211,25 +226,32 @@ dict_canna_read_priv_dic_list(uim_word **head)
   if (!dict_canna_get_priv_dic_dir(dirname, sizeof(dirname)))
     return status;
 
-  status = RkGetWordTextDic(CANNA_STD_CONTEXT, (unsigned char *)dirname,
-			    dicname, buf, CANNA_PRIV_DIC_BUFLEN);
+  status = RkGetWordTextDic(CANNA_STD_CONTEXT,
+                            (unsigned char *)dirname,
+                            dicname,
+                            buf,
+                            CANNA_PRIV_DIC_BUFLEN);
 
   if (status == -2)
     return status;
 
-
-  while (status > 0)  {
+  while (status > 0) {
     parse_canna_priv_dic_buf((char *)buf, head);
-    status = RkGetWordTextDic(CANNA_STD_CONTEXT, (unsigned char *)"",
-			      (unsigned char *)"", buf, CANNA_PRIV_DIC_BUFLEN);
+    status = RkGetWordTextDic(CANNA_STD_CONTEXT,
+                              (unsigned char *)"",
+                              (unsigned char *)"",
+                              buf,
+                              CANNA_PRIV_DIC_BUFLEN);
   }
 
   return status;
 }
 
 static int
-dict_canna_add_entry_to_priv_dic(char *phon, char *desc, char *cclass_native,
-				 int freq)
+dict_canna_add_entry_to_priv_dic(char *phon,
+                                 char *desc,
+                                 char *cclass_native,
+                                 int freq)
 {
   int status;
   char dicname[] = CANNA_DEFAULT_PRIV_DICNAME;
@@ -242,7 +264,8 @@ dict_canna_add_entry_to_priv_dic(char *phon, char *desc, char *cclass_native,
   status = RkMountDic(CANNA_STD_CONTEXT, dicname, 0);
 
   if (status == 0) {
-    if (asprintf(&entry, "%s %s %s\n", phon, cclass_native, desc) < 0 || entry == NULL) {
+    if (asprintf(&entry, "%s %s %s\n", phon, cclass_native, desc) < 0 ||
+        entry == NULL) {
       status = RkDefineDic(CANNA_STD_CONTEXT, dicname, entry);
       free(entry);
     }
@@ -254,8 +277,9 @@ dict_canna_add_entry_to_priv_dic(char *phon, char *desc, char *cclass_native,
 }
 
 static int
-dict_canna_delete_entry_from_priv_dic(char *phon, char *desc,
-				      char *cclass_native)
+dict_canna_delete_entry_from_priv_dic(char *phon,
+                                      char *desc,
+                                      char *cclass_native)
 {
   int status;
   char dicname[] = CANNA_DEFAULT_PRIV_DICNAME;
@@ -268,7 +292,8 @@ dict_canna_delete_entry_from_priv_dic(char *phon, char *desc,
   status = RkMountDic(CANNA_STD_CONTEXT, dicname, 0);
 
   if (status == 0) {
-    if (asprintf(&entry, "%s %s %s\n", phon, cclass_native, desc) < 0 || entry == NULL) {
+    if (asprintf(&entry, "%s %s %s\n", phon, cclass_native, desc) < 0 ||
+        entry == NULL) {
       status = RkDeleteDic(CANNA_STD_CONTEXT, dicname, entry);
       free(entry);
     }
@@ -345,8 +370,10 @@ uim_dict_canna_add_word(uim_dict *dict, uim_word *word)
   if (dict == NULL || word == NULL)
     return 0;
 
-  return dict_canna_add_entry_to_priv_dic(word->phon, word->desc,
-					  word->cclass_native, word->freq);
+  return dict_canna_add_entry_to_priv_dic(word->phon,
+                                          word->desc,
+                                          word->cclass_native,
+                                          word->freq);
 }
 
 static int
@@ -361,8 +388,9 @@ uim_dict_canna_remove_word(uim_dict *dict, uim_word *word)
   if (dict == NULL)
     return 0;
 
-  return dict_canna_delete_entry_from_priv_dic(word->phon, word->desc,
-				      word->cclass_native);
+  return dict_canna_delete_entry_from_priv_dic(word->phon,
+                                               word->desc,
+                                               word->cclass_native);
 }
 
 static void

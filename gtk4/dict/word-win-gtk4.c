@@ -17,17 +17,17 @@
      may be used to endorse or promote products derived from this software
      without specific prior written permission.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' AND
-  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE LIABLE
-  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
-  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-  SUCH DAMAGE.
+  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.
 
 */
 
@@ -57,25 +57,33 @@ static char *pos_broad[] = {
   N_("Etc"),
 };
 
-static void word_window_class_init  (WordWindowClass *window);
-static void word_window_init        (WordWindow      *window);
+static void
+word_window_class_init(WordWindowClass *window);
+static void
+word_window_init(WordWindow *window);
 
-static GtkWidget *word_window_necessary_create   (WordWindow  *window);
-static GtkWidget *word_window_additional_create  (WordWindow  *window);
-static void       word_window_add                (WordWindow  *window);
-static gboolean   word_window_validate_values    (WordWindow  *window);
-static void       word_window_cclass_reset       (WordWindow *window);
+static GtkWidget *
+word_window_necessary_create(WordWindow *window);
+static GtkWidget *
+word_window_additional_create(WordWindow *window);
+static void
+word_window_add(WordWindow *window);
+static gboolean
+word_window_validate_values(WordWindow *window);
+static void
+word_window_cclass_reset(WordWindow *window);
 
-static gboolean   idle_wordwin_destroy           (gpointer data);
+static gboolean
+idle_wordwin_destroy(gpointer data);
 
-static void word_window_response            (GtkDialog   *dialog,
-					     gint         arg);
-static void cclass_combobox_changed_cb      (GtkComboBox *combobox,
-					     WordWindow  *window);
-static void button_cclass_browse_clicked_cb (GtkButton   *button,
-					     WordWindow  *window);
-static void browse_cclass_result_cb         (gchar *cclass_code,
-					     gpointer user_data);
+static void
+word_window_response(GtkDialog *dialog, gint arg);
+static void
+cclass_combobox_changed_cb(GtkComboBox *combobox, WordWindow *window);
+static void
+button_cclass_browse_clicked_cb(GtkButton *button, WordWindow *window);
+static void
+browse_cclass_result_cb(gchar *cclass_code, gpointer user_data);
 
 static gint word_window_signals[LAST_SIGNAL] = {0};
 
@@ -89,7 +97,8 @@ notify(GtkWindow *parent, const gchar *message)
 }
 
 GType
-word_window_get_type(void) {
+word_window_get_type(void)
+{
   static GType type = 0;
 
   if (type == 0) {
@@ -101,7 +110,7 @@ word_window_get_type(void) {
       NULL, /* class_finalize */
       NULL, /* class_data */
       sizeof(WordWindow),
-      0, /* n_preallocs */
+      0,                                  /* n_preallocs */
       (GInstanceInitFunc)word_window_init /* instance_init */
     };
     type = g_type_register_static(GTK_TYPE_DIALOG, "WordWindow", &info, 0);
@@ -110,18 +119,20 @@ word_window_get_type(void) {
 }
 
 static void
-word_window_class_init (WordWindowClass *klass)
+word_window_class_init(WordWindowClass *klass)
 {
-  GtkDialogClass *dialog_class = (GtkDialogClass *) klass;
+  GtkDialogClass *dialog_class = (GtkDialogClass *)klass;
 
-  word_window_signals[WORD_ADDED_SIGNAL]
-    = g_signal_new ("word-added",
-		    G_TYPE_FROM_CLASS(klass),
-		    G_SIGNAL_RUN_FIRST,
-		    G_STRUCT_OFFSET(WordWindowClass, word_added),
-		    NULL, NULL,
-		    g_cclosure_marshal_VOID__VOID,
-		    G_TYPE_NONE, 0);
+  word_window_signals[WORD_ADDED_SIGNAL] =
+    g_signal_new("word-added",
+                 G_TYPE_FROM_CLASS(klass),
+                 G_SIGNAL_RUN_FIRST,
+                 G_STRUCT_OFFSET(WordWindowClass, word_added),
+                 NULL,
+                 NULL,
+                 g_cclosure_marshal_VOID__VOID,
+                 G_TYPE_NONE,
+                 0);
 
   dialog_class->response = word_window_response;
 
@@ -162,7 +173,7 @@ word_window_init(WordWindow *window)
   vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 6);
   gtk_box_append(GTK_BOX(vbox1), vbox2);
 
-  label = gtk_label_new (_("Additional information"));
+  label = gtk_label_new(_("Additional information"));
   gtk_label_set_xalign(GTK_LABEL(label), 0.0);
   gtk_box_append(GTK_BOX(vbox2), label);
 
@@ -184,16 +195,17 @@ word_window_init(WordWindow *window)
 
   gtk_window_set_title(GTK_WINDOW(window), _("Add a word"));
   gtk_dialog_add_button(GTK_DIALOG(window),
-			_("_Clear"), WORD_WINDOW_RESPONSE_CLEAR);
+                        _("_Clear"),
+                        WORD_WINDOW_RESPONSE_CLEAR);
+  gtk_dialog_add_button(GTK_DIALOG(window), _("_Cancel"), GTK_RESPONSE_CANCEL);
   gtk_dialog_add_button(GTK_DIALOG(window),
-			_("_Cancel"), GTK_RESPONSE_CANCEL);
-  gtk_dialog_add_button(GTK_DIALOG(window),
-			_("_Add"), WORD_WINDOW_RESPONSE_ADD);
+                        _("_Add"),
+                        WORD_WINDOW_RESPONSE_ADD);
   gtk_box_append(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(window))),
-                vbox1);
+                 vbox1);
 
   window->pane = GTK_WIDGET(vbox1);
-  window->add   = NULL;
+  window->add = NULL;
   window->clear = NULL;
 
   window->dict = NULL;
@@ -216,12 +228,13 @@ word_window_new(WordWindowType mode, uim_dict *dict)
   word_window_cclass_reset(WORD_WINDOW(widget));
 
   if (mode == WORD_WINDOW_MODE_EDIT) {
-    g_snprintf(title, sizeof(title), _("Edit the word (%s)"),
-	       _(dict->identifier));
+    g_snprintf(title,
+               sizeof(title),
+               _("Edit the word (%s)"),
+               _(dict->identifier));
     gtk_widget_set_visible(WORD_WINDOW(widget)->continuance, FALSE);
   } else {
-    g_snprintf(title, sizeof(title), _("Add a word (%s)"),
-	       _(dict->identifier));
+    g_snprintf(title, sizeof(title), _("Add a word (%s)"), _(dict->identifier));
   }
 
   gtk_window_set_title(GTK_WINDOW(widget), title);
@@ -277,7 +290,7 @@ word_window_necessary_create(WordWindow *window)
 
     for (i = 0; i < pos_num; i++) {
       gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combobox_pos_broad),
-				_(pos_broad[i]));
+                                     _(pos_broad[i]));
     }
 
     gtk_widget_set_halign(combobox_pos_broad, GTK_ALIGN_START);
@@ -285,8 +298,10 @@ word_window_necessary_create(WordWindow *window)
     gtk_grid_attach(GTK_GRID(table1), combobox_pos_broad, 1, 2, 1, 1);
     gtk_combo_box_set_active(GTK_COMBO_BOX(combobox_pos_broad), 0);
 
-    g_signal_connect(G_OBJECT(combobox_pos_broad), "changed",
-		     G_CALLBACK(cclass_combobox_changed_cb), window);
+    g_signal_connect(G_OBJECT(combobox_pos_broad),
+                     "changed",
+                     G_CALLBACK(cclass_combobox_changed_cb),
+                     window);
   }
 
   label = gtk_label_new_with_mnemonic(_("_Frequency:"));
@@ -333,8 +348,10 @@ word_window_additional_create(WordWindow *window)
   button = gtk_button_new_with_mnemonic(_("_Browse..."));
   gtk_widget_set_hexpand(button, TRUE);
   gtk_grid_attach(GTK_GRID(table), button, 2, 0, 1, 1);
-  g_signal_connect(G_OBJECT(button), "clicked",
-		   G_CALLBACK(button_cclass_browse_clicked_cb), window);
+  g_signal_connect(G_OBJECT(button),
+                   "clicked",
+                   G_CALLBACK(button_cclass_browse_clicked_cb),
+                   window);
 
   window->cclass_code = entry;
 
@@ -342,7 +359,7 @@ word_window_additional_create(WordWindow *window)
 }
 
 void
-word_window_set_word (WordWindow *window, uim_word *w)
+word_window_set_word(WordWindow *window, uim_word *w)
 {
   gchar *phonetic, *literal, *cclass;
   GtkAdjustment *adj;
@@ -368,7 +385,7 @@ word_window_set_word (WordWindow *window, uim_word *w)
 
   if (cclass_type >= 0)
     gtk_combo_box_set_active(GTK_COMBO_BOX(window->combobox_pos_broad),
-			     cclass_type);
+                             cclass_type);
 
   gtk_editable_set_text(GTK_EDITABLE(window->cclass_code), cclass);
 
@@ -389,7 +406,7 @@ word_window_clear(WordWindow *window)
 }
 
 gboolean
-word_window_is_continuance_mode (WordWindow *window)
+word_window_is_continuance_mode(WordWindow *window)
 {
   g_return_val_if_fail(IS_WORD_WINDOW(window), FALSE);
 
@@ -409,7 +426,8 @@ word_window_add(WordWindow *window)
   g_return_if_fail(window->dict);
 
   valid = word_window_validate_values(window);
-  if (!valid) return;
+  if (!valid)
+    return;
 
   utf8_phonetic = gtk_editable_get_text(GTK_EDITABLE(window->phon));
   utf8_literal = gtk_editable_get_text(GTK_EDITABLE(window->desc));
@@ -430,17 +448,17 @@ word_window_add(WordWindow *window)
   if (phonetic != NULL && literal != NULL) {
     uim_word *word = malloc(sizeof(uim_word));
 
-    word->type        = type;
-    word->charset     = window->dict->charset;
-    word->phon        = phonetic;
-    word->desc        = literal;
+    word->type = type;
+    word->charset = window->dict->charset;
+    word->phon = phonetic;
+    word->desc = literal;
     word->cclass_code = cclass_desc;
     word->cclass_native = cclass_native;
-    word->freq        = freq;
+    word->freq = freq;
 
-    word->okuri          = 0;
+    word->okuri = 0;
     word->following_kana = NULL;
-    word->annotation     = NULL;
+    word->annotation = NULL;
 
     ret = uim_dict_add_word(window->dict, word);
 
@@ -505,8 +523,7 @@ idle_wordwin_destroy(gpointer data)
 static void
 word_window_response(GtkDialog *dialog, gint arg)
 {
-  switch (arg)
-  {
+  switch (arg) {
   case WORD_WINDOW_RESPONSE_ADD:
     word_window_add(WORD_WINDOW(dialog));
     break;
@@ -524,7 +541,7 @@ word_window_response(GtkDialog *dialog, gint arg)
 }
 
 static void
-word_window_cclass_reset (WordWindow *window)
+word_window_cclass_reset(WordWindow *window)
 {
   gint type;
   const gchar *desc;
@@ -578,7 +595,8 @@ browse_cclass_result_cb(gchar *cclass_code, gpointer user_data)
   if (!cclass_code)
     return;
 
-  cclass_desc = find_desc_from_code_with_type(cclass_code,
+  cclass_desc = find_desc_from_code_with_type(
+    cclass_code,
     gtk_combo_box_get_active(GTK_COMBO_BOX(window->combobox_pos_broad)));
 
   utf8_cclass_desc = cclass_desc ? eucjp_to_utf8(cclass_desc) : g_strdup("");
@@ -597,6 +615,9 @@ button_cclass_browse_clicked_cb(GtkButton *button, WordWindow *window)
   system = dict_identifier_to_support_type(window->dict->identifier);
   type = gtk_combo_box_get_active(GTK_COMBO_BOX(window->combobox_pos_broad));
 
-  cclass_dialog(GTK_WINDOW(window), type, system,
-               browse_cclass_result_cb, window);
+  cclass_dialog(GTK_WINDOW(window),
+                type,
+                system,
+                browse_cclass_result_cb,
+                window);
 }

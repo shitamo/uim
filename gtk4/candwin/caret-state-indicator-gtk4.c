@@ -17,17 +17,17 @@
      may be used to endorse or promote products derived from this software
      without specific prior written permission.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' AND
-  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE LIABLE
-  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
-  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-  SUCH DAMAGE.
+  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include <config.h>
@@ -61,8 +61,8 @@ caret_state_indicator_timeout(gpointer data)
   gint timeout, called_time, current_time;
 
   timeout = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(window), "timeout"));
-  called_time = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(window),
-				"called_time"));
+  called_time =
+    GPOINTER_TO_INT(g_object_get_data(G_OBJECT(window), "called_time"));
   current_time = get_current_time();
 
   if ((current_time - called_time) * 1000 >= timeout)
@@ -93,7 +93,7 @@ caret_state_indicator_new(void)
 
   window = gtk_window_new();
   gtk_window_set_decorated(GTK_WINDOW(window), FALSE);
-  label  = gtk_label_new("");
+  label = gtk_label_new("");
   frame = gtk_frame_new(NULL);
   gtk_frame_set_child(GTK_FRAME(frame), label);
   hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
@@ -102,12 +102,13 @@ caret_state_indicator_new(void)
   gtk_window_set_child(GTK_WINDOW(window), hbox);
 
   gtk_window_set_default_size(GTK_WINDOW(window),
-			      DEFAULT_WINDOW_WIDTH,
-			      DEFAULT_WINDOW_HEIGHT);
+                              DEFAULT_WINDOW_WIDTH,
+                              DEFAULT_WINDOW_HEIGHT);
 
-  g_signal_connect(window, "destroy",
-		   G_CALLBACK(caret_state_indicator_destroy_cb),
-		   NULL);
+  g_signal_connect(window,
+                   "destroy",
+                   G_CALLBACK(caret_state_indicator_destroy_cb),
+                   NULL);
 
   gtk_label_set_xalign(GTK_LABEL(label), 0.5);
   gtk_label_set_yalign(GTK_LABEL(label), 0.5);
@@ -122,7 +123,10 @@ caret_state_indicator_new(void)
 }
 
 void
-caret_state_indicator_update(GtkWidget *window, gint topwin_x, gint topwin_y, const gchar *str)
+caret_state_indicator_update(GtkWidget *window,
+                             gint topwin_x,
+                             gint topwin_y,
+                             const gchar *str)
 {
   gint cursor_x, cursor_y;
 
@@ -144,18 +148,18 @@ caret_state_indicator_update(GtkWidget *window, gint topwin_x, gint topwin_y, co
     cols = g_strsplit(str, "\t", 0);
     for (i = 0; cols[i] && strcmp("", cols[i]); i++) {
       if (label_list) {
-	label = label_list->data;
-	gtk_label_set_text(GTK_LABEL(label), cols[i]);
+        label = label_list->data;
+        gtk_label_set_text(GTK_LABEL(label), cols[i]);
       } else {
-	label = gtk_label_new(cols[i]);
-	frame = gtk_frame_new(NULL);
-	gtk_frame_set_child(GTK_FRAME(frame), label);
-	gtk_widget_set_hexpand(frame, TRUE);
-	gtk_box_append(GTK_BOX(hbox), frame);
-	list1 = g_list_append(list1, label);
-	label_list = g_list_find(list1, label);
-	list2 = g_list_append(list2, frame);
-	frame_list = g_list_find(list2, frame);
+        label = gtk_label_new(cols[i]);
+        frame = gtk_frame_new(NULL);
+        gtk_frame_set_child(GTK_FRAME(frame), label);
+        gtk_widget_set_hexpand(frame, TRUE);
+        gtk_box_append(GTK_BOX(hbox), frame);
+        list1 = g_list_append(list1, label);
+        label_list = g_list_find(list1, label);
+        list2 = g_list_append(list2, frame);
+        frame_list = g_list_find(list2, frame);
       }
       label_list = label_list->next;
       frame_list = frame_list->next;
@@ -181,15 +185,18 @@ caret_state_indicator_update(GtkWidget *window, gint topwin_x, gint topwin_y, co
 }
 
 void
-caret_state_indicator_set_cursor_location(GtkWidget *window, GdkRectangle *cursor_location)
+caret_state_indicator_set_cursor_location(GtkWidget *window,
+                                          GdkRectangle *cursor_location)
 {
   g_return_if_fail(window != NULL);
 
-  g_object_set_data(G_OBJECT(window), "cursor_x",
-		    GINT_TO_POINTER(cursor_location->x));
-  g_object_set_data(G_OBJECT(window), "cursor_y",
-		    GINT_TO_POINTER(cursor_location->y +
-				    cursor_location->height));
+  g_object_set_data(G_OBJECT(window),
+                    "cursor_x",
+                    GINT_TO_POINTER(cursor_location->x));
+  g_object_set_data(
+    G_OBJECT(window),
+    "cursor_y",
+    GINT_TO_POINTER(cursor_location->y + cursor_location->height));
 }
 
 void
@@ -211,6 +218,7 @@ caret_state_indicator_set_timeout(GtkWidget *window, gint timeout)
   g_object_set_data(G_OBJECT(window), "timeout-tag", GUINT_TO_POINTER(tag));
   g_object_set_data(G_OBJECT(window), "timeout", GINT_TO_POINTER(timeout));
   /* "called_time" stores the latest time when this function is called */
-  g_object_set_data(G_OBJECT(window), "called_time",
-		    GINT_TO_POINTER(current_time));
+  g_object_set_data(G_OBJECT(window),
+                    "called_time",
+                    GINT_TO_POINTER(current_time));
 }

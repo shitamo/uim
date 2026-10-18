@@ -19,17 +19,17 @@
      may be used to endorse or promote products derived from this software
      without specific prior written permission.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' AND
-  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE LIABLE
-  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
-  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-  SUCH DAMAGE.
+  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.
 
 
   This file is compiled three times, with -DUIM_CANDWIN_STYLE_TABLE or
@@ -72,7 +72,8 @@ static UIMCandWinGtk *cwin;
 static GtkWidget *caret_state_indicator;
 static GMainLoop *main_loop;
 
-static void index_changed_cb(UIMCandWinGtk *cwin)
+static void
+index_changed_cb(UIMCandWinGtk *cwin)
 {
   fprintf(stdout, "index\n");
   fprintf(stdout, "%d\n\n", uim_cand_win_gtk_get_index(cwin));
@@ -89,8 +90,10 @@ init_candidate_win(void)
 #else
   cwin = UIM_CAND_WIN_GTK(uim_cand_win_vertical_gtk_new());
 #endif
-  g_signal_connect(G_OBJECT(cwin), "index-changed",
-		   G_CALLBACK(index_changed_cb), NULL);
+  g_signal_connect(G_OBJECT(cwin),
+                   "index-changed",
+                   G_CALLBACK(index_changed_cb),
+                   NULL);
   caret_state_indicator = caret_state_indicator_new();
 }
 
@@ -123,11 +126,8 @@ candwin_collect_candidates(const gchar *charset, gchar **raw_candidates)
       break;
     }
     uim_candidate candidate;
-    gchar *utf8_str = g_convert(raw_candidate,
-                                -1,
-                                "UTF-8",
-                                charset,
-                                &rbytes, &wbytes, NULL);
+    gchar *utf8_str =
+      g_convert(raw_candidate, -1, "UTF-8", charset, &rbytes, &wbytes, NULL);
     gchar **column = g_strsplit(utf8_str, "\a", 3);
     candidate = g_new0(struct uim_candidate_, 1);
     candidate->heading_label = g_strdup(column[0]);
@@ -338,7 +338,7 @@ str_parse(gchar *str)
   g_strfreev(tmp);
 }
 
-#define CANDIDATE_BUFFER_SIZE	4096
+#define CANDIDATE_BUFFER_SIZE 4096
 static gboolean
 read_cb(GIOChannel *channel, GIOCondition c, gpointer p)
 {
@@ -389,8 +389,7 @@ main(int argc, char *argv[])
   init_candidate_win();
 
   channel = g_io_channel_unix_new(0);
-  read_tag = g_io_add_watch(channel, G_IO_IN | G_IO_HUP | G_IO_ERR,
-			    read_cb, 0);
+  read_tag = g_io_add_watch(channel, G_IO_IN | G_IO_HUP | G_IO_ERR, read_cb, 0);
 
   main_loop = g_main_loop_new(NULL, FALSE);
   g_main_loop_run(main_loop);

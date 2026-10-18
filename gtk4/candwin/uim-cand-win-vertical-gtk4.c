@@ -17,17 +17,17 @@
      may be used to endorse or promote products derived from this software
      without specific prior written permission.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' AND
-  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE LIABLE
-  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
-  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-  SUCH DAMAGE.
+  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.
 
 */
 
@@ -49,35 +49,36 @@ enum {
   LISTSTORE_NR_COLUMNS
 };
 
-static void uim_cand_win_vertical_gtk_init(UIMCandWinVerticalGtk *cwin);
-static void uim_cand_win_vertical_gtk_class_init(UIMCandWinGtkClass *klass);
-static void uim_cand_win_vertical_gtk_dispose(GObject *obj);
+static void
+uim_cand_win_vertical_gtk_init(UIMCandWinVerticalGtk *cwin);
+static void
+uim_cand_win_vertical_gtk_class_init(UIMCandWinGtkClass *klass);
+static void
+uim_cand_win_vertical_gtk_dispose(GObject *obj);
 
-static gboolean	tree_selection_change		(GtkTreeSelection *selection,
-						 GtkTreeModel *model,
-						 GtkTreePath *path,
-						 gboolean path_currently_selected,
-						 gpointer data);
-static gboolean tree_selection_changed		(GtkTreeSelection *selection,
-						 gpointer data);
-static void	tree_view_click_pressed		(GtkGestureClick *gesture,
-						 gint n_press,
-						 gdouble x,
-						 gdouble y,
-						 gpointer data);
-
+static gboolean
+tree_selection_change(GtkTreeSelection *selection,
+                      GtkTreeModel *model,
+                      GtkTreePath *path,
+                      gboolean path_currently_selected,
+                      gpointer data);
+static gboolean
+tree_selection_changed(GtkTreeSelection *selection, gpointer data);
+static void
+tree_view_click_pressed(
+  GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer data);
 
 static GType cand_win_vertical_type = 0;
 static GTypeInfo const object_info = {
-  sizeof (UIMCandWinVerticalGtkClass),
-  (GBaseInitFunc) NULL,
-  (GBaseFinalizeFunc) NULL,
-  (GClassInitFunc) uim_cand_win_vertical_gtk_class_init,
-  (GClassFinalizeFunc) NULL,
-  NULL,                       /* class_data */
-  sizeof (UIMCandWinVerticalGtk),
-  0,                          /* n_preallocs */
-  (GInstanceInitFunc) uim_cand_win_vertical_gtk_init,
+  sizeof(UIMCandWinVerticalGtkClass),
+  (GBaseInitFunc)NULL,
+  (GBaseFinalizeFunc)NULL,
+  (GClassInitFunc)uim_cand_win_vertical_gtk_class_init,
+  (GClassFinalizeFunc)NULL,
+  NULL, /* class_data */
+  sizeof(UIMCandWinVerticalGtk),
+  0, /* n_preallocs */
+  (GInstanceInitFunc)uim_cand_win_vertical_gtk_init,
 };
 
 static UIMCandWinGtkClass *parent_class = NULL;
@@ -86,25 +87,29 @@ GType
 uim_cand_win_vertical_gtk_get_type(void)
 {
   if (!cand_win_vertical_type)
-    cand_win_vertical_type = g_type_register_static(UIM_TYPE_CAND_WIN_GTK, "UIMCandWinVerticalGtk",
-						   &object_info, (GTypeFlags)0);
+    cand_win_vertical_type = g_type_register_static(UIM_TYPE_CAND_WIN_GTK,
+                                                    "UIMCandWinVerticalGtk",
+                                                    &object_info,
+                                                    (GTypeFlags)0);
   return cand_win_vertical_type;
 }
 
 static void
-uim_cand_win_vertical_gtk_class_init (UIMCandWinGtkClass *klass)
+uim_cand_win_vertical_gtk_class_init(UIMCandWinGtkClass *klass)
 {
-  GObjectClass *object_class = (GObjectClass *) klass;
+  GObjectClass *object_class = (GObjectClass *)klass;
 
-  parent_class = g_type_class_peek_parent (klass);
+  parent_class = g_type_class_peek_parent(klass);
   object_class->dispose = uim_cand_win_vertical_gtk_dispose;
 
-  klass->set_index = (void (*)(UIMCandWinGtk *, gint))uim_cand_win_vertical_gtk_set_index;
-  klass->set_page = (void (*)(UIMCandWinGtk *, gint))uim_cand_win_vertical_gtk_set_page;
+  klass->set_index =
+    (void (*)(UIMCandWinGtk *, gint))uim_cand_win_vertical_gtk_set_index;
+  klass->set_page =
+    (void (*)(UIMCandWinGtk *, gint))uim_cand_win_vertical_gtk_set_page;
 }
 
 static void
-uim_cand_win_vertical_gtk_init (UIMCandWinVerticalGtk *vertical_cwin)
+uim_cand_win_vertical_gtk_init(UIMCandWinVerticalGtk *vertical_cwin)
 {
   UIMCandWinGtk *cwin;
   GtkCellRenderer *renderer;
@@ -115,36 +120,41 @@ uim_cand_win_vertical_gtk_init (UIMCandWinVerticalGtk *vertical_cwin)
   cwin = UIM_CAND_WIN_GTK(vertical_cwin);
 
   cwin->view = gtk_tree_view_new();
-  gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(cwin->scrolled_window), cwin->view);
+  gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(cwin->scrolled_window),
+                                cwin->view);
 
-  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW(cwin->view));
+  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(cwin->view));
 
   gtk_tree_selection_set_select_function(selection,
-					 tree_selection_change,
-					 cwin,
-					 NULL);
-  g_signal_connect (G_OBJECT(selection), "changed",
-		    G_CALLBACK(tree_selection_changed), cwin);
+                                         tree_selection_change,
+                                         cwin,
+                                         NULL);
+  g_signal_connect(G_OBJECT(selection),
+                   "changed",
+                   G_CALLBACK(tree_selection_changed),
+                   cwin);
 
   renderer = gtk_cell_renderer_text_new();
   g_object_set(renderer, "scale", 0.8, (const gchar *)NULL);
 
   column = gtk_tree_view_column_new_with_attributes("No",
-						    renderer,
-						    "text", COLUMN_HEADING,
-						    (const gchar *)NULL);
+                                                    renderer,
+                                                    "text",
+                                                    COLUMN_HEADING,
+                                                    (const gchar *)NULL);
   gtk_tree_view_append_column(GTK_TREE_VIEW(cwin->view), column);
-  gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+  gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
 
   renderer = gtk_cell_renderer_text_new();
   g_object_set(renderer, "scale", 1.2, (const gchar *)NULL);
   column = gtk_tree_view_column_new_with_attributes("Text",
-						    renderer,
-						    "text", COLUMN_CANDIDATE,
-						    (const gchar *)NULL);
+                                                    renderer,
+                                                    "text",
+                                                    COLUMN_CANDIDATE,
+                                                    (const gchar *)NULL);
   gtk_tree_view_append_column(GTK_TREE_VIEW(cwin->view), column);
   gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(cwin->view), FALSE);
-  gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+  gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
 
   click = gtk_gesture_click_new();
   gtk_gesture_single_set_button(GTK_GESTURE_SINGLE(click), GDK_BUTTON_PRIMARY);
@@ -153,14 +163,14 @@ uim_cand_win_vertical_gtk_init (UIMCandWinVerticalGtk *vertical_cwin)
 }
 
 static void
-uim_cand_win_vertical_gtk_dispose (GObject *obj)
+uim_cand_win_vertical_gtk_dispose(GObject *obj)
 {
-  if (G_OBJECT_CLASS (parent_class)->dispose)
-    G_OBJECT_CLASS (parent_class)->dispose(obj);
+  if (G_OBJECT_CLASS(parent_class)->dispose)
+    G_OBJECT_CLASS(parent_class)->dispose(obj);
 }
 
 UIMCandWinVerticalGtk *
-uim_cand_win_vertical_gtk_new (void)
+uim_cand_win_vertical_gtk_new(void)
 {
   GObject *obj = g_object_new(UIM_TYPE_CAND_WIN_VERTICAL_GTK, NULL);
 
@@ -169,10 +179,10 @@ uim_cand_win_vertical_gtk_new (void)
 
 static gboolean
 tree_selection_change(GtkTreeSelection *selection,
-		      GtkTreeModel *model,
-		      GtkTreePath *path,
-		      gboolean path_currently_selected,
-		      gpointer data)
+                      GtkTreeModel *model,
+                      GtkTreePath *path,
+                      gboolean path_currently_selected,
+                      gpointer data)
 {
   UIMCandWinVerticalGtk *vertical_cwin = UIM_CAND_WIN_VERTICAL_GTK(data);
   UIMCandWinGtk *cwin = UIM_CAND_WIN_GTK(vertical_cwin);
@@ -218,8 +228,7 @@ tree_selection_change(GtkTreeSelection *selection,
 }
 
 static gboolean
-tree_selection_changed(GtkTreeSelection *selection,
-		       gpointer data)
+tree_selection_changed(GtkTreeSelection *selection, gpointer data)
 {
   GtkTreeModel *model;
   GtkTreeIter iter;
@@ -229,23 +238,22 @@ tree_selection_changed(GtkTreeSelection *selection,
   if (gtk_tree_selection_get_selected(selection, &model, &iter)) {
     char *annotation = NULL;
 
-    gtk_tree_model_get(model, &iter,
-		       COLUMN_ANNOTATION, &annotation,
-		       -1);
+    gtk_tree_model_get(model, &iter, COLUMN_ANNOTATION, &annotation, -1);
 
     if (annotation && *annotation) {
       if (!cwin->sub_window.window)
-	uim_cand_win_gtk_create_sub_window(cwin);
+        uim_cand_win_gtk_create_sub_window(cwin);
       gtk_text_buffer_set_text(
-	gtk_text_view_get_buffer(GTK_TEXT_VIEW(cwin->sub_window.text_view)),
-	annotation, -1);
+        gtk_text_view_get_buffer(GTK_TEXT_VIEW(cwin->sub_window.text_view)),
+        annotation,
+        -1);
       uim_cand_win_gtk_layout_sub_window(cwin);
       gtk_widget_set_visible(cwin->sub_window.window, TRUE);
       cwin->sub_window.active = TRUE;
     } else {
       if (cwin->sub_window.window) {
-	gtk_widget_set_visible(cwin->sub_window.window, FALSE);
-	cwin->sub_window.active = FALSE;
+        gtk_widget_set_visible(cwin->sub_window.window, FALSE);
+        cwin->sub_window.active = FALSE;
       }
     }
     free(annotation);
@@ -265,8 +273,8 @@ tree_selection_changed(GtkTreeSelection *selection,
 }
 
 static void
-tree_view_click_pressed(GtkGestureClick *gesture, gint n_press,
-			gdouble x, gdouble y, gpointer data)
+tree_view_click_pressed(
+  GtkGestureClick *gesture, gint n_press, gdouble x, gdouble y, gpointer data)
 {
   UIMCandWinVerticalGtk *vertical_cwin = UIM_CAND_WIN_VERTICAL_GTK(data);
   UIMCandWinGtk *cwin = UIM_CAND_WIN_GTK(vertical_cwin);
@@ -275,8 +283,12 @@ tree_view_click_pressed(GtkGestureClick *gesture, gint n_press,
   gint *indicies;
 
   exist = gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(cwin->view),
-					(gint)x, (gint)y,
-					&path, NULL, NULL, NULL);
+                                        (gint)x,
+                                        (gint)y,
+                                        &path,
+                                        NULL,
+                                        NULL,
+                                        NULL);
   if (!exist)
     return;
 
@@ -289,9 +301,9 @@ tree_view_click_pressed(GtkGestureClick *gesture, gint n_press,
   gtk_tree_path_free(path);
 }
 
-
 void
-uim_cand_win_vertical_gtk_set_index(UIMCandWinVerticalGtk *vertical_cwin, gint index)
+uim_cand_win_vertical_gtk_set_index(UIMCandWinVerticalGtk *vertical_cwin,
+                                    gint index)
 {
   UIMCandWinGtk *cwin;
   UIMCandWinVerticalGtkClass *vertical_cwin_class;
@@ -313,12 +325,12 @@ uim_cand_win_vertical_gtk_set_index(UIMCandWinVerticalGtk *vertical_cwin, gint i
       pos = cwin->candidate_index % cwin->display_limit;
 
     path = gtk_tree_path_new_from_indices(pos, -1);
-    gtk_tree_view_set_cursor(GTK_TREE_VIEW(cwin->view),
-			     path, NULL, FALSE);
+    gtk_tree_view_set_cursor(GTK_TREE_VIEW(cwin->view), path, NULL, FALSE);
     gtk_tree_path_free(path);
 
   } else {
-    GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(cwin->view));
+    GtkTreeSelection *selection =
+      gtk_tree_view_get_selection(GTK_TREE_VIEW(cwin->view));
 
     gtk_tree_selection_unselect_all(selection);
     uim_cand_win_gtk_update_label(cwin);
@@ -326,7 +338,8 @@ uim_cand_win_vertical_gtk_set_index(UIMCandWinVerticalGtk *vertical_cwin, gint i
 }
 
 void
-uim_cand_win_vertical_gtk_set_page(UIMCandWinVerticalGtk *vertical_cwin, gint page)
+uim_cand_win_vertical_gtk_set_page(UIMCandWinVerticalGtk *vertical_cwin,
+                                   gint page)
 {
   guint len, new_page;
   gint new_index;
@@ -341,27 +354,27 @@ uim_cand_win_vertical_gtk_set_page(UIMCandWinVerticalGtk *vertical_cwin, gint pa
 
   if (page < 0)
     new_page = len - 1;
-  else if (page >= (gint) len)
+  else if (page >= (gint)len)
     new_page = 0;
   else
     new_page = page;
 
   gtk_tree_view_set_model(GTK_TREE_VIEW(cwin->view),
-			  GTK_TREE_MODEL(cwin->stores->pdata[new_page]));
+                          GTK_TREE_MODEL(cwin->stores->pdata[new_page]));
 
   cwin->page_index = new_page;
 
   if (cwin->display_limit) {
     if (cwin->candidate_index >= 0)
-      new_index
-        = (new_page * cwin->display_limit) + (cwin->candidate_index % cwin->display_limit);
+      new_index = (new_page * cwin->display_limit) +
+                  (cwin->candidate_index % cwin->display_limit);
     else
       new_index = -1;
   } else {
     new_index = cwin->candidate_index;
   }
 
-  if (new_index >= (gint) cwin->nr_candidates)
+  if (new_index >= (gint)cwin->nr_candidates)
     new_index = cwin->nr_candidates - 1;
 
   uim_cand_win_gtk_set_index(cwin, new_index);

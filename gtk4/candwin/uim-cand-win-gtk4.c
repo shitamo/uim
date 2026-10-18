@@ -17,17 +17,17 @@
      may be used to endorse or promote products derived from this software
      without specific prior written permission.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' AND
-  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE LIABLE
-  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
-  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-  SUCH DAMAGE.
+  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.
 
 */
 
@@ -40,7 +40,7 @@
 #include <uim/uim.h>
 #include <uim/uim-scm.h>
 
-#define NR_CANDIDATES 20 /* FIXME! not used yet */
+#define NR_CANDIDATES            20 /* FIXME! not used yet */
 #define DEFAULT_MIN_WINDOW_WIDTH 80
 
 enum {
@@ -56,32 +56,41 @@ enum {
   NR_COLUMNS
 };
 
-static void	uim_cand_win_gtk_init		(UIMCandWinGtk *cwin);
-static void	uim_cand_win_gtk_class_init	(UIMCandWinGtkClass *klass);
-static void	uim_cand_win_gtk_dispose	(GObject *obj);
-static void	uim_cand_win_gtk_map		(GtkWidget *widget);
-static void	uim_cand_win_gtk_unmap		(GtkWidget *widget);
-static void	uim_cand_win_gtk_real_set_index		(UIMCandWinGtk *cwin,
-							 gint index);
-static void	uim_cand_win_gtk_real_set_page		(UIMCandWinGtk *cwin,
-							 gint page);
-static void	uim_cand_win_gtk_real_create_sub_window(UIMCandWinGtk *cwin);
-static void	uim_cand_win_gtk_sync_sub_window_transient_for(UIMCandWinGtk *cwin);
-static void	uim_cand_win_gtk_real_layout_sub_window	(UIMCandWinGtk *cwin);
+static void
+uim_cand_win_gtk_init(UIMCandWinGtk *cwin);
+static void
+uim_cand_win_gtk_class_init(UIMCandWinGtkClass *klass);
+static void
+uim_cand_win_gtk_dispose(GObject *obj);
+static void
+uim_cand_win_gtk_map(GtkWidget *widget);
+static void
+uim_cand_win_gtk_unmap(GtkWidget *widget);
+static void
+uim_cand_win_gtk_real_set_index(UIMCandWinGtk *cwin, gint index);
+static void
+uim_cand_win_gtk_real_set_page(UIMCandWinGtk *cwin, gint page);
+static void
+uim_cand_win_gtk_real_create_sub_window(UIMCandWinGtk *cwin);
+static void
+uim_cand_win_gtk_sync_sub_window_transient_for(UIMCandWinGtk *cwin);
+static void
+uim_cand_win_gtk_real_layout_sub_window(UIMCandWinGtk *cwin);
 
-static void	pagebutton_clicked(GtkButton *button, gpointer data);
+static void
+pagebutton_clicked(GtkButton *button, gpointer data);
 
 static GType cand_win_type = 0;
 static GTypeInfo const object_info = {
-  sizeof (UIMCandWinGtkClass),
-  (GBaseInitFunc) NULL,
-  (GBaseFinalizeFunc) NULL,
-  (GClassInitFunc) uim_cand_win_gtk_class_init,
-  (GClassFinalizeFunc) NULL,
-  NULL,                       /* class_data */
-  sizeof (UIMCandWinGtk),
-  0,                          /* n_preallocs */
-  (GInstanceInitFunc) uim_cand_win_gtk_init,
+  sizeof(UIMCandWinGtkClass),
+  (GBaseInitFunc)NULL,
+  (GBaseFinalizeFunc)NULL,
+  (GClassInitFunc)uim_cand_win_gtk_class_init,
+  (GClassFinalizeFunc)NULL,
+  NULL, /* class_data */
+  sizeof(UIMCandWinGtk),
+  0, /* n_preallocs */
+  (GInstanceInitFunc)uim_cand_win_gtk_init,
 };
 
 static GtkWindowClass *parent_class = NULL;
@@ -91,30 +100,34 @@ GType
 uim_cand_win_gtk_get_type(void)
 {
   if (!cand_win_type)
-    cand_win_type = g_type_register_static(GTK_TYPE_WINDOW, "UIMCandWinGtk",
-					   &object_info, (GTypeFlags)0);
+    cand_win_type = g_type_register_static(GTK_TYPE_WINDOW,
+                                           "UIMCandWinGtk",
+                                           &object_info,
+                                           (GTypeFlags)0);
   return cand_win_type;
 }
 
 static void
-uim_cand_win_gtk_class_init (UIMCandWinGtkClass *klass)
+uim_cand_win_gtk_class_init(UIMCandWinGtkClass *klass)
 {
-  GObjectClass *object_class = (GObjectClass *) klass;
-  GtkWidgetClass *widget_class = (GtkWidgetClass *) klass;
+  GObjectClass *object_class = (GObjectClass *)klass;
+  GtkWidgetClass *widget_class = (GtkWidgetClass *)klass;
 
-  parent_class = g_type_class_peek_parent (klass);
+  parent_class = g_type_class_peek_parent(klass);
   object_class->dispose = uim_cand_win_gtk_dispose;
 
-  cand_win_gtk_signals[INDEX_CHANGED_SIGNAL]
-    = g_signal_new("index-changed",
-		   G_TYPE_FROM_CLASS(klass),
-		   G_SIGNAL_RUN_FIRST,
-		   G_STRUCT_OFFSET(UIMCandWinGtkClass, index_changed),
-		   NULL, NULL,
-		   g_cclosure_marshal_VOID__VOID,
-		   G_TYPE_NONE, 0);
+  cand_win_gtk_signals[INDEX_CHANGED_SIGNAL] =
+    g_signal_new("index-changed",
+                 G_TYPE_FROM_CLASS(klass),
+                 G_SIGNAL_RUN_FIRST,
+                 G_STRUCT_OFFSET(UIMCandWinGtkClass, index_changed),
+                 NULL,
+                 NULL,
+                 g_cclosure_marshal_VOID__VOID,
+                 G_TYPE_NONE,
+                 0);
 
-  widget_class->map   = uim_cand_win_gtk_map;
+  widget_class->map = uim_cand_win_gtk_map;
   widget_class->unmap = uim_cand_win_gtk_unmap;
 
   klass->set_index = uim_cand_win_gtk_real_set_index;
@@ -140,7 +153,7 @@ uim_cand_win_gtk_get_window_pos_type(UIMCandWinGtk *cwin)
 }
 
 static void
-uim_cand_win_gtk_init (UIMCandWinGtk *cwin)
+uim_cand_win_gtk_init(UIMCandWinGtk *cwin)
 {
   GtkWidget *frame;
   GtkWidget *vbox;
@@ -165,16 +178,17 @@ uim_cand_win_gtk_init (UIMCandWinGtk *cwin)
   cwin->cursor.x = cwin->cursor.y = 0;
   cwin->cursor.width = cwin->cursor.height = 0;
 
-  cwin->sub_window.window          = NULL;
+  cwin->sub_window.window = NULL;
   cwin->sub_window.scrolled_window = NULL;
-  cwin->sub_window.text_view       = NULL;
-  cwin->sub_window.active          = FALSE;
+  cwin->sub_window.text_view = NULL;
+  cwin->sub_window.active = FALSE;
 
   /* The sub window is a popup too, so it needs the same transient parent
    * as the candidate window to be positioned on Wayland. */
-  g_signal_connect(cwin, "notify::transient-for",
-		   G_CALLBACK(uim_cand_win_gtk_sync_sub_window_transient_for),
-		   NULL);
+  g_signal_connect(cwin,
+                   "notify::transient-for",
+                   G_CALLBACK(uim_cand_win_gtk_sync_sub_window_transient_for),
+                   NULL);
 
   /* build window */
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
@@ -193,10 +207,14 @@ uim_cand_win_gtk_init (UIMCandWinGtk *cwin)
   gtk_box_append(GTK_BOX(hbox), cwin->num_label);
   gtk_box_append(GTK_BOX(hbox), GTK_WIDGET(cwin->next_page_button));
   gtk_box_append(GTK_BOX(vbox), hbox);
-  g_signal_connect(cwin->prev_page_button, "clicked",
-      G_CALLBACK(pagebutton_clicked), cwin);
-  g_signal_connect(cwin->next_page_button, "clicked",
-      G_CALLBACK(pagebutton_clicked), cwin);
+  g_signal_connect(cwin->prev_page_button,
+                   "clicked",
+                   G_CALLBACK(pagebutton_clicked),
+                   cwin);
+  g_signal_connect(cwin->next_page_button,
+                   "clicked",
+                   G_CALLBACK(pagebutton_clicked),
+                   cwin);
 
   frame = gtk_frame_new(NULL);
 
@@ -213,7 +231,7 @@ uim_cand_win_gtk_init (UIMCandWinGtk *cwin)
 }
 
 static void
-uim_cand_win_gtk_dispose (GObject *obj)
+uim_cand_win_gtk_dispose(GObject *obj)
 {
   UIMCandWinGtk *cwin;
 
@@ -226,7 +244,7 @@ uim_cand_win_gtk_dispose (GObject *obj)
 
     for (i = 0; i < cwin->stores->len; i++) {
       if (cwin->stores->pdata[i])
-	g_object_unref(G_OBJECT(cwin->stores->pdata[i]));
+        g_object_unref(G_OBJECT(cwin->stores->pdata[i]));
     }
     g_ptr_array_free(cwin->stores, TRUE);
     cwin->stores = NULL;
@@ -237,39 +255,38 @@ uim_cand_win_gtk_dispose (GObject *obj)
     cwin->sub_window.window = NULL;
   }
   cwin->sub_window.scrolled_window = NULL;
-  cwin->sub_window.text_view       = NULL;
+  cwin->sub_window.text_view = NULL;
 
-  if (G_OBJECT_CLASS (parent_class)->dispose)
-    G_OBJECT_CLASS (parent_class)->dispose(obj);
+  if (G_OBJECT_CLASS(parent_class)->dispose)
+    G_OBJECT_CLASS(parent_class)->dispose(obj);
 }
 
 static void
-uim_cand_win_gtk_map (GtkWidget *widget)
+uim_cand_win_gtk_map(GtkWidget *widget)
 {
   UIMCandWinGtk *cwin = UIM_CAND_WIN_GTK(widget);
 
   if (cwin->sub_window.active)
     gtk_widget_set_visible(cwin->sub_window.window, TRUE);
 
-  if (GTK_WIDGET_CLASS (parent_class)->map)
-    GTK_WIDGET_CLASS (parent_class)->map(widget);
+  if (GTK_WIDGET_CLASS(parent_class)->map)
+    GTK_WIDGET_CLASS(parent_class)->map(widget);
 }
 
-
 static void
-uim_cand_win_gtk_unmap (GtkWidget *widget)
+uim_cand_win_gtk_unmap(GtkWidget *widget)
 {
   UIMCandWinGtk *cwin = UIM_CAND_WIN_GTK(widget);
 
   if (cwin->sub_window.window)
     gtk_widget_set_visible(cwin->sub_window.window, FALSE);
 
-  if (GTK_WIDGET_CLASS (parent_class)->unmap)
-    GTK_WIDGET_CLASS (parent_class)->unmap(widget);
+  if (GTK_WIDGET_CLASS(parent_class)->unmap)
+    GTK_WIDGET_CLASS(parent_class)->unmap(widget);
 }
 
 UIMCandWinGtk *
-uim_cand_win_gtk_new (void)
+uim_cand_win_gtk_new(void)
 {
   GObject *obj = g_object_new(UIM_TYPE_CAND_WIN_GTK, NULL);
   return UIM_CAND_WIN_GTK(obj);
@@ -281,19 +298,21 @@ uim_cand_win_gtk_update_label(UIMCandWinGtk *cwin)
   char label_str[20];
 
   if (cwin->candidate_index >= 0)
-    g_snprintf(label_str, sizeof(label_str), "%d / %d",
-	       cwin->candidate_index + 1 , cwin->nr_candidates);
+    g_snprintf(label_str,
+               sizeof(label_str),
+               "%d / %d",
+               cwin->candidate_index + 1,
+               cwin->nr_candidates);
   else
-    g_snprintf(label_str, sizeof(label_str), "- / %d",
-	       cwin->nr_candidates);
+    g_snprintf(label_str, sizeof(label_str), "- / %d", cwin->nr_candidates);
 
   gtk_label_set_text(GTK_LABEL(cwin->num_label), label_str);
 }
 
 void
 uim_cand_win_gtk_set_nr_candidates(UIMCandWinGtk *cwin,
-				   guint nr,
-				   guint display_limit)
+                                   guint nr,
+                                   guint display_limit)
 {
   gint i, nr_stores = 1;
 
@@ -314,7 +333,7 @@ uim_cand_win_gtk_set_nr_candidates(UIMCandWinGtk *cwin,
     cwin->stores = g_ptr_array_new();
 
   /* remove old data */
-  if (cwin->page_index >= 0 && cwin->page_index < (int) cwin->stores->len) {
+  if (cwin->page_index >= 0 && cwin->page_index < (int)cwin->stores->len) {
     /* Remove data from current page to shrink the window */
     if (cwin->stores->pdata[cwin->page_index]) {
       cwin->block_index_selection = TRUE;
@@ -341,8 +360,8 @@ uim_cand_win_gtk_set_nr_candidates(UIMCandWinGtk *cwin,
 
 void
 uim_cand_win_gtk_set_candidates(UIMCandWinGtk *cwin,
-				guint display_limit,
-				GSList *candidates)
+                                guint display_limit,
+                                GSList *candidates)
 {
   gint i, nr_stores = 1;
 
@@ -352,7 +371,7 @@ uim_cand_win_gtk_set_candidates(UIMCandWinGtk *cwin,
     cwin->stores = g_ptr_array_new();
 
   /* remove old data */
-  if (cwin->page_index >= 0 && cwin->page_index < (int) cwin->stores->len) {
+  if (cwin->page_index >= 0 && cwin->page_index < (int)cwin->stores->len) {
     /* Remove data from current page to shrink the window */
     if (cwin->stores->pdata[cwin->page_index])
       gtk_list_store_clear(cwin->stores->pdata[cwin->page_index]);
@@ -382,9 +401,9 @@ uim_cand_win_gtk_set_candidates(UIMCandWinGtk *cwin,
   /* create GtkListStores, and set candidates */
   for (i = 0; i < nr_stores; i++) {
     GtkListStore *store = gtk_list_store_new(NR_COLUMNS,
-					     G_TYPE_STRING,
-					     G_TYPE_STRING,
-					     G_TYPE_STRING);
+                                             G_TYPE_STRING,
+                                             G_TYPE_STRING,
+                                             G_TYPE_STRING);
     GSList *node;
     guint j;
 
@@ -392,19 +411,22 @@ uim_cand_win_gtk_set_candidates(UIMCandWinGtk *cwin,
 
     /* set candidates */
     for (j = i * display_limit, node = g_slist_nth(candidates, j);
-	 display_limit ? j < display_limit * (i + 1) : j < cwin->nr_candidates;
-	 j++, node = g_slist_next(node))
-    {
+         display_limit ? j < display_limit * (i + 1) : j < cwin->nr_candidates;
+         j++, node = g_slist_next(node)) {
       GtkTreeIter ti;
 
       if (node) {
-	uim_candidate cand = node->data;
-	gtk_list_store_append(store, &ti);
-        gtk_list_store_set(store, &ti,
-			   COLUMN_HEADING,    uim_candidate_get_heading_label(cand),
-			   COLUMN_CANDIDATE,  uim_candidate_get_cand_str(cand),
-			   COLUMN_ANNOTATION, uim_candidate_get_annotation_str(cand),
-			   TERMINATOR);
+        uim_candidate cand = node->data;
+        gtk_list_store_append(store, &ti);
+        gtk_list_store_set(store,
+                           &ti,
+                           COLUMN_HEADING,
+                           uim_candidate_get_heading_label(cand),
+                           COLUMN_CANDIDATE,
+                           uim_candidate_get_cand_str(cand),
+                           COLUMN_ANNOTATION,
+                           uim_candidate_get_annotation_str(cand),
+                           TERMINATOR);
       }
     }
   }
@@ -424,8 +446,8 @@ uim_cand_win_gtk_set_candidates(UIMCandWinGtk *cwin,
 
 void
 uim_cand_win_gtk_set_page_candidates(UIMCandWinGtk *cwin,
-				     guint page,
-				     GSList *candidates)
+                                     guint page,
+                                     GSList *candidates)
 {
   GtkListStore *store;
   GSList *node;
@@ -440,28 +462,28 @@ uim_cand_win_gtk_set_page_candidates(UIMCandWinGtk *cwin,
   len = g_slist_length(candidates);
 
   /* create GtkListStores, and set candidates */
-  store = gtk_list_store_new(NR_COLUMNS,
-			     G_TYPE_STRING,
-			     G_TYPE_STRING,
-			     G_TYPE_STRING);
+  store =
+    gtk_list_store_new(NR_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 
   cwin->stores->pdata[page] = store;
 
   /* set candidates */
-  for (j = 0, node = g_slist_nth(candidates, j);
-       j < len;
-       j++, node = g_slist_next(node))
-  {
+  for (j = 0, node = g_slist_nth(candidates, j); j < len;
+       j++, node = g_slist_next(node)) {
     GtkTreeIter ti;
 
     if (node) {
       uim_candidate cand = node->data;
       gtk_list_store_append(store, &ti);
-      gtk_list_store_set(store, &ti,
-			 COLUMN_HEADING,    uim_candidate_get_heading_label(cand),
-			 COLUMN_CANDIDATE,  uim_candidate_get_cand_str(cand),
-			 COLUMN_ANNOTATION, uim_candidate_get_annotation_str(cand),
-			 TERMINATOR);
+      gtk_list_store_set(store,
+                         &ti,
+                         COLUMN_HEADING,
+                         uim_candidate_get_heading_label(cand),
+                         COLUMN_CANDIDATE,
+                         uim_candidate_get_cand_str(cand),
+                         COLUMN_ANNOTATION,
+                         uim_candidate_get_annotation_str(cand),
+                         TERMINATOR);
     }
   }
 }
@@ -491,7 +513,7 @@ uim_cand_win_gtk_get_index(UIMCandWinGtk *cwin)
 void
 uim_cand_win_gtk_set_index(UIMCandWinGtk *cwin, gint index)
 {
-  UIM_CAND_WIN_GTK_GET_CLASS (cwin)->set_index(cwin, index);
+  UIM_CAND_WIN_GTK_GET_CLASS(cwin)->set_index(cwin, index);
 }
 
 static void
@@ -501,7 +523,7 @@ uim_cand_win_gtk_real_set_index(UIMCandWinGtk *cwin, gint index)
 
   g_return_if_fail(UIM_IS_CAND_WIN_GTK(cwin));
 
-  if (index >= (gint) cwin->nr_candidates)
+  if (index >= (gint)cwin->nr_candidates)
     cwin->candidate_index = 0;
   else
     cwin->candidate_index = index;
@@ -535,7 +557,7 @@ uim_cand_win_gtk_get_page(UIMCandWinGtk *cwin)
 void
 uim_cand_win_gtk_set_page(UIMCandWinGtk *cwin, gint page)
 {
-  UIM_CAND_WIN_GTK_GET_CLASS (cwin)->set_page(cwin, page);
+  UIM_CAND_WIN_GTK_GET_CLASS(cwin)->set_page(cwin, page);
 }
 
 static void
@@ -552,7 +574,7 @@ uim_cand_win_gtk_real_set_page(UIMCandWinGtk *cwin, gint page)
 
   if (page < 0)
     new_page = len - 1;
-  else if (page >= (gint) len)
+  else if (page >= (gint)len)
     new_page = 0;
   else
     new_page = page;
@@ -561,15 +583,15 @@ uim_cand_win_gtk_real_set_page(UIMCandWinGtk *cwin, gint page)
 
   if (cwin->display_limit) {
     if (cwin->candidate_index >= 0)
-      new_index
-        = (new_page * cwin->display_limit) + (cwin->candidate_index % cwin->display_limit);
+      new_index = (new_page * cwin->display_limit) +
+                  (cwin->candidate_index % cwin->display_limit);
     else
       new_index = -1;
   } else {
     new_index = cwin->candidate_index;
   }
 
-  if (new_index >= (gint) cwin->nr_candidates)
+  if (new_index >= (gint)cwin->nr_candidates)
     new_index = cwin->nr_candidates - 1;
 
   uim_cand_win_gtk_set_index(cwin, new_index);
@@ -583,7 +605,8 @@ uim_cand_win_gtk_set_scrollable(UIMCandWinGtk *cwin, gboolean scrollable)
   g_return_if_fail(UIM_IS_CAND_WIN_GTK(cwin));
 
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(cwin->scrolled_window),
-				 GTK_POLICY_NEVER, policy);
+                                 GTK_POLICY_NEVER,
+                                 policy);
 }
 
 void
@@ -618,7 +641,7 @@ uim_cand_win_gtk_query_new_page_by_cand_select(UIMCandWinGtk *cwin, gint index)
 
 guint
 uim_cand_win_gtk_query_new_page_by_shift_page(UIMCandWinGtk *cwin,
-					    gboolean forward)
+                                              gboolean forward)
 {
   gint index;
   guint new_page, len;
@@ -666,7 +689,8 @@ pagebutton_clicked(GtkButton *button, gpointer data)
   }
   if (cwin->candidate_index >= 0) {
     g_signal_emit(G_OBJECT(cwin),
-                  cand_win_gtk_signals[INDEX_CHANGED_SIGNAL], 0);
+                  cand_win_gtk_signals[INDEX_CHANGED_SIGNAL],
+                  0);
   }
   /* if got candidates, update view */
   if (!has_candidates && cwin->stores->pdata[cwin->page_index]) {
@@ -676,14 +700,16 @@ pagebutton_clicked(GtkButton *button, gpointer data)
 
 void
 uim_cand_win_gtk_layout(UIMCandWinGtk *cwin,
-			gint topwin_x, gint topwin_y,
-			gint topwin_width, gint topwin_height)
+                        gint topwin_x,
+                        gint topwin_y,
+                        gint topwin_width,
+                        gint topwin_height)
 {
   GtkRequisition req;
-  int  x, y;
-  int  cursor_x, cursor_y;
-  int  sc_he, cw_he; /*screen height, candidate window height*/
-  int  sc_wi, cw_wi;
+  int x, y;
+  int cursor_x, cursor_y;
+  int sc_he, cw_he; /*screen height, candidate window height*/
+  int sc_wi, cw_wi;
 
   g_return_if_fail(UIM_IS_CAND_WIN_GTK(cwin));
 
@@ -707,17 +733,17 @@ uim_cand_win_gtk_layout(UIMCandWinGtk *cwin,
   }
   cursor_y = cwin->cursor.y;
 
-  if (sc_wi <  topwin_x + cursor_x + cw_wi) {
+  if (sc_wi < topwin_x + cursor_x + cw_wi) {
     /* x = topwin_x + cursor_x - cw_wi; */
     x = sc_wi - cw_wi;
   } else {
     x = topwin_x + cursor_x;
   }
 
-  if (sc_he <  topwin_y + cursor_y +  cwin->cursor.height + cw_he) {
+  if (sc_he < topwin_y + cursor_y + cwin->cursor.height + cw_he) {
     y = topwin_y + cursor_y - cw_he;
   } else {
-    y = topwin_y + cursor_y +  cwin->cursor.height;
+    y = topwin_y + cursor_y + cwin->cursor.height;
   }
 
   cand_win_move_window(GTK_WIDGET(cwin), x, y);
@@ -739,7 +765,7 @@ uim_cand_win_gtk_set_cursor_location(UIMCandWinGtk *cwin, GdkRectangle *area)
 void
 uim_cand_win_gtk_create_sub_window(UIMCandWinGtk *cwin)
 {
-  UIM_CAND_WIN_GTK_GET_CLASS (cwin)->create_sub_window(cwin);
+  UIM_CAND_WIN_GTK_GET_CLASS(cwin)->create_sub_window(cwin);
   uim_cand_win_gtk_sync_sub_window_transient_for(cwin);
 }
 
@@ -759,7 +785,7 @@ uim_cand_win_gtk_sync_sub_window_transient_for(UIMCandWinGtk *cwin)
   gtk_window_set_transient_for(sub_window, parent);
 }
 
-#define UIM_ANNOTATION_WIN_WIDTH 200
+#define UIM_ANNOTATION_WIN_WIDTH  200
 #define UIM_ANNOTATION_WIN_HEIGHT 200
 
 void
@@ -773,15 +799,16 @@ uim_cand_win_gtk_real_create_sub_window(UIMCandWinGtk *cwin)
   cwin->sub_window.window = window = gtk_window_new();
   gtk_window_set_decorated(GTK_WINDOW(window), FALSE);
   gtk_window_set_default_size(GTK_WINDOW(window),
-			      UIM_ANNOTATION_WIN_WIDTH,
-			      UIM_ANNOTATION_WIN_HEIGHT);
+                              UIM_ANNOTATION_WIN_WIDTH,
+                              UIM_ANNOTATION_WIN_HEIGHT);
   gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
 
   frame = gtk_frame_new(NULL);
 
   cwin->sub_window.scrolled_window = scrwin = gtk_scrolled_window_new();
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrwin),
-				 GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+                                 GTK_POLICY_AUTOMATIC,
+                                 GTK_POLICY_AUTOMATIC);
 
   cwin->sub_window.text_view = text_view = gtk_text_view_new();
   gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
@@ -792,11 +819,10 @@ uim_cand_win_gtk_real_create_sub_window(UIMCandWinGtk *cwin)
   gtk_window_set_child(GTK_WINDOW(window), frame);
 }
 
-
 void
 uim_cand_win_gtk_layout_sub_window(UIMCandWinGtk *cwin)
 {
-  UIM_CAND_WIN_GTK_GET_CLASS (cwin)->layout_sub_window(cwin);
+  UIM_CAND_WIN_GTK_GET_CLASS(cwin)->layout_sub_window(cwin);
 }
 
 void

@@ -19,17 +19,17 @@
      may be used to endorse or promote products derived from this software
      without specific prior written permission.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' AND
-  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE LIABLE
-  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
-  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-  SUCH DAMAGE.
+  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.
 
   Like its GTK 3 predecessor, this dialog is entirely input-method
   agnostic: the list of engines to offer comes solely from uim's
@@ -57,7 +57,8 @@
 #define SWITCHER_TYPE_ITEM (switcher_item_get_type())
 G_DECLARE_FINAL_TYPE(SwitcherItem, switcher_item, SWITCHER, ITEM, GObject)
 
-struct _SwitcherItem {
+struct _SwitcherItem
+{
   GObject parent_instance;
   gchar *name;
   gchar *language;
@@ -91,8 +92,10 @@ switcher_item_init(SwitcherItem *self)
 }
 
 static SwitcherItem *
-switcher_item_new(const gchar *name, const gchar *language,
-                  const gchar *description, gboolean current)
+switcher_item_new(const gchar *name,
+                  const gchar *language,
+                  const gchar *description,
+                  gboolean current)
 {
   SwitcherItem *item = g_object_new(SWITCHER_TYPE_ITEM, NULL);
 
@@ -121,8 +124,10 @@ static GtkSingleSelection *switcher_selection;
 static gboolean custom_enabled;
 static enum switcher_coverage coverage = IMSW_COVERAGE_WHOLE_DESKTOP;
 
-static void check_helper_connection(void);
-static void parse_helper_str_im_list(const char *im_list_str_new);
+static void
+check_helper_connection(void);
+static void
+parse_helper_str_im_list(const char *im_list_str_new);
 
 /* ------------------------------ helpers -------------------------------- */
 
@@ -165,8 +170,10 @@ save_default_im(void)
   if (!im_name)
     return;
 
-  uim_scm_callf("custom-set-value!", "yy",
-               "custom-preserved-default-im-name", im_name);
+  uim_scm_callf("custom-set-value!",
+                "yy",
+                "custom-preserved-default-im-name",
+                im_name);
   uim_custom_save_custom("custom-preserved-default-im-name");
   g_free(im_name);
 }
@@ -217,8 +224,9 @@ coverage_toggled_cb(GtkCheckButton *button, gpointer data)
 /* ------------------------------ list view -------------------------------- */
 
 static void
-setup_label_cb(GtkSignalListItemFactory *factory, GtkListItem *list_item,
-              gpointer data)
+setup_label_cb(GtkSignalListItemFactory *factory,
+               GtkListItem *list_item,
+               gpointer data)
 {
   GtkWidget *label = gtk_label_new(NULL);
 
@@ -227,8 +235,9 @@ setup_label_cb(GtkSignalListItemFactory *factory, GtkListItem *list_item,
 }
 
 static void
-bind_name_cb(GtkSignalListItemFactory *factory, GtkListItem *list_item,
-            gpointer data)
+bind_name_cb(GtkSignalListItemFactory *factory,
+             GtkListItem *list_item,
+             gpointer data)
 {
   SwitcherItem *item = gtk_list_item_get_item(list_item);
   GtkWidget *label = gtk_list_item_get_child(list_item);
@@ -237,32 +246,33 @@ bind_name_cb(GtkSignalListItemFactory *factory, GtkListItem *list_item,
 }
 
 static void
-bind_lang_cb(GtkSignalListItemFactory *factory, GtkListItem *list_item,
-            gpointer data)
+bind_lang_cb(GtkSignalListItemFactory *factory,
+             GtkListItem *list_item,
+             gpointer data)
 {
   SwitcherItem *item = gtk_list_item_get_item(list_item);
   GtkWidget *label = gtk_list_item_get_child(list_item);
 
   gtk_label_set_text(GTK_LABEL(label),
-                     (item->language && *item->language) ?
-                     item->language : "-");
+                     (item->language && *item->language) ? item->language
+                                                         : "-");
 }
 
 static void
-bind_desc_cb(GtkSignalListItemFactory *factory, GtkListItem *list_item,
-            gpointer data)
+bind_desc_cb(GtkSignalListItemFactory *factory,
+             GtkListItem *list_item,
+             gpointer data)
 {
   SwitcherItem *item = gtk_list_item_get_item(list_item);
   GtkWidget *label = gtk_list_item_get_child(list_item);
 
-  gtk_label_set_text(GTK_LABEL(label),
-                     (item->description && *item->description) ?
-                     item->description : "-");
+  gtk_label_set_text(
+    GTK_LABEL(label),
+    (item->description && *item->description) ? item->description : "-");
 }
 
 static GtkColumnViewColumn *
-make_column(const gchar *title,
-           GCallback bind_cb)
+make_column(const gchar *title, GCallback bind_cb)
 {
   GtkListItemFactory *factory = gtk_signal_list_item_factory_new();
   GtkColumnViewColumn *column;
@@ -282,18 +292,23 @@ create_switcher_view(void)
   switcher_store = g_list_store_new(SWITCHER_TYPE_ITEM);
   switcher_selection = gtk_single_selection_new(G_LIST_MODEL(switcher_store));
 
-  switcher_view =
-    GTK_COLUMN_VIEW(gtk_column_view_new(GTK_SELECTION_MODEL(switcher_selection)));
+  switcher_view = GTK_COLUMN_VIEW(
+    gtk_column_view_new(GTK_SELECTION_MODEL(switcher_selection)));
 
-  gtk_column_view_append_column(switcher_view,
+  gtk_column_view_append_column(
+    switcher_view,
     make_column(_("InputMethodName"), G_CALLBACK(bind_name_cb)));
-  gtk_column_view_append_column(switcher_view,
+  gtk_column_view_append_column(
+    switcher_view,
     make_column(_("Language"), G_CALLBACK(bind_lang_cb)));
-  gtk_column_view_append_column(switcher_view,
+  gtk_column_view_append_column(
+    switcher_view,
     make_column(_("Description"), G_CALLBACK(bind_desc_cb)));
 
-  g_signal_connect_swapped(switcher_view, "activate",
-                           G_CALLBACK(ok_clicked_cb), NULL);
+  g_signal_connect_swapped(switcher_view,
+                           "activate",
+                           G_CALLBACK(ok_clicked_cb),
+                           NULL);
 
   return GTK_WIDGET(switcher_view);
 }
@@ -334,10 +349,14 @@ create_switcher(GtkApplication *app)
   gtk_window_set_icon_name(GTK_WINDOW(switcher_window), "uim");
   gtk_window_set_default_size(GTK_WINDOW(switcher_window), 480, 360);
 
-  g_signal_connect(switcher_window, "destroy",
-                   G_CALLBACK(gtk_window_destroy), NULL);
-  g_signal_connect(switcher_window, "notify::is-active",
-                   G_CALLBACK(window_active_changed_cb), NULL);
+  g_signal_connect(switcher_window,
+                   "destroy",
+                   G_CALLBACK(gtk_window_destroy),
+                   NULL);
+  g_signal_connect(switcher_window,
+                   "notify::is-active",
+                   G_CALLBACK(window_active_changed_cb),
+                   NULL);
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 8);
   gtk_widget_set_margin_top(vbox, 8);
@@ -352,7 +371,8 @@ create_switcher(GtkApplication *app)
 
   scrolled = gtk_scrolled_window_new();
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled),
-                                 GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+                                 GTK_POLICY_AUTOMATIC,
+                                 GTK_POLICY_AUTOMATIC);
   gtk_widget_set_hexpand(scrolled, TRUE);
   gtk_widget_set_vexpand(scrolled, TRUE);
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled),
@@ -372,18 +392,26 @@ create_switcher(GtkApplication *app)
   radio0 = gtk_check_button_new_with_label(_("whole desktop"));
   radio1 = gtk_check_button_new_with_label(_("current application only"));
   radio2 = gtk_check_button_new_with_label(_("current text area only"));
-  gtk_check_button_set_group(GTK_CHECK_BUTTON(radio1), GTK_CHECK_BUTTON(radio0));
-  gtk_check_button_set_group(GTK_CHECK_BUTTON(radio2), GTK_CHECK_BUTTON(radio0));
+  gtk_check_button_set_group(GTK_CHECK_BUTTON(radio1),
+                             GTK_CHECK_BUTTON(radio0));
+  gtk_check_button_set_group(GTK_CHECK_BUTTON(radio2),
+                             GTK_CHECK_BUTTON(radio0));
 
   gtk_box_append(GTK_BOX(coverage_box), radio0);
   gtk_box_append(GTK_BOX(coverage_box), radio1);
   gtk_box_append(GTK_BOX(coverage_box), radio2);
 
-  g_signal_connect(radio0, "toggled", G_CALLBACK(coverage_toggled_cb),
+  g_signal_connect(radio0,
+                   "toggled",
+                   G_CALLBACK(coverage_toggled_cb),
                    GINT_TO_POINTER(IMSW_COVERAGE_WHOLE_DESKTOP));
-  g_signal_connect(radio1, "toggled", G_CALLBACK(coverage_toggled_cb),
+  g_signal_connect(radio1,
+                   "toggled",
+                   G_CALLBACK(coverage_toggled_cb),
                    GINT_TO_POINTER(IMSW_COVERAGE_THIS_APPLICATION_ONLY));
-  g_signal_connect(radio2, "toggled", G_CALLBACK(coverage_toggled_cb),
+  g_signal_connect(radio2,
+                   "toggled",
+                   G_CALLBACK(coverage_toggled_cb),
                    GINT_TO_POINTER(IMSW_COVERAGE_THIS_TEXT_AREA_ONLY));
 
   gtk_check_button_set_active(GTK_CHECK_BUTTON(radio0), TRUE);
@@ -437,9 +465,10 @@ parse_helper_str_im_list(const char *im_list_str_new)
 
     if (info && info[0] && info[1] && info[2]) {
       gboolean current = info[3] && *info[3];
-      SwitcherItem *item =
-        switcher_item_new(info[0], get_text(info[1]), get_text(info[2]),
-                          current);
+      SwitcherItem *item = switcher_item_new(info[0],
+                                             get_text(info[1]),
+                                             get_text(info[2]),
+                                             current);
 
       if (current)
         select_index = g_list_model_get_n_items(G_LIST_MODEL(switcher_store));
@@ -503,8 +532,8 @@ check_helper_connection(void)
   if (uim_fd > 0) {
     GIOChannel *channel = g_io_channel_unix_new(uim_fd);
 
-    read_tag = g_io_add_watch(channel, G_IO_IN | G_IO_HUP | G_IO_ERR,
-                              fd_read_cb, NULL);
+    read_tag =
+      g_io_add_watch(channel, G_IO_IN | G_IO_HUP | G_IO_ERR, fd_read_cb, NULL);
     g_io_channel_unref(channel);
   }
 }

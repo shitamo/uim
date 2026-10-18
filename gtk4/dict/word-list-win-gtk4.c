@@ -17,17 +17,17 @@
      may be used to endorse or promote products derived from this software
      without specific prior written permission.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' AND
-  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE LIABLE
-  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
-  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-  SUCH DAMAGE.
+  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.
 
 */
 
@@ -44,41 +44,76 @@
 #include "word-list-win-gtk4.h"
 #include "word-win-gtk4.h"
 
-static void word_list_window_class_init    (WordListWindowClass *window);
-static void word_list_window_init          (WordListWindow *window);
-static void word_list_window_dispose       (GObject        *object);
-static void word_list_window_set_sensitive (WordListWindow *window);
+static void
+word_list_window_class_init(WordListWindowClass *window);
+static void
+word_list_window_init(WordListWindow *window);
+static void
+word_list_window_dispose(GObject *object);
+static void
+word_list_window_set_sensitive(WordListWindow *window);
 
-static void build_action_group          (WordListWindow *window);
-static void build_menu_bar              (WordListWindow *window, GtkBox *vbox);
-static void build_toolbar               (WordListWindow *window, GtkBox *vbox);
-static void build_popup_menu            (WordListWindow *window);
+static void
+build_action_group(WordListWindow *window);
+static void
+build_menu_bar(WordListWindow *window, GtkBox *vbox);
+static void
+build_toolbar(WordListWindow *window, GtkBox *vbox);
+static void
+build_popup_menu(WordListWindow *window);
 
 /* action callbacks (GSimpleAction, "activate") */
-static void act_quit_cb                 (GSimpleAction *action, GVariant *param, gpointer data);
-static void act_add_word_cb             (GSimpleAction *action, GVariant *param, gpointer data);
-static void act_remove_word_cb          (GSimpleAction *action, GVariant *param, gpointer data);
-static void act_edit_word_cb            (GSimpleAction *action, GVariant *param, gpointer data);
-static void act_about_cb                (GSimpleAction *action, GVariant *param, gpointer data);
-static void act_dictionary_type_change_state_cb (GSimpleAction *action, GVariant *value, gpointer data);
+static void
+act_quit_cb(GSimpleAction *action, GVariant *param, gpointer data);
+static void
+act_add_word_cb(GSimpleAction *action, GVariant *param, gpointer data);
+static void
+act_remove_word_cb(GSimpleAction *action, GVariant *param, gpointer data);
+static void
+act_edit_word_cb(GSimpleAction *action, GVariant *param, gpointer data);
+static void
+act_about_cb(GSimpleAction *action, GVariant *param, gpointer data);
+static void
+act_dictionary_type_change_state_cb(GSimpleAction *action,
+                                    GVariant *value,
+                                    gpointer data);
 
 /* call back functions for WordListView */
-static void     word_list_click_pressed_cb (GtkGestureClick *gesture, gint n_press,
-					    gdouble x, gdouble y, WordListWindow *window);
-static gboolean word_list_row_activated_cb (GtkTreeView *treeview, GtkTreePath *path,
-					    GtkTreeViewColumn *column, WordListWindow *window);
-static gboolean word_list_key_pressed_cb   (GtkEventControllerKey *controller, guint keyval,
-					    guint keycode, GdkModifierType state,
-					    WordListWindow *window);
-static void word_list_selection_changed_cb (GtkTreeSelection *selection,
-					    WordListWindow *window);
+static void
+word_list_click_pressed_cb(GtkGestureClick *gesture,
+                           gint n_press,
+                           gdouble x,
+                           gdouble y,
+                           WordListWindow *window);
+static gboolean
+word_list_row_activated_cb(GtkTreeView *treeview,
+                           GtkTreePath *path,
+                           GtkTreeViewColumn *column,
+                           WordListWindow *window);
+static gboolean
+word_list_key_pressed_cb(GtkEventControllerKey *controller,
+                         guint keyval,
+                         guint keycode,
+                         GdkModifierType state,
+                         WordListWindow *window);
+static void
+word_list_selection_changed_cb(GtkTreeSelection *selection,
+                               WordListWindow *window);
 
 /* call back functions for WordWindow */
-static void wordwin_response_cb            (WordWindow     *dialog,
-					    WordListWindow *window);
+static void
+wordwin_response_cb(WordWindow *dialog, WordListWindow *window);
 
-static void dict_get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec);
-static void dict_set_property(GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec);
+static void
+dict_get_property(GObject *object,
+                  guint prop_id,
+                  GValue *value,
+                  GParamSpec *pspec);
+static void
+dict_set_property(GObject *object,
+                  guint prop_id,
+                  const GValue *value,
+                  GParamSpec *pspec);
 
 GtkWindowClass *parent_class = NULL;
 
@@ -95,25 +130,30 @@ GtkWindowClass *parent_class = NULL;
 #define ACTION_ABOUT           "about"
 #define ACTION_DICTIONARY_TYPE "dictionary-type"
 
-#define ACTIVATE_ACTION(window, action_name)				       \
-  g_action_group_activate_action(G_ACTION_GROUP((window)->actions),	       \
-				 (action_name), NULL)
+#define ACTIVATE_ACTION(window, action_name)                                   \
+  g_action_group_activate_action(G_ACTION_GROUP((window)->actions),            \
+                                 (action_name),                                \
+                                 NULL)
 
-#define SET_ACTION_SENSITIVE(window, action_name, sensitive)		       \
-{									       \
-  GAction *action_ = g_action_map_lookup_action(G_ACTION_MAP((window)->actions), \
-						(action_name));	       \
-  if (action_)								       \
-    g_simple_action_set_enabled(G_SIMPLE_ACTION(action_), (sensitive));      \
-}
+#define SET_ACTION_SENSITIVE(window, action_name, sensitive)                   \
+  {                                                                            \
+    GAction *action_ =                                                         \
+      g_action_map_lookup_action(G_ACTION_MAP((window)->actions),              \
+                                 (action_name));                               \
+    if (action_)                                                               \
+      g_simple_action_set_enabled(G_SIMPLE_ACTION(action_), (sensitive));      \
+  }
 
 static const gchar *
 dict_type_to_name(DictEnumDictionaryType type)
 {
   switch (type) {
-  case DICT_ENUM_DICTIONARY_TYPE_ANTHY: return "anthy";
-  case DICT_ENUM_DICTIONARY_TYPE_CANNA: return "canna";
-  default: return "anthy";
+  case DICT_ENUM_DICTIONARY_TYPE_ANTHY:
+    return "anthy";
+  case DICT_ENUM_DICTIONARY_TYPE_CANNA:
+    return "canna";
+  default:
+    return "anthy";
   }
 }
 
@@ -125,7 +165,9 @@ name_to_dict_type(const gchar *name)
   return DICT_ENUM_DICTIONARY_TYPE_ANTHY;
 }
 
-GType word_list_window_get_type(void) {
+GType
+word_list_window_get_type(void)
+{
   static GType type = 0;
 
   if (type == 0) {
@@ -137,11 +179,10 @@ GType word_list_window_get_type(void) {
       NULL, /* class_finalize */
       NULL, /* class_data */
       sizeof(WordListWindow),
-      0, /* n_preallocs */
+      0,                                       /* n_preallocs */
       (GInstanceInitFunc)word_list_window_init /* instance_init */
     };
-    type = g_type_register_static(GTK_TYPE_WINDOW,
-				  "WordListWindow", &info, 0);
+    type = g_type_register_static(GTK_TYPE_WINDOW, "WordListWindow", &info, 0);
   }
   return type;
 }
@@ -152,39 +193,47 @@ dict_enum_dictionary_type_get_type(void)
   static GType etype = 0;
   if (etype == 0) {
     static const GEnumValue values[] = {
-      { DICT_ENUM_DICTIONARY_TYPE_ANTHY, "DICT_ENUM_DICTIONARY_TYPE_ANTHY", "anthy" },
-      { DICT_ENUM_DICTIONARY_TYPE_CANNA, "DICT_ENUM_DICTIONARY_TYPE_CANNA", "canna" },
-      { DICT_ENUM_DICTIONARY_TYPE_SKK, "DICT_ENUM_DICTIONARY_TYPE_SKK", "skk" },
-      { DICT_ENUM_DICTIONARY_TYPE_PRIME, "DICT_ENUM_DICTIONARY_TYPE_PRIME", "prime" },
-      { DICT_ENUM_DICTIONARY_TYPE_UNKOWN, "DICT_ENUM_DICTIONARY_TYPE_UNKOWN", "unknown" },
-      { 0, NULL, NULL }
-    };
+      {DICT_ENUM_DICTIONARY_TYPE_ANTHY,
+       "DICT_ENUM_DICTIONARY_TYPE_ANTHY",
+       "anthy"},
+      {DICT_ENUM_DICTIONARY_TYPE_CANNA,
+       "DICT_ENUM_DICTIONARY_TYPE_CANNA",
+       "canna"},
+      {DICT_ENUM_DICTIONARY_TYPE_SKK, "DICT_ENUM_DICTIONARY_TYPE_SKK", "skk"},
+      {DICT_ENUM_DICTIONARY_TYPE_PRIME,
+       "DICT_ENUM_DICTIONARY_TYPE_PRIME",
+       "prime"},
+      {DICT_ENUM_DICTIONARY_TYPE_UNKOWN,
+       "DICT_ENUM_DICTIONARY_TYPE_UNKOWN",
+       "unknown"},
+      {0, NULL, NULL}};
     etype = g_enum_register_static("DictEnumDictionaryType", values);
   }
   return etype;
 }
 
 static void
-word_list_window_class_init (WordListWindowClass *klass)
+word_list_window_class_init(WordListWindowClass *klass)
 {
   GObjectClass *object_class;
 
   parent_class = g_type_class_peek_parent(klass);
-  object_class = (GObjectClass *) klass;
+  object_class = (GObjectClass *)klass;
 
   object_class->dispose = word_list_window_dispose;
 
   object_class->get_property = dict_get_property;
   object_class->set_property = dict_set_property;
 
-  g_object_class_install_property(object_class,
-  				  PROP_DICTIONARY_TYPE,
-				  g_param_spec_enum("dictionary-type",
-				  		    _("dictionary type"),
-						    _("dictionary type"),
-						    DICT_TYPE_ENUM_DICTIONARY_TYPE,
-						    DICT_ENUM_DICTIONARY_TYPE_ANTHY,
-						    G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+  g_object_class_install_property(
+    object_class,
+    PROP_DICTIONARY_TYPE,
+    g_param_spec_enum("dictionary-type",
+                      _("dictionary type"),
+                      _("dictionary type"),
+                      DICT_TYPE_ENUM_DICTIONARY_TYPE,
+                      DICT_ENUM_DICTIONARY_TYPE_ANTHY,
+                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 }
 
 static void
@@ -201,29 +250,35 @@ static void
 build_action_group(WordListWindow *window)
 {
   static const GActionEntry entries[] = {
-    { ACTION_QUIT,        act_quit_cb,        NULL, NULL, NULL },
-    { ACTION_ADD_WORD,    act_add_word_cb,    NULL, NULL, NULL },
-    { ACTION_REMOVE_WORD, act_remove_word_cb, NULL, NULL, NULL },
-    { ACTION_EDIT_WORD,   act_edit_word_cb,   NULL, NULL, NULL },
-    { ACTION_ABOUT,       act_about_cb,       NULL, NULL, NULL },
+    {ACTION_QUIT, act_quit_cb, NULL, NULL, NULL},
+    {ACTION_ADD_WORD, act_add_word_cb, NULL, NULL, NULL},
+    {ACTION_REMOVE_WORD, act_remove_word_cb, NULL, NULL, NULL},
+    {ACTION_EDIT_WORD, act_edit_word_cb, NULL, NULL, NULL},
+    {ACTION_ABOUT, act_about_cb, NULL, NULL, NULL},
   };
   GSimpleAction *dict_type_action;
 
   window->actions = g_simple_action_group_new();
-  g_action_map_add_action_entries(G_ACTION_MAP(window->actions), entries,
-				  G_N_ELEMENTS(entries), window);
+  g_action_map_add_action_entries(G_ACTION_MAP(window->actions),
+                                  entries,
+                                  G_N_ELEMENTS(entries),
+                                  window);
 
   dict_type_action = g_simple_action_new_stateful(
-      ACTION_DICTIONARY_TYPE, G_VARIANT_TYPE_STRING,
-      g_variant_new_string(dict_type_to_name(window->dictionary_type)));
-  g_signal_connect(dict_type_action, "change-state",
-		   G_CALLBACK(act_dictionary_type_change_state_cb), window);
+    ACTION_DICTIONARY_TYPE,
+    G_VARIANT_TYPE_STRING,
+    g_variant_new_string(dict_type_to_name(window->dictionary_type)));
+  g_signal_connect(dict_type_action,
+                   "change-state",
+                   G_CALLBACK(act_dictionary_type_change_state_cb),
+                   window);
   g_action_map_add_action(G_ACTION_MAP(window->actions),
-			  G_ACTION(dict_type_action));
+                          G_ACTION(dict_type_action));
   g_object_unref(dict_type_action);
 
-  gtk_widget_insert_action_group(GTK_WIDGET(window), "win",
-				 G_ACTION_GROUP(window->actions));
+  gtk_widget_insert_action_group(GTK_WIDGET(window),
+                                 "win",
+                                 G_ACTION_GROUP(window->actions));
 }
 
 static void
@@ -241,15 +296,17 @@ build_menu_bar(WordListWindow *window, GtkBox *vbox)
 
 #ifdef USE_ANTHY
   item = g_menu_item_new(_("_Anthy"), NULL);
-  g_menu_item_set_action_and_target_value(item, "win." ACTION_DICTIONARY_TYPE,
-					  g_variant_new_string("anthy"));
+  g_menu_item_set_action_and_target_value(item,
+                                          "win." ACTION_DICTIONARY_TYPE,
+                                          g_variant_new_string("anthy"));
   g_menu_append_item(select_menu, item);
   g_object_unref(item);
 #endif
 #ifdef USE_CANNA
   item = g_menu_item_new(_("_Canna"), NULL);
-  g_menu_item_set_action_and_target_value(item, "win." ACTION_DICTIONARY_TYPE,
-					  g_variant_new_string("canna"));
+  g_menu_item_set_action_and_target_value(item,
+                                          "win." ACTION_DICTIONARY_TYPE,
+                                          g_variant_new_string("canna"));
   g_menu_append_item(select_menu, item);
   g_object_unref(item);
 #endif
@@ -292,17 +349,20 @@ build_toolbar(WordListWindow *window, GtkBox *vbox)
 
   button = gtk_button_new_from_icon_name("list-add-symbolic");
   gtk_widget_set_tooltip_text(button, _("Add a new word"));
-  gtk_actionable_set_action_name(GTK_ACTIONABLE(button), "win." ACTION_ADD_WORD);
+  gtk_actionable_set_action_name(GTK_ACTIONABLE(button),
+                                 "win." ACTION_ADD_WORD);
   gtk_box_append(GTK_BOX(box), button);
 
   button = gtk_button_new_from_icon_name("document-edit-symbolic");
   gtk_widget_set_tooltip_text(button, _("Edit the selected word"));
-  gtk_actionable_set_action_name(GTK_ACTIONABLE(button), "win." ACTION_EDIT_WORD);
+  gtk_actionable_set_action_name(GTK_ACTIONABLE(button),
+                                 "win." ACTION_EDIT_WORD);
   gtk_box_append(GTK_BOX(box), button);
 
   button = gtk_button_new_from_icon_name("list-remove-symbolic");
   gtk_widget_set_tooltip_text(button, _("Remove the selected word"));
-  gtk_actionable_set_action_name(GTK_ACTIONABLE(button), "win." ACTION_REMOVE_WORD);
+  gtk_actionable_set_action_name(GTK_ACTIONABLE(button),
+                                 "win." ACTION_REMOVE_WORD);
   gtk_box_append(GTK_BOX(box), button);
 
   gtk_box_append(vbox, box);
@@ -335,7 +395,7 @@ build_popup_menu(WordListWindow *window)
 }
 
 static void
-word_list_window_init (WordListWindow *window)
+word_list_window_init(WordListWindow *window)
 {
   GtkWidget *word_list, *vbox, *statusbar;
   GtkEventController *key_controller;
@@ -352,7 +412,8 @@ word_list_window_init (WordListWindow *window)
   build_toolbar(window, GTK_BOX(vbox));
 
   window->word_list = word_list = word_list_view_new();
-  word_list_view_set_visible_cclass_code_column(WORD_LIST_VIEW(word_list), TRUE);
+  word_list_view_set_visible_cclass_code_column(WORD_LIST_VIEW(word_list),
+                                                TRUE);
   word_list_view_set_visible_freq_column(WORD_LIST_VIEW(word_list), TRUE);
   gtk_widget_set_vexpand(word_list, TRUE);
   gtk_box_append(GTK_BOX(vbox), word_list);
@@ -362,23 +423,29 @@ word_list_window_init (WordListWindow *window)
   click_gesture = gtk_gesture_click_new();
   gtk_gesture_single_set_button(GTK_GESTURE_SINGLE(click_gesture), 0);
   gtk_widget_add_controller(GTK_WIDGET(WORD_LIST_VIEW(window->word_list)->view),
-			    GTK_EVENT_CONTROLLER(click_gesture));
-  g_signal_connect(click_gesture, "pressed",
-		   G_CALLBACK(word_list_click_pressed_cb), window);
+                            GTK_EVENT_CONTROLLER(click_gesture));
+  g_signal_connect(click_gesture,
+                   "pressed",
+                   G_CALLBACK(word_list_click_pressed_cb),
+                   window);
 
   g_signal_connect(WORD_LIST_VIEW(window->word_list)->view,
-		   "row-activated",
-		   G_CALLBACK(word_list_row_activated_cb), window);
+                   "row-activated",
+                   G_CALLBACK(word_list_row_activated_cb),
+                   window);
 
   key_controller = gtk_event_controller_key_new();
   gtk_widget_add_controller(GTK_WIDGET(WORD_LIST_VIEW(window->word_list)->view),
-			    key_controller);
-  g_signal_connect(key_controller, "key-pressed",
-		   G_CALLBACK(word_list_key_pressed_cb), window);
+                            key_controller);
+  g_signal_connect(key_controller,
+                   "key-pressed",
+                   G_CALLBACK(word_list_key_pressed_cb),
+                   window);
 
   g_signal_connect(WORD_LIST_VIEW(window->word_list)->selection,
-		   "changed",
-		   G_CALLBACK(word_list_selection_changed_cb), window);
+                   "changed",
+                   G_CALLBACK(word_list_selection_changed_cb),
+                   window);
 
   window->statusbar = statusbar = gtk_statusbar_new();
   gtk_box_append(GTK_BOX(vbox), statusbar);
@@ -406,8 +473,10 @@ word_list_window_dispose(GObject *object)
 }
 
 static void
-dict_get_property(GObject *object, guint prop_id, GValue *value,
-		  GParamSpec *pspec)
+dict_get_property(GObject *object,
+                  guint prop_id,
+                  GValue *value,
+                  GParamSpec *pspec)
 {
   switch (prop_id) {
   case PROP_DICTIONARY_TYPE:
@@ -419,8 +488,10 @@ dict_get_property(GObject *object, guint prop_id, GValue *value,
 }
 
 static void
-dict_set_property(GObject *object, guint prop_id, const GValue *value,
-		  GParamSpec *pspec)
+dict_set_property(GObject *object,
+                  guint prop_id,
+                  const GValue *value,
+                  GParamSpec *pspec)
 {
   WordListWindow *window = WORD_LIST_WINDOW(object);
   uim_dict *dict = NULL;
@@ -431,17 +502,19 @@ dict_set_property(GObject *object, guint prop_id, const GValue *value,
     window->dictionary_type = g_value_get_enum(value);
 
     dict_type_action = g_action_map_lookup_action(G_ACTION_MAP(window->actions),
-						  ACTION_DICTIONARY_TYPE);
+                                                  ACTION_DICTIONARY_TYPE);
     if (dict_type_action)
-      g_simple_action_set_state(G_SIMPLE_ACTION(dict_type_action),
-				g_variant_new_string(dict_type_to_name(window->dictionary_type)));
+      g_simple_action_set_state(
+        G_SIMPLE_ACTION(dict_type_action),
+        g_variant_new_string(dict_type_to_name(window->dictionary_type)));
 
     switch (window->dictionary_type) {
     case DICT_ENUM_DICTIONARY_TYPE_ANTHY:
       dict = uim_dict_open(N_("Anthy private dictionary"));
       break;
     case DICT_ENUM_DICTIONARY_TYPE_CANNA:
-      word_list_view_set_visible_freq_column(WORD_LIST_VIEW(window->word_list), FALSE);
+      word_list_view_set_visible_freq_column(WORD_LIST_VIEW(window->word_list),
+                                             FALSE);
       dict = uim_dict_open(N_("Canna private dictionary"));
       break;
     default:
@@ -453,7 +526,9 @@ dict_set_property(GObject *object, guint prop_id, const GValue *value,
     }
     word_list_view_set_dict(WORD_LIST_VIEW(window->word_list), dict);
 
-    gtk_statusbar_push(GTK_STATUSBAR(window->statusbar), 0, _(dict->identifier));
+    gtk_statusbar_push(GTK_STATUSBAR(window->statusbar),
+                       0,
+                       _(dict->identifier));
     break;
   default:
     break;
@@ -468,10 +543,11 @@ dict_get_dictionary_type(GtkWidget *window)
   return w->dictionary_type;
 }
 
-GtkWidget *word_list_window_new(int type)
+GtkWidget *
+word_list_window_new(int type)
 {
-  return GTK_WIDGET(g_object_new(WORD_LIST_WINDOW_TYPE,
-				 "dictionary-type", type, NULL));
+  return GTK_WIDGET(
+    g_object_new(WORD_LIST_WINDOW_TYPE, "dictionary-type", type, NULL));
 }
 
 static void
@@ -487,10 +563,10 @@ word_list_window_set_sensitive(WordListWindow *window)
   selected = gtk_tree_selection_get_selected(selection, NULL, NULL);
 
   if (selected) {
-    SET_ACTION_SENSITIVE(window, ACTION_EDIT_WORD,   TRUE);
+    SET_ACTION_SENSITIVE(window, ACTION_EDIT_WORD, TRUE);
     SET_ACTION_SENSITIVE(window, ACTION_REMOVE_WORD, TRUE);
   } else {
-    SET_ACTION_SENSITIVE(window, ACTION_EDIT_WORD,   FALSE);
+    SET_ACTION_SENSITIVE(window, ACTION_EDIT_WORD, FALSE);
     SET_ACTION_SENSITIVE(window, ACTION_REMOVE_WORD, FALSE);
   }
 }
@@ -514,17 +590,17 @@ act_add_word_cb(GSimpleAction *action, GVariant *param, gpointer data)
   GtkWidget *w;
 
   w = word_window_new(WORD_WINDOW_MODE_ADD,
-		      WORD_LIST_VIEW(window->word_list)->dict);
+                      WORD_LIST_VIEW(window->word_list)->dict);
   gtk_window_set_modal(GTK_WINDOW(w), TRUE);
   gtk_window_set_transient_for(GTK_WINDOW(w), GTK_WINDOW(window));
-  g_signal_connect(w, "word-added",
-		   G_CALLBACK(wordwin_response_cb), window);
+  g_signal_connect(w, "word-added", G_CALLBACK(wordwin_response_cb), window);
   gtk_window_present(GTK_WINDOW(w));
 }
 
-typedef struct {
+typedef struct
+{
   WordListWindow *window;
-  GList          *list;
+  GList *list;
 } RemoveConfirmState;
 
 static void
@@ -535,7 +611,8 @@ remove_confirm_dialog_cb(GObject *source, GAsyncResult *result, gpointer data)
   int button, ok_count = 0, fail_count = 0;
   GList *node;
 
-  button = gtk_alert_dialog_choose_finish(GTK_ALERT_DIALOG(source), result, &error);
+  button =
+    gtk_alert_dialog_choose_finish(GTK_ALERT_DIALOG(source), result, &error);
   if (error) {
     g_error_free(error);
     g_list_free(state->list);
@@ -547,22 +624,25 @@ remove_confirm_dialog_cb(GObject *source, GAsyncResult *result, gpointer data)
   if (button == 1) {
     for (node = state->list; node; node = g_list_next(node)) {
       uim_word *w = node->data;
-      int ret = uim_dict_remove_word(WORD_LIST_VIEW(state->window->word_list)->dict, w);
+      int ret =
+        uim_dict_remove_word(WORD_LIST_VIEW(state->window->word_list)->dict, w);
 
       if (ret)
-	ok_count++;
+        ok_count++;
       else
-	fail_count++;
+        fail_count++;
     }
     if (ok_count)
       word_list_view_refresh(WORD_LIST_VIEW(state->window->word_list));
 
     if (fail_count == 0) {
-      GtkAlertDialog *alert = gtk_alert_dialog_new("%s", _("Word deletion succeeded."));
+      GtkAlertDialog *alert =
+        gtk_alert_dialog_new("%s", _("Word deletion succeeded."));
       gtk_alert_dialog_show(alert, GTK_WINDOW(state->window));
       g_object_unref(alert);
     } else {
-      GtkAlertDialog *alert = gtk_alert_dialog_new("%s", _("Word deletion failed."));
+      GtkAlertDialog *alert =
+        gtk_alert_dialog_new("%s", _("Word deletion failed."));
       gtk_alert_dialog_show(alert, GTK_WINDOW(state->window));
       g_object_unref(alert);
     }
@@ -580,10 +660,12 @@ act_remove_word_cb(GSimpleAction *action, GVariant *param, gpointer data)
   RemoveConfirmState *state;
   GList *list;
   const gchar *message = _("Are you sure to remove seleted words?");
-  const char *buttons[] = { N_("_Cancel"), N_("_Remove"), NULL };
+  const char *buttons[] = {N_("_Cancel"), N_("_Remove"), NULL};
 
-  list = word_list_view_get_selected_data_list(WORD_LIST_VIEW(window->word_list));
-  if (!list) return;
+  list =
+    word_list_view_get_selected_data_list(WORD_LIST_VIEW(window->word_list));
+  if (!list)
+    return;
 
   if (!g_list_next(list))
     message = _("Are you sure to remove the selected word?");
@@ -593,11 +675,14 @@ act_remove_word_cb(GSimpleAction *action, GVariant *param, gpointer data)
   state->list = list;
 
   alert = gtk_alert_dialog_new("%s", message);
-  gtk_alert_dialog_set_buttons(alert, (const char * const *)buttons);
+  gtk_alert_dialog_set_buttons(alert, (const char *const *)buttons);
   gtk_alert_dialog_set_cancel_button(alert, 0);
   gtk_alert_dialog_set_default_button(alert, 0);
-  gtk_alert_dialog_choose(alert, GTK_WINDOW(window), NULL,
-			  remove_confirm_dialog_cb, state);
+  gtk_alert_dialog_choose(alert,
+                          GTK_WINDOW(window),
+                          NULL,
+                          remove_confirm_dialog_cb,
+                          state);
   g_object_unref(alert);
 }
 
@@ -607,19 +692,22 @@ act_edit_word_cb(GSimpleAction *action, GVariant *param, gpointer data)
   WordListWindow *window = WORD_LIST_WINDOW(data);
   GList *list;
 
-  list = word_list_view_get_selected_data_list(WORD_LIST_VIEW(window->word_list));
+  list =
+    word_list_view_get_selected_data_list(WORD_LIST_VIEW(window->word_list));
 
   /* FIXME! it can edit only one word yet. */
   if (list) {
     GtkWidget *widget;
 
     widget = word_window_new(WORD_WINDOW_MODE_EDIT,
-			     WORD_LIST_VIEW(window->word_list)->dict);
+                             WORD_LIST_VIEW(window->word_list)->dict);
     gtk_window_set_modal(GTK_WINDOW(widget), TRUE);
     gtk_window_set_transient_for(GTK_WINDOW(widget), GTK_WINDOW(window));
     word_window_set_word(WORD_WINDOW(widget), list->data);
-    g_signal_connect(widget, "word-added",
-    		     G_CALLBACK(wordwin_response_cb), window);
+    g_signal_connect(widget,
+                     "word-added",
+                     G_CALLBACK(wordwin_response_cb),
+                     window);
 
     gtk_window_present(GTK_WINDOW(widget));
   }
@@ -634,16 +722,13 @@ act_about_cb(GSimpleAction *action, GVariant *param, gpointer data)
   GdkPixbuf *pixbuf, *transparent;
   GdkTexture *logo = NULL;
   const gchar *filename = UIM_PIXMAPSDIR "/uim-dict.png";
-  const gchar *authors[] = {
-    "Masahito Omote <omote@utyuuzin.net>",
-    "Takuro Ashie",
-    "Etsushi Kato",
-    NULL
-  };
-  const gchar *copyright = N_(
-    "Copyright (C) 2003-2004 Masahito Omote\n"
-    "Copyright (C) 2004-2026 uim Project\n"
-    "All rights reserved.");
+  const gchar *authors[] = {"Masahito Omote <omote@utyuuzin.net>",
+                            "Takuro Ashie",
+                            "Etsushi Kato",
+                            NULL};
+  const gchar *copyright = N_("Copyright (C) 2003-2004 Masahito Omote\n"
+                              "Copyright (C) 2004-2026 uim Project\n"
+                              "All rights reserved.");
 
   pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
   if (pixbuf) {
@@ -659,7 +744,8 @@ act_about_cb(GSimpleAction *action, GVariant *param, gpointer data)
   gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(about), N_("uim-dict"));
   gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(about), VERSION);
   gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(about), _(copyright));
-  gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(about), "https://github.com/uim/uim");
+  gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(about),
+                               "https://github.com/uim/uim");
   gtk_about_dialog_set_authors(GTK_ABOUT_DIALOG(about), authors);
   if (logo) {
     gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(about), GDK_PAINTABLE(logo));
@@ -671,11 +757,13 @@ act_about_cb(GSimpleAction *action, GVariant *param, gpointer data)
 }
 
 static void
-act_dictionary_type_change_state_cb(GSimpleAction *action, GVariant *value,
-				    gpointer data)
+act_dictionary_type_change_state_cb(GSimpleAction *action,
+                                    GVariant *value,
+                                    gpointer data)
 {
   WordListWindow *window = WORD_LIST_WINDOW(data);
-  DictEnumDictionaryType new_type = name_to_dict_type(g_variant_get_string(value, NULL));
+  DictEnumDictionaryType new_type =
+    name_to_dict_type(g_variant_get_string(value, NULL));
 
   if (new_type != window->dictionary_type) {
     GtkWidget *newwin;
@@ -688,16 +776,19 @@ act_dictionary_type_change_state_cb(GSimpleAction *action, GVariant *value,
 
       gtk_window_destroy(GTK_WINDOW(newwin));
       if (app)
-	g_application_quit(app);
+        g_application_quit(app);
       return;
     }
 
     g_signal_handlers_disconnect_by_func(window,
-					 (gpointer)dict_window_destroy_cb, NULL);
+                                         (gpointer)dict_window_destroy_cb,
+                                         NULL);
     gtk_window_destroy(GTK_WINDOW(window));
 
-    g_signal_connect(newwin, "destroy",
-		     G_CALLBACK(dict_window_destroy_cb), NULL);
+    g_signal_connect(newwin,
+                     "destroy",
+                     G_CALLBACK(dict_window_destroy_cb),
+                     NULL);
     gtk_window_present(GTK_WINDOW(newwin));
   }
 
@@ -708,10 +799,14 @@ act_dictionary_type_change_state_cb(GSimpleAction *action, GVariant *value,
  * call back functions for WordListView
  */
 static void
-word_list_click_pressed_cb(GtkGestureClick *gesture, gint n_press,
-			   gdouble x, gdouble y, WordListWindow *window)
+word_list_click_pressed_cb(GtkGestureClick *gesture,
+                           gint n_press,
+                           gdouble x,
+                           gdouble y,
+                           WordListWindow *window)
 {
-  guint button = gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(gesture));
+  guint button =
+    gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(gesture));
 
   if (button == GDK_BUTTON_MIDDLE && n_press == 1) {
     ACTIVATE_ACTION(window, ACTION_EDIT_WORD);
@@ -724,7 +819,7 @@ word_list_click_pressed_cb(GtkGestureClick *gesture, gint n_press,
      * is attached to it); the popover is anchored to word_list
      * instead (see build_popup_menu()), so translate accordingly. */
     gtk_widget_translate_coordinates(view, window->word_list, x, y, &tx, &ty);
-    rect = (GdkRectangle){ (int)tx, (int)ty, 1, 1 };
+    rect = (GdkRectangle){(int)tx, (int)ty, 1, 1};
 
     gtk_popover_set_pointing_to(GTK_POPOVER(window->popup_menu), &rect);
     gtk_popover_popup(GTK_POPOVER(window->popup_menu));
@@ -732,8 +827,10 @@ word_list_click_pressed_cb(GtkGestureClick *gesture, gint n_press,
 }
 
 static gboolean
-word_list_row_activated_cb(GtkTreeView *treeview, GtkTreePath *path,
-			   GtkTreeViewColumn *column, WordListWindow *window)
+word_list_row_activated_cb(GtkTreeView *treeview,
+                           GtkTreePath *path,
+                           GtkTreeViewColumn *column,
+                           WordListWindow *window)
 {
   ACTIVATE_ACTION(window, ACTION_EDIT_WORD);
 
@@ -741,9 +838,11 @@ word_list_row_activated_cb(GtkTreeView *treeview, GtkTreePath *path,
 }
 
 static gboolean
-word_list_key_pressed_cb(GtkEventControllerKey *controller, guint keyval,
-			 guint keycode, GdkModifierType state,
-			 WordListWindow *window)
+word_list_key_pressed_cb(GtkEventControllerKey *controller,
+                         guint keyval,
+                         guint keycode,
+                         GdkModifierType state,
+                         WordListWindow *window)
 {
   switch (keyval) {
   case GDK_KEY_Delete:
@@ -759,11 +858,10 @@ word_list_key_pressed_cb(GtkEventControllerKey *controller, guint keyval,
 
 static void
 word_list_selection_changed_cb(GtkTreeSelection *selection,
-			       WordListWindow *window)
+                               WordListWindow *window)
 {
   word_list_window_set_sensitive(window);
 }
-
 
 /*
  * call back functions for WordWindow

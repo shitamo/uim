@@ -17,17 +17,17 @@
  *     may be used to endorse or promote products derived from this software
  *     without specific prior written permission.
  *
- *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' AND
- *  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- *  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE LIABLE
- *  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- *  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- *  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- *  SUCH DAMAGE.
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
+ * IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * This code is based on canna's code. For more information about canna,
  * visit https://canna-input.github.io/ . Canna license is as follows,
@@ -80,9 +80,9 @@
 
 #include "word.h"
 
-#define SUPPORT_ANTHY (1 << 0)
-#define SUPPORT_CANNA (1 << 1)
-#define SUPPORT_ANTHY_CANNA (SUPPORT_ANTHY|SUPPORT_CANNA)
+#define SUPPORT_ANTHY       (1 << 0)
+#define SUPPORT_CANNA       (1 << 1)
+#define SUPPORT_ANTHY_CANNA (SUPPORT_ANTHY | SUPPORT_CANNA)
 
 enum {
   POS_SUBSTANTIVE,
@@ -93,12 +93,13 @@ enum {
   NR_POS
 };
 
-typedef struct _category_code {
+typedef struct _category_code
+{
   const char *code;
   const char *desc;
   const char *example;
-  int   flag;
-  int   type;
+  int flag;
+  int type;
 } category_code;
 
 extern category_code substantive_code[];
@@ -119,10 +120,15 @@ int    cannadic_import            (const char *, int);
 int    cannadic_export            (const char *, int);
 GList *cannadic_parse_line_glist  (unsigned char *buf, GList *list);
 #endif
-const char  *find_desc_from_code        (const char *code);
-const char  *find_desc_from_code_with_type        (const char *code, int type);
-const char  *find_code_from_desc        (const char *desc, int type);
-int    find_cclass_type_from_code (const char *code);
-int    find_cclass_type_from_desc (const char *desc);
+const char *
+find_desc_from_code(const char *code);
+const char *
+find_desc_from_code_with_type(const char *code, int type);
+const char *
+find_code_from_desc(const char *desc, int type);
+int
+find_cclass_type_from_code(const char *code);
+int
+find_cclass_type_from_desc(const char *desc);
 
 #endif /* UIM_DICT_CANNA_CCLASS_H */

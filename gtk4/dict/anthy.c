@@ -18,17 +18,17 @@
  *     may be used to endorse or promote products derived from this software
  *     without specific prior written permission.
  *
- *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' AND
- *  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- *  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE LIABLE
- *  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- *  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- *  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- *  SUCH DAMAGE.
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
+ * IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include <config.h>
@@ -47,32 +47,38 @@
 #include "canna-cclass.h"
 #include "util.h"
 
-static uim_dict *uim_dict_anthy_open        (const char *identifier);
-static void      uim_dict_anthy_close       (uim_dict *dict);
-static int       uim_dict_anthy_add_word    (uim_dict *dict, uim_word *word);
-static int       uim_dict_anthy_change_word (uim_dict *dict, uim_word *word);
-static int       uim_dict_anthy_remove_word (uim_dict *dict, uim_word *word);
-static void      uim_dict_anthy_refresh     (uim_dict *dict);
+static uim_dict *
+uim_dict_anthy_open(const char *identifier);
+static void
+uim_dict_anthy_close(uim_dict *dict);
+static int
+uim_dict_anthy_add_word(uim_dict *dict, uim_word *word);
+static int
+uim_dict_anthy_change_word(uim_dict *dict, uim_word *word);
+static int
+uim_dict_anthy_remove_word(uim_dict *dict, uim_word *word);
+static void
+uim_dict_anthy_refresh(uim_dict *dict);
 
 #if 0 /* should be accessed through functions */
 static
 #endif
 uim_dict_class uim_dict_class_anthy = {
-  "Anthy",                    /* type */
+  "Anthy", /* type */
 
-  NULL,                       /* init */
-  NULL,                       /* exit */
+  NULL, /* init */
+  NULL, /* exit */
 
-  NULL,                       /* list_known_dict */
-  NULL,                       /* default_priv_dict */
+  NULL, /* list_known_dict */
+  NULL, /* default_priv_dict */
 
-  uim_dict_anthy_open,        /* open */
+  uim_dict_anthy_open, /* open */
 
-  NULL,                       /* is_supported */
-  NULL,                       /* load_file */
-  NULL,                       /* save_file */
+  NULL, /* is_supported */
+  NULL, /* load_file */
+  NULL, /* save_file */
 
-  uim_dict_anthy_close,       /* close */
+  uim_dict_anthy_close, /* close */
 
   uim_dict_anthy_add_word,    /* add_word */
   uim_dict_anthy_change_word, /* change_word */
@@ -122,33 +128,44 @@ dict_anthy_read_priv_dic_list(uim_word **head)
   }
 
   while (ret == 0) {
-    if (anthy_priv_dic_get_index(phon, sizeof(phon))
-	&& anthy_priv_dic_get_wtype(cclass_native,
-				    sizeof(cclass_native))
-	&& anthy_priv_dic_get_word(desc, sizeof(desc))) {
+    if (anthy_priv_dic_get_index(phon, sizeof(phon)) &&
+        anthy_priv_dic_get_wtype(cclass_native, sizeof(cclass_native)) &&
+        anthy_priv_dic_get_word(desc, sizeof(desc))) {
       gint pos;
       const char *cclass_code = NULL;
 
       for (pos = 0; pos < NR_POS; pos++) {
-	cclass_code = find_desc_from_code_with_type(cclass_native, pos);
-	if (cclass_code)
-	  break;
+        cclass_code = find_desc_from_code_with_type(cclass_native, pos);
+        if (cclass_code)
+          break;
       }
 
 #if LIBANTHY_UTF8_CAPABLE
       {
-	gchar *cclass_code_utf8 = eucjp_to_utf8(cclass_code);
-	word_append(head, WORD_TYPE_ANTHY, "UTF-8",
-		    phon, desc, cclass_code_utf8, cclass_native,
-		    anthy_priv_dic_get_freq(),
-		    0, NULL);
-	g_free(cclass_code_utf8);
+        gchar *cclass_code_utf8 = eucjp_to_utf8(cclass_code);
+        word_append(head,
+                    WORD_TYPE_ANTHY,
+                    "UTF-8",
+                    phon,
+                    desc,
+                    cclass_code_utf8,
+                    cclass_native,
+                    anthy_priv_dic_get_freq(),
+                    0,
+                    NULL);
+        g_free(cclass_code_utf8);
       }
 #else /* EUC-JP */
-      word_append(head, WORD_TYPE_ANTHY, "EUC-JP",
-		  phon, desc, cclass_code, cclass_native,
-		  anthy_priv_dic_get_freq(),
-		  0, NULL);
+      word_append(head,
+                  WORD_TYPE_ANTHY,
+                  "EUC-JP",
+                  phon,
+                  desc,
+                  cclass_code,
+                  cclass_native,
+                  anthy_priv_dic_get_freq(),
+                  0,
+                  NULL);
 #endif
     }
     ret = anthy_priv_dic_select_next_entry();
@@ -157,8 +174,10 @@ dict_anthy_read_priv_dic_list(uim_word **head)
 }
 
 static int
-dict_anthy_add_priv_dic_with_flags(char *phon, char *desc,
-				   char *cclass_code, int freq)
+dict_anthy_add_priv_dic_with_flags(char *phon,
+                                   char *desc,
+                                   char *cclass_code,
+                                   int freq)
 {
   int status;
 
@@ -175,7 +194,7 @@ dict_anthy_add_priv_dic_with_flags(char *phon, char *desc,
     status = 1;
     break;
   default:
-    status = 0; 
+    status = 0;
   }
 
   return status;
@@ -208,16 +227,16 @@ uim_dict_anthy_open(const char *identifier)
   if (dict == NULL)
     return NULL;
 
-  dict->funcs      = &uim_dict_class_anthy;
+  dict->funcs = &uim_dict_class_anthy;
   dict->identifier = strdup(identifier);
-  dict->filename   = NULL;
+  dict->filename = NULL;
 #if LIBANTHY_UTF8_CAPABLE
-  dict->charset    = strdup("UTF-8");
+  dict->charset = strdup("UTF-8");
 #else
-  dict->charset    = strdup("EUC-JP");
+  dict->charset = strdup("EUC-JP");
 #endif
-  dict->ref_count  = 0; /* at this point, no window refers this */
-  dict->word_list  = NULL;
+  dict->ref_count = 0; /* at this point, no window refers this */
+  dict->word_list = NULL;
 
   dict_anthy_read_priv_dic_list(&dict->word_list);
 
@@ -248,8 +267,10 @@ uim_dict_anthy_add_word(uim_dict *dict, uim_word *word)
   if (dict == NULL || word == NULL)
     return 0;
 
-  ret = dict_anthy_add_priv_dic_with_flags(word->phon, word->desc,
-					   word->cclass_native, word->freq);
+  ret = dict_anthy_add_priv_dic_with_flags(word->phon,
+                                           word->desc,
+                                           word->cclass_native,
+                                           word->freq);
 
   return ret;
 }
@@ -266,8 +287,9 @@ uim_dict_anthy_remove_word(uim_dict *dict, uim_word *word)
   if (dict == NULL)
     return 0;
 
-  return dict_anthy_delete_priv_dic(word->phon, word->desc,
-				    word->cclass_native);
+  return dict_anthy_delete_priv_dic(word->phon,
+                                    word->desc,
+                                    word->cclass_native);
 }
 
 static void

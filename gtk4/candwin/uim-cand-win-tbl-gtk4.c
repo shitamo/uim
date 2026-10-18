@@ -17,17 +17,17 @@
      may be used to endorse or promote products derived from this software
      without specific prior written permission.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' AND
-  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE LIABLE
-  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
-  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-  SUCH DAMAGE.
+  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.
 
 
   GTK4 dropped GtkTable (and its per-column/per-row "spacing after this
@@ -62,79 +62,92 @@ enum {
   LISTSTORE_NR_COLUMNS
 };
 
-#define TABLE_NR_COLUMNS 13
-#define TABLE_NR_ROWS 8
-#define TABLE_NR_CELLS (TABLE_NR_COLUMNS * TABLE_NR_ROWS)
-#define CELLINDEX(row,col) ((row) * TABLE_NR_COLUMNS + (col))
+#define TABLE_NR_COLUMNS    13
+#define TABLE_NR_ROWS       8
+#define TABLE_NR_CELLS      (TABLE_NR_COLUMNS * TABLE_NR_ROWS)
+#define CELLINDEX(row, col) ((row) * TABLE_NR_COLUMNS + (col))
 /* 106 keyboard */
 static gchar default_tbl_cell2label[TABLE_NR_CELLS] = {
-  '1','2','3','4','5', '6','7','8','9','0',   '-','^','\\',
-  'q','w','e','r','t', 'y','u','i','o','p',   '@','[','\0',
-  'a','s','d','f','g', 'h','j','k','l',';',   ':',']','\0',
-  'z','x','c','v','b', 'n','m',',','.','/',   '\0','\0',' ',
-  '!','"','#','$','%', '&','\'','(',')','\0', '=','~','|',
-  'Q','W','E','R','T', 'Y','U','I','O','P',   '`','{','\0',
-  'A','S','D','F','G', 'H','J','K','L','+',   '*','}','\0',
-  'Z','X','C','V','B', 'N','M','<','>','?',   '_','\0','\0',
+  '1', '2', '3', '4', '5', '6', '7',  '8', '9', '0',  '-',  '^',  '\\',
+  'q', 'w', 'e', 'r', 't', 'y', 'u',  'i', 'o', 'p',  '@',  '[',  '\0',
+  'a', 's', 'd', 'f', 'g', 'h', 'j',  'k', 'l', ';',  ':',  ']',  '\0',
+  'z', 'x', 'c', 'v', 'b', 'n', 'm',  ',', '.', '/',  '\0', '\0', ' ',
+  '!', '"', '#', '$', '%', '&', '\'', '(', ')', '\0', '=',  '~',  '|',
+  'Q', 'W', 'E', 'R', 'T', 'Y', 'U',  'I', 'O', 'P',  '`',  '{',  '\0',
+  'A', 'S', 'D', 'F', 'G', 'H', 'J',  'K', 'L', '+',  '*',  '}',  '\0',
+  'Z', 'X', 'C', 'V', 'B', 'N', 'M',  '<', '>', '?',  '_',  '\0', '\0',
 };
 /* table consists of four blocks
  *   blockLR  blockA
  *   blockLRS blockAS
  */
-#define BLOCK_A_ROW_START 0
-#define BLOCK_A_ROW_END 4
-#define BLOCK_A_COLUMN_START 10
-#define BLOCK_A_COLUMN_END TABLE_NR_COLUMNS
-#define BLOCK_LRS_ROW_START BLOCK_A_ROW_END
-#define BLOCK_LRS_ROW_END TABLE_NR_ROWS
+#define BLOCK_A_ROW_START      0
+#define BLOCK_A_ROW_END        4
+#define BLOCK_A_COLUMN_START   10
+#define BLOCK_A_COLUMN_END     TABLE_NR_COLUMNS
+#define BLOCK_LRS_ROW_START    BLOCK_A_ROW_END
+#define BLOCK_LRS_ROW_END      TABLE_NR_ROWS
 #define BLOCK_LRS_COLUMN_START 0
-#define BLOCK_LRS_COLUMN_END BLOCK_A_COLUMN_START
-#define BLOCK_AS_ROW_START BLOCK_LRS_ROW_START
-#define BLOCK_AS_ROW_END BLOCK_LRS_ROW_END
-#define BLOCK_AS_COLUMN_START BLOCK_LRS_COLUMN_END
-#define BLOCK_AS_COLUMN_END TABLE_NR_COLUMNS
-#define BLOCK_LR_NR_CELLS (BLOCK_A_ROW_END * BLOCK_A_COLUMN_START)
-#define BLOCK_LRS_NR_CELLS ((BLOCK_LRS_ROW_END - BLOCK_LRS_ROW_START) * (BLOCK_LRS_COLUMN_END - BLOCK_LRS_COLUMN_START))
+#define BLOCK_LRS_COLUMN_END   BLOCK_A_COLUMN_START
+#define BLOCK_AS_ROW_START     BLOCK_LRS_ROW_START
+#define BLOCK_AS_ROW_END       BLOCK_LRS_ROW_END
+#define BLOCK_AS_COLUMN_START  BLOCK_LRS_COLUMN_END
+#define BLOCK_AS_COLUMN_END    TABLE_NR_COLUMNS
+#define BLOCK_LR_NR_CELLS      (BLOCK_A_ROW_END * BLOCK_A_COLUMN_START)
+#define BLOCK_LRS_NR_CELLS                                                     \
+  ((BLOCK_LRS_ROW_END - BLOCK_LRS_ROW_START) *                                 \
+   (BLOCK_LRS_COLUMN_END - BLOCK_LRS_COLUMN_START))
 
-#define BLOCK_SPACING 20
-#define HOMEPOSITION_SPACING 2
-#define SPACING_LEFT_BLOCK_COLUMN 4
-#define SPACING_RIGHT_BLOCK_COLUMN (BLOCK_A_COLUMN_START - 1)
-#define SPACING_UP_BLOCK_ROW (BLOCK_A_ROW_END - 1)
-#define SPACING_LEFTHAND_FAR_COLUMN 3
+#define BLOCK_SPACING                20
+#define HOMEPOSITION_SPACING         2
+#define SPACING_LEFT_BLOCK_COLUMN    4
+#define SPACING_RIGHT_BLOCK_COLUMN   (BLOCK_A_COLUMN_START - 1)
+#define SPACING_UP_BLOCK_ROW         (BLOCK_A_ROW_END - 1)
+#define SPACING_LEFTHAND_FAR_COLUMN  3
 #define SPACING_RIGHTHAND_FAR_COLUMN 5
-#define SPACING_UPPER_FAR_ROW 0
-#define SPACING_SHIFT_UPPER_FAR_ROW 4
+#define SPACING_UPPER_FAR_ROW        0
+#define SPACING_SHIFT_UPPER_FAR_ROW  4
 
-struct index_button {
+struct index_button
+{
   gint cand_index_in_page;
   GtkButton *button;
 };
 
-static void	uim_cand_win_tbl_gtk_init		(UIMCandWinTblGtk *cwin);
-static void	uim_cand_win_tbl_gtk_class_init	(UIMCandWinGtkClass *klass);
-static void	uim_cand_win_tbl_gtk_dispose	(GObject *obj);
-static gchar	*init_tbl_cell2label(void);
-static void	button_clicked(GtkButton *button, gpointer data);
-static void	clear_button(struct index_button *idxbutton,
-                             const gchar *tbl_cell2label, gint cell_index);
-static void	show_table(UIMCandWinTblGtk *ctblwin);
-static GtkButton *get_button(GPtrArray *buttons, gint idx);
-static void	set_col_spacing(UIMCandWinTblGtk *ctblwin, gint col, gint spacing);
-static void	set_row_spacing(UIMCandWinTblGtk *ctblwin, gint row, gint spacing);
-
+static void
+uim_cand_win_tbl_gtk_init(UIMCandWinTblGtk *cwin);
+static void
+uim_cand_win_tbl_gtk_class_init(UIMCandWinGtkClass *klass);
+static void
+uim_cand_win_tbl_gtk_dispose(GObject *obj);
+static gchar *
+init_tbl_cell2label(void);
+static void
+button_clicked(GtkButton *button, gpointer data);
+static void
+clear_button(struct index_button *idxbutton,
+             const gchar *tbl_cell2label,
+             gint cell_index);
+static void
+show_table(UIMCandWinTblGtk *ctblwin);
+static GtkButton *
+get_button(GPtrArray *buttons, gint idx);
+static void
+set_col_spacing(UIMCandWinTblGtk *ctblwin, gint col, gint spacing);
+static void
+set_row_spacing(UIMCandWinTblGtk *ctblwin, gint row, gint spacing);
 
 static GType cand_win_tbl_type = 0;
 static GTypeInfo const object_info = {
-  sizeof (UIMCandWinTblGtkClass),
-  (GBaseInitFunc) NULL,
-  (GBaseFinalizeFunc) NULL,
-  (GClassInitFunc) uim_cand_win_tbl_gtk_class_init,
-  (GClassFinalizeFunc) NULL,
-  NULL,                       /* class_data */
-  sizeof (UIMCandWinTblGtk),
-  0,                          /* n_preallocs */
-  (GInstanceInitFunc) uim_cand_win_tbl_gtk_init,
+  sizeof(UIMCandWinTblGtkClass),
+  (GBaseInitFunc)NULL,
+  (GBaseFinalizeFunc)NULL,
+  (GClassInitFunc)uim_cand_win_tbl_gtk_class_init,
+  (GClassFinalizeFunc)NULL,
+  NULL, /* class_data */
+  sizeof(UIMCandWinTblGtk),
+  0, /* n_preallocs */
+  (GInstanceInitFunc)uim_cand_win_tbl_gtk_init,
 };
 
 static GtkWindowClass *parent_class = NULL;
@@ -143,25 +156,29 @@ GType
 uim_cand_win_tbl_gtk_get_type(void)
 {
   if (!cand_win_tbl_type)
-    cand_win_tbl_type = g_type_register_static(UIM_TYPE_CAND_WIN_GTK, "UIMCandWinTblGtk",
-					   &object_info, (GTypeFlags)0);
+    cand_win_tbl_type = g_type_register_static(UIM_TYPE_CAND_WIN_GTK,
+                                               "UIMCandWinTblGtk",
+                                               &object_info,
+                                               (GTypeFlags)0);
   return cand_win_tbl_type;
 }
 
 static void
-uim_cand_win_tbl_gtk_class_init (UIMCandWinGtkClass *klass)
+uim_cand_win_tbl_gtk_class_init(UIMCandWinGtkClass *klass)
 {
-  GObjectClass *object_class = (GObjectClass *) klass;
+  GObjectClass *object_class = (GObjectClass *)klass;
 
-  parent_class = g_type_class_peek_parent (klass);
+  parent_class = g_type_class_peek_parent(klass);
   object_class->dispose = uim_cand_win_tbl_gtk_dispose;
 
-  klass->set_index = (void (*)(UIMCandWinGtk *, gint))uim_cand_win_tbl_gtk_set_index;
-  klass->set_page = (void (*)(UIMCandWinGtk *, gint))uim_cand_win_tbl_gtk_set_page;
+  klass->set_index =
+    (void (*)(UIMCandWinGtk *, gint))uim_cand_win_tbl_gtk_set_index;
+  klass->set_page =
+    (void (*)(UIMCandWinGtk *, gint))uim_cand_win_tbl_gtk_set_page;
 }
 
 static void
-uim_cand_win_tbl_gtk_init (UIMCandWinTblGtk *ctblwin)
+uim_cand_win_tbl_gtk_init(UIMCandWinTblGtk *ctblwin)
 {
   gint row, col;
   GtkWidget *viewport;
@@ -176,7 +193,8 @@ uim_cand_win_tbl_gtk_init (UIMCandWinTblGtk *ctblwin)
   gtk_grid_set_column_homogeneous(GTK_GRID(cwin->view), TRUE);
   viewport = gtk_viewport_new(NULL, NULL);
   gtk_viewport_set_child(GTK_VIEWPORT(viewport), cwin->view);
-  gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(cwin->scrolled_window), viewport);
+  gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(cwin->scrolled_window),
+                                viewport);
 
   for (row = 0; row < TABLE_NR_ROWS; row++) {
     for (col = 0; col < TABLE_NR_COLUMNS; col++) {
@@ -214,7 +232,8 @@ set_col_spacing(UIMCandWinTblGtk *ctblwin, gint col, gint spacing)
   gint row;
 
   for (row = 0; row < TABLE_NR_ROWS; row++) {
-    struct index_button *idxbutton = g_ptr_array_index(ctblwin->buttons, CELLINDEX(row, col));
+    struct index_button *idxbutton =
+      g_ptr_array_index(ctblwin->buttons, CELLINDEX(row, col));
     if (idxbutton && idxbutton->button)
       gtk_widget_set_margin_end(GTK_WIDGET(idxbutton->button), spacing);
   }
@@ -228,7 +247,8 @@ set_row_spacing(UIMCandWinTblGtk *ctblwin, gint row, gint spacing)
   gint col;
 
   for (col = 0; col < TABLE_NR_COLUMNS; col++) {
-    struct index_button *idxbutton = g_ptr_array_index(ctblwin->buttons, CELLINDEX(row, col));
+    struct index_button *idxbutton =
+      g_ptr_array_index(ctblwin->buttons, CELLINDEX(row, col));
     if (idxbutton && idxbutton->button)
       gtk_widget_set_margin_bottom(GTK_WIDGET(idxbutton->button), spacing);
   }
@@ -312,7 +332,7 @@ button_clicked(GtkButton *button, gpointer data)
 }
 
 static void
-uim_cand_win_tbl_gtk_dispose (GObject *obj)
+uim_cand_win_tbl_gtk_dispose(GObject *obj)
 {
   UIMCandWinTblGtk *ctblwin;
 
@@ -334,21 +354,24 @@ uim_cand_win_tbl_gtk_dispose (GObject *obj)
     ctblwin->buttons = NULL;
   }
 
-  if (G_OBJECT_CLASS (parent_class)->dispose)
-    G_OBJECT_CLASS (parent_class)->dispose(obj);
+  if (G_OBJECT_CLASS(parent_class)->dispose)
+    G_OBJECT_CLASS(parent_class)->dispose(obj);
 }
 
 UIMCandWinTblGtk *
-uim_cand_win_tbl_gtk_new (void)
+uim_cand_win_tbl_gtk_new(void)
 {
   GObject *obj = g_object_new(UIM_TYPE_CAND_WIN_TBL_GTK, NULL);
   return UIM_CAND_WIN_TBL_GTK(obj);
 }
 
-static GtkButton*
-assign_cellbutton(GPtrArray *buttons, const gchar *tbl_cell2label,
-    const gchar labelchar, gint cand_index, gint display_limit,
-    gboolean *has_label)
+static GtkButton *
+assign_cellbutton(GPtrArray *buttons,
+                  const gchar *tbl_cell2label,
+                  const gchar labelchar,
+                  gint cand_index,
+                  gint display_limit,
+                  gboolean *has_label)
 {
   gint i;
   struct index_button *idxbutton;
@@ -374,8 +397,9 @@ assign_cellbutton(GPtrArray *buttons, const gchar *tbl_cell2label,
 
   /* find free cell */
   for (i = 0; i < TABLE_NR_CELLS; i++) {
-    if (display_limit && display_limit <= BLOCK_LR_NR_CELLS + BLOCK_LRS_NR_CELLS
-        && i % TABLE_NR_COLUMNS >= BLOCK_A_COLUMN_START) {
+    if (display_limit &&
+        display_limit <= BLOCK_LR_NR_CELLS + BLOCK_LRS_NR_CELLS &&
+        i % TABLE_NR_COLUMNS >= BLOCK_A_COLUMN_START) {
       /* skip blockA which is far from home position */
       i += TABLE_NR_COLUMNS - BLOCK_A_COLUMN_START - 1;
       continue;
@@ -405,7 +429,7 @@ uim_cand_win_tbl_gtk_set_index(UIMCandWinTblGtk *ctblwin, gint index)
   g_return_if_fail(UIM_IS_CAND_WIN_TBL_GTK(ctblwin));
   cwin = UIM_CAND_WIN_GTK(ctblwin);
 
-  if (index >= (gint) cwin->nr_candidates)
+  if (index >= (gint)cwin->nr_candidates)
     cwin->candidate_index = 0;
   else
     cwin->candidate_index = index;
@@ -422,8 +446,9 @@ uim_cand_win_tbl_gtk_set_index(UIMCandWinTblGtk *ctblwin, gint index)
 }
 
 static void
-clear_button(struct index_button *idxbutton, const gchar *tbl_cell2label,
-    gint cell_index)
+clear_button(struct index_button *idxbutton,
+             const gchar *tbl_cell2label,
+             gint cell_index)
 {
   GtkButton *button = NULL;
   gboolean is_blank_cell = (tbl_cell2label[cell_index] == '\0') ? TRUE : FALSE;
@@ -451,8 +476,10 @@ clear_all_buttons(GPtrArray *buttons, const gchar *tbl_cell2label)
 }
 
 static void
-update_table_button(GtkTreeModel *model, GPtrArray *buttons,
-    const gchar *tbl_cell2label, gint display_limit)
+update_table_button(GtkTreeModel *model,
+                    GPtrArray *buttons,
+                    const gchar *tbl_cell2label,
+                    gint display_limit)
 {
   GtkTreeIter ti;
   gboolean has_next;
@@ -465,13 +492,22 @@ update_table_button(GtkTreeModel *model, GPtrArray *buttons,
     gchar *cand_str = NULL;
     GtkButton *button = NULL;
 
-    gtk_tree_model_get(model, &ti, COLUMN_HEADING, &heading,
-        COLUMN_CANDIDATE, &cand_str, TERMINATOR);
+    gtk_tree_model_get(model,
+                       &ti,
+                       COLUMN_HEADING,
+                       &heading,
+                       COLUMN_CANDIDATE,
+                       &cand_str,
+                       TERMINATOR);
     if (cand_str != NULL) {
       gboolean has_label = FALSE;
       gchar ch = (heading == NULL) ? '\0' : heading[0];
-      button = assign_cellbutton(buttons, tbl_cell2label, ch, cand_index,
-          display_limit, &has_label);
+      button = assign_cellbutton(buttons,
+                                 tbl_cell2label,
+                                 ch,
+                                 cand_index,
+                                 display_limit,
+                                 &has_label);
       if (button != NULL) {
         /* NORMAL vs HALF relief no longer distinguishable in GTK4;
          * both simply get a frame. */
@@ -504,14 +540,15 @@ uim_cand_win_tbl_gtk_set_page(UIMCandWinTblGtk *ctblwin, gint page)
 
   if (page < 0)
     new_page = len - 1;
-  else if (page >= (gint) len)
+  else if (page >= (gint)len)
     new_page = 0;
   else
     new_page = page;
 
   if (cwin->stores->pdata[new_page]) {
     update_table_button(GTK_TREE_MODEL(cwin->stores->pdata[new_page]),
-                        ctblwin->buttons, ctblwin->tbl_cell2label,
+                        ctblwin->buttons,
+                        ctblwin->tbl_cell2label,
                         cwin->display_limit);
     show_table(ctblwin);
   }
@@ -520,22 +557,23 @@ uim_cand_win_tbl_gtk_set_page(UIMCandWinTblGtk *ctblwin, gint page)
 
   if (cwin->display_limit) {
     if (cwin->candidate_index >= 0)
-      new_index
-        = (new_page * cwin->display_limit) + (cwin->candidate_index % cwin->display_limit);
+      new_index = (new_page * cwin->display_limit) +
+                  (cwin->candidate_index % cwin->display_limit);
     else
       new_index = -1;
   } else {
     new_index = cwin->candidate_index;
   }
 
-  if (new_index >= (gint) cwin->nr_candidates)
+  if (new_index >= (gint)cwin->nr_candidates)
     new_index = cwin->nr_candidates - 1;
 
   uim_cand_win_gtk_set_index(cwin, new_index);
 }
 
 static gboolean
-is_empty_block(GPtrArray *buttons, gint rowstart, gint rowend, gint colstart, gint colend)
+is_empty_block(
+  GPtrArray *buttons, gint rowstart, gint rowend, gint colstart, gint colend)
 {
   gint row, col;
   for (row = rowstart; row < rowend; row++) {
@@ -570,12 +608,21 @@ show_table(UIMCandWinTblGtk *ctblwin)
   gint hide_row, hide_col;
   gint row_spacing, col_spacing;
   gboolean blockA, blockAS, blockLRS;
-  blockA = !is_empty_block(buttons, BLOCK_A_ROW_START, BLOCK_A_ROW_END,
-      BLOCK_A_COLUMN_START, BLOCK_A_COLUMN_END);
-  blockAS = !is_empty_block(buttons, BLOCK_AS_ROW_START, BLOCK_AS_ROW_END,
-      BLOCK_AS_COLUMN_START, BLOCK_AS_COLUMN_END);
-  blockLRS = !is_empty_block(buttons, BLOCK_LRS_ROW_START, BLOCK_LRS_ROW_END,
-      BLOCK_LRS_COLUMN_START, BLOCK_LRS_COLUMN_END);
+  blockA = !is_empty_block(buttons,
+                           BLOCK_A_ROW_START,
+                           BLOCK_A_ROW_END,
+                           BLOCK_A_COLUMN_START,
+                           BLOCK_A_COLUMN_END);
+  blockAS = !is_empty_block(buttons,
+                            BLOCK_AS_ROW_START,
+                            BLOCK_AS_ROW_END,
+                            BLOCK_AS_COLUMN_START,
+                            BLOCK_AS_COLUMN_END);
+  blockLRS = !is_empty_block(buttons,
+                             BLOCK_LRS_ROW_START,
+                             BLOCK_LRS_ROW_END,
+                             BLOCK_LRS_COLUMN_START,
+                             BLOCK_LRS_COLUMN_END);
 
   hide_row = TABLE_NR_ROWS;
   hide_col = TABLE_NR_COLUMNS;

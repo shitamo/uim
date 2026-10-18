@@ -19,17 +19,17 @@
      may be used to endorse or promote products derived from this software
      without specific prior written permission.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' AND
-  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE LIABLE
-  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
-  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-  SUCH DAMAGE.
+  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.
 
 
   GTK4 removed gtk_window_move()/gtk_window_get_position() and the whole
@@ -65,16 +65,19 @@ G_BEGIN_DECLS
 
 /* Move widget's toplevel surface so its origin is at (x, y) in root
  * (screen) coordinates. No-op when not running on X11. */
-void cand_win_move_window(GtkWidget *widget, gint x, gint y);
+void
+cand_win_move_window(GtkWidget *widget, gint x, gint y);
 
 /* Query widget's toplevel surface origin in root (screen) coordinates.
- * Returns FALSE (leaving *x/*y untouched) when not running on X11 or
+ * Returns FALSE (leaving *x and *y untouched) when not running on X11 or
  * the surface isn't realized yet. */
-gboolean cand_win_get_window_origin(GtkWidget *widget, gint *x, gint *y);
+gboolean
+cand_win_get_window_origin(GtkWidget *widget, gint *x, gint *y);
 
 /* Fetch the usable size of the monitor widget is (or would be) shown
  * on, falling back to the first monitor of widget's display. */
-void cand_win_get_monitor_size(GtkWidget *widget, gint *width, gint *height);
+void
+cand_win_get_monitor_size(GtkWidget *widget, gint *width, gint *height);
 
 G_END_DECLS
 

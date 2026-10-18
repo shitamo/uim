@@ -19,17 +19,17 @@
      may be used to endorse or promote products derived from this software
      without specific prior written permission.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' AND
-  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE LIABLE
-  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
-  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-  SUCH DAMAGE.
+  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.
 
 
   Positioning note
@@ -66,10 +66,11 @@
 #include "uim-toolbar-widget.h"
 
 #ifdef HAVE_GTK4_LAYER_SHELL
-#include <gtk4-layer-shell.h>
+#  include <gtk4-layer-shell.h>
 #endif
 
-typedef struct {
+typedef struct
+{
   GtkWidget *window;
   double press_x, press_y;
   gboolean move_started;
@@ -95,8 +96,10 @@ typedef struct {
  * whatever is under the pointer instead of being hijacked into a
  * window move. */
 static void
-drag_begin_cb(GtkGestureDrag *gesture, double start_x, double start_y,
-             gpointer data)
+drag_begin_cb(GtkGestureDrag *gesture,
+              double start_x,
+              double start_y,
+              gpointer data)
 {
   StandaloneShell *shell = data;
 
@@ -106,8 +109,10 @@ drag_begin_cb(GtkGestureDrag *gesture, double start_x, double start_y,
 }
 
 static void
-drag_update_cb(GtkGestureDrag *gesture, double offset_x, double offset_y,
-              gpointer data)
+drag_update_cb(GtkGestureDrag *gesture,
+               double offset_x,
+               double offset_y,
+               gpointer data)
 {
   StandaloneShell *shell = data;
   GtkWidget *widget;
@@ -130,19 +135,22 @@ drag_update_cb(GtkGestureDrag *gesture, double offset_x, double offset_y,
   gtk_native_get_surface_transform(native, &nx, &ny);
   button = gtk_gesture_single_get_current_button(GTK_GESTURE_SINGLE(gesture));
 
-  gdk_toplevel_begin_move(GDK_TOPLEVEL(surface),
-                         gtk_gesture_get_device(GTK_GESTURE(gesture)),
-                         (int)button,
-                         shell->press_x + nx, shell->press_y + ny,
-                         gtk_event_controller_get_current_event_time(
-                           GTK_EVENT_CONTROLLER(gesture)));
+  gdk_toplevel_begin_move(
+    GDK_TOPLEVEL(surface),
+    gtk_gesture_get_device(GTK_GESTURE(gesture)),
+    (int)button,
+    shell->press_x + nx,
+    shell->press_y + ny,
+    gtk_event_controller_get_current_event_time(GTK_EVENT_CONTROLLER(gesture)));
 
   gtk_gesture_set_state(GTK_GESTURE(gesture), GTK_EVENT_SEQUENCE_CLAIMED);
 }
 
 static void
-drag_end_cb(GtkGestureDrag *gesture, double offset_x, double offset_y,
-           gpointer data)
+drag_end_cb(GtkGestureDrag *gesture,
+            double offset_x,
+            double offset_y,
+            gpointer data)
 {
   StandaloneShell *shell = data;
 
@@ -205,8 +213,7 @@ main(int argc, char *argv[])
 
   uim_init();
 
-  app = gtk_application_new("org.uim.ToolbarGtk4",
-                            G_APPLICATION_NON_UNIQUE);
+  app = gtk_application_new("org.uim.ToolbarGtk4", G_APPLICATION_NON_UNIQUE);
   g_signal_connect(app, "activate", G_CALLBACK(activate_cb), NULL);
   status = g_application_run(G_APPLICATION(app), argc, argv);
   g_object_unref(app);

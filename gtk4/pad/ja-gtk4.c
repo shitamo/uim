@@ -19,17 +19,17 @@
      may be used to endorse or promote products derived from this software
      without specific prior written permission.
 
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' AND
-  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE LIABLE
-  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
-  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-  SUCH DAMAGE.
+  ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.
 
   This pad only ever emits characters through uim's generic
   "commit_string" helper message, so like the toolbar and switcher it
@@ -50,227 +50,127 @@
 #define BUTTON_H_ALIGN 5
 
 /* written in unicode */
-static gchar *alphabet_capital[] = {
-  "Ａ", "Ｂ", "Ｃ", "Ｄ", "Ｅ",
-  "Ｆ", "Ｇ", "Ｈ", "Ｉ", "Ｊ",
-  "Ｋ", "Ｌ", "Ｍ", "Ｎ", "Ｏ",
-  "Ｐ", "Ｑ", "Ｒ", "Ｓ", "Ｔ",
-  "Ｕ", "Ｖ", "Ｗ", "Ｘ", "Ｙ",
-  "Ｚ", NULL
-};
+static gchar *alphabet_capital[] = {"Ａ", "Ｂ", "Ｃ", "Ｄ", "Ｅ", "Ｆ", "Ｇ",
+                                    "Ｈ", "Ｉ", "Ｊ", "Ｋ", "Ｌ", "Ｍ", "Ｎ",
+                                    "Ｏ", "Ｐ", "Ｑ", "Ｒ", "Ｓ", "Ｔ", "Ｕ",
+                                    "Ｖ", "Ｗ", "Ｘ", "Ｙ", "Ｚ", NULL};
 
-static gchar *alphabet_small[] = {
-  "ａ", "ｂ", "ｃ", "ｄ", "ｅ",
-  "ｆ", "ｇ", "ｈ", "ｉ", "ｊ",
-  "ｋ", "ｌ", "ｍ", "ｎ", "ｏ",
-  "ｐ", "ｑ", "ｒ", "ｓ", "ｔ",
-  "ｕ", "ｖ", "ｗ", "ｘ", "ｙ",
-  "ｚ", NULL
-};
+static gchar *alphabet_small[] = {"ａ", "ｂ", "ｃ", "ｄ", "ｅ", "ｆ", "ｇ",
+                                  "ｈ", "ｉ", "ｊ", "ｋ", "ｌ", "ｍ", "ｎ",
+                                  "ｏ", "ｐ", "ｑ", "ｒ", "ｓ", "ｔ", "ｕ",
+                                  "ｖ", "ｗ", "ｘ", "ｙ", "ｚ", NULL};
 
 static gchar *numbers[] = {
-  "０", "１", "２", "３", "４",
-  "５", "６", "７", "８", "９",
-  NULL
-};
+  "０", "１", "２", "３", "４", "５", "６", "７", "８", "９", NULL};
 
-static gchar *symbols[] = {
-  "−", "，", "．", "！", "？",
-  NULL
-};
+static gchar *symbols[] = {"−", "，", "．", "！", "？", NULL};
 
 static gchar *katakana[] = {
-  "ア", "イ", "ウ", "エ", "オ",
-  "カ", "キ", "ク", "ケ", "コ",
-  "サ", "シ", "ス", "セ", "ソ",
-  "タ", "チ", "ツ", "テ", "ト",
-  "ナ", "ニ", "ヌ", "ネ", "ノ",
-  "ハ", "ヒ", "フ", "ヘ", "ホ",
-  "マ", "ミ", "ム", "メ", "モ",
-  "ヤ", "",   "ユ", "",   "ヨ",
-  "ラ", "リ", "ル", "レ", "ロ",
-  "ワ", "ヰ", "",   "ヱ", "ヲ",
-  "ン", "ヴ", "",   "゛", "゜",
-  "ガ", "ギ", "グ", "ゲ", "ゴ",
-  "ザ", "ジ", "ズ", "ゼ", "ゾ",
-  "ダ", "ヂ", "ヅ", "デ", "ド",
-  "バ", "ビ", "ブ", "ベ", "ボ",
-  "パ", "ピ", "プ", "ペ", "ポ",
-  "ァ", "ィ", "ゥ", "ェ", "ォ",
-  "ャ", "",   "ュ", "",   "ョ",
-  "ッ", "ヮ", "ヵ", "ヶ",
-  NULL
-};
+  "ア", "イ", "ウ", "エ", "オ", "カ", "キ", "ク", "ケ", "コ", "サ", "シ",
+  "ス", "セ", "ソ", "タ", "チ", "ツ", "テ", "ト", "ナ", "ニ", "ヌ", "ネ",
+  "ノ", "ハ", "ヒ", "フ", "ヘ", "ホ", "マ", "ミ", "ム", "メ", "モ", "ヤ",
+  "",   "ユ", "",   "ヨ", "ラ", "リ", "ル", "レ", "ロ", "ワ", "ヰ", "",
+  "ヱ", "ヲ", "ン", "ヴ", "",   "゛", "゜", "ガ", "ギ", "グ", "ゲ", "ゴ",
+  "ザ", "ジ", "ズ", "ゼ", "ゾ", "ダ", "ヂ", "ヅ", "デ", "ド", "バ", "ビ",
+  "ブ", "ベ", "ボ", "パ", "ピ", "プ", "ペ", "ポ", "ァ", "ィ", "ゥ", "ェ",
+  "ォ", "ャ", "",   "ュ", "",   "ョ", "ッ", "ヮ", "ヵ", "ヶ", NULL};
 
 static gchar *hiragana[] = {
-  "あ", "い", "う", "え", "お",
-  "か", "き", "く", "け", "こ",
-  "さ", "し", "す", "せ", "そ",
-  "た", "ち", "つ", "て", "と",
-  "な", "に", "ぬ", "ね", "の",
-  "は", "ひ", "ふ", "へ", "ほ",
-  "ま", "み", "む", "め", "も",
-  "や", "",   "ゆ", "",   "よ",
-  "ら", "り", "る", "れ", "ろ",
-  "わ", "ゐ", "",   "ゑ", "を",
-  "ん", "う゛", "", "゛", "゜",
-  "が", "ぎ", "ぐ", "げ", "ご",
-  "ざ", "じ", "ず", "ぜ", "ぞ",
-  "だ", "ぢ", "づ", "で", "ど",
-  "ば", "び", "ぶ", "べ", "ぼ",
-  "ぱ", "ぴ", "ぷ", "ぺ", "ぽ",
-  "ぁ", "ぃ", "ぅ", "ぇ", "ぉ",
-  "ゃ", "",   "ゅ", "",   "ょ",
-  "っ", "ゎ",
-  NULL
-};
+  "あ", "い", "う", "え",   "お", "か", "き", "く", "け", "こ", "さ", "し",
+  "す", "せ", "そ", "た",   "ち", "つ", "て", "と", "な", "に", "ぬ", "ね",
+  "の", "は", "ひ", "ふ",   "へ", "ほ", "ま", "み", "む", "め", "も", "や",
+  "",   "ゆ", "",   "よ",   "ら", "り", "る", "れ", "ろ", "わ", "ゐ", "",
+  "ゑ", "を", "ん", "う゛", "",   "゛", "゜", "が", "ぎ", "ぐ", "げ", "ご",
+  "ざ", "じ", "ず", "ぜ",   "ぞ", "だ", "ぢ", "づ", "で", "ど", "ば", "び",
+  "ぶ", "べ", "ぼ", "ぱ",   "ぴ", "ぷ", "ぺ", "ぽ", "ぁ", "ぃ", "ぅ", "ぇ",
+  "ぉ", "ゃ", "",   "ゅ",   "",   "ょ", "っ", "ゎ", NULL};
 
-static gchar *kana_symbols[] = {
-  "ー", "、", "。", "！", "？",
-  NULL
-};
+static gchar *kana_symbols[] = {"ー", "、", "。", "！", "？", NULL};
 
-static gchar *kigou[] = {
-  "　", "￣", "＿", "‖", "｜",
-  "♂", "♀", "＃", "＆", "＊",
-  "＠", "※", "〒", "〓", "☆",
-  "★", "○", "●", "◎", "◇",
-  "◆", "□", "■", "△", "▲",
-  "▽", "▼", "♯", "♭", "♪",
-  "§", "†", "‡", "¶", "◯",
-  NULL
-};
+static gchar *kigou[] = {"　", "￣", "＿", "‖",  "｜", "♂", "♀", "＃", "＆",
+                         "＊", "＠", "※",  "〒", "〓", "☆", "★", "○",  "●",
+                         "◎",  "◇",  "◆",  "□",  "■",  "△", "▲", "▽",  "▼",
+                         "♯",  "♭",  "♪",  "§",  "†",  "‡", "¶", "◯",  NULL};
 
-static gchar *bracket[] = {
-  "‘", "’", "“", "”", "（",
-  "）", "〔", "〕", "［", "］",
-  "｛", "｝", "〈", "〉", "《",
-  "》", "「", "」", "『", "』",
-  "【", "】", "〝", "〟",
-  NULL
-};
+static gchar *bracket[] = {"‘",  "’",  "“",  "”",  "（", "）", "〔", "〕", "［",
+                           "］", "｛", "｝", "〈", "〉", "《", "》", "「", "」",
+                           "『", "』", "【", "】", "〝", "〟", NULL};
 
-static gchar *arrow[] = {
-  "→", "←", "↑", "↓",
-  NULL
-};
+static gchar *arrow[] = {"→", "←", "↑", "↓", NULL};
 
-static gchar *omission[] = {
-  "㍻", "№", "㏍", "℡", "㊤",
-  "㊥", "㊦", "㊧", "㊨", "㈱",
-  "㈲", "㈹", "㍾", "㍽", "㍼",
-  "™", "©", "®",
-  NULL
-};
+static gchar *omission[] = {"㍻",
+                            "№",
+                            "㏍",
+                            "℡",
+                            "㊤",
+                            "㊥",
+                            "㊦",
+                            "㊧",
+                            "㊨",
+                            "㈱",
+                            "㈲",
+                            "㈹",
+                            "㍾",
+                            "㍽",
+                            "㍼",
+                            "™",
+                            "©",
+                            "®",
+                            NULL};
 
-static gchar *unit[] = {
-  "℃", "￥", "＄", "¢", "£",
-  "％", "‰", "°", "′", "″",
-  "㍉", "㌔", "㌢", "㍍", "㌘",
-  "㌧", "㌃", "㌶", "㍑", "㍗",
-  "㌍", "㌦", "㌣", "㌫", "㍊",
-  "㌻", "㎜", "㎝", "㎞", "㎎",
-  "㎏", "㏄", "ℓ", "㎟", "㎠",
-  "㎡", "㎢", "㎣", "㎤", "㎥",
-  "㎦", "Å",
-  NULL
-};
+static gchar *unit[] = {"℃",  "￥", "＄", "¢",  "£",  "％", "‰",  "°",  "′",
+                        "″",  "㍉", "㌔", "㌢", "㍍", "㌘", "㌧", "㌃", "㌶",
+                        "㍑", "㍗", "㌍", "㌦", "㌣", "㌫", "㍊", "㌻", "㎜",
+                        "㎝", "㎞", "㎎", "㎏", "㏄", "ℓ",  "㎟", "㎠", "㎡",
+                        "㎢", "㎣", "㎤", "㎥", "㎦", "Å",  NULL};
 
-static gchar *dot[] = {
-  "、", "。", "，", "．", "・",
-  "：", "；", "？", "！", "゛",
-  "゜", "´", "｀", "¨", "＾",
-  "ヽ", "ヾ", "ゝ", "ゞ", "〃",
-  "仝", "々", "〆", "〇", "ー",
-  "―", "‐", "／", "＼", "〜",
-  "…", "‥", "°", "′", "″",
-  NULL
-};
+static gchar *dot[] = {"、", "。", "，", "．", "・", "：", "；", "？", "！",
+                       "゛", "゜", "´",  "｀", "¨",  "＾", "ヽ", "ヾ", "ゝ",
+                       "ゞ", "〃", "仝", "々", "〆", "〇", "ー", "―",  "‐",
+                       "／", "＼", "〜", "…",  "‥",  "°",  "′",  "″",  NULL};
 
 static gchar *academic[] = {
-  "＋", "－", "±", "×", "÷",
-  "＝", "≠", "≒", "≡", "∽",
-  "＜", "＞", "≦", "≧", "∞",
-  "∴", "∵", "∫", "∬", "∮",
-  "∂", "∇", "≪", "≫", "√",
-  "∝", "∑", "∠", "⊥", "⌒",
-  "∟", "⊿", "∈", "∋", "⊆",
-  "⊇", "⊂", "⊃", "∪", "∩",
-  "∧", "∨", "￢", "⇒", "⇔",
-  "∀", "∃",
-  NULL
-};
+  "＋", "－", "±", "×", "÷", "＝", "≠",  "≒", "≡", "∽", "＜", "＞",
+  "≦",  "≧",  "∞", "∴", "∵", "∫",  "∬",  "∮", "∂", "∇", "≪",  "≫",
+  "√",  "∝",  "∑", "∠", "⊥", "⌒",  "∟",  "⊿", "∈", "∋", "⊆",  "⊇",
+  "⊂",  "⊃",  "∪", "∩", "∧", "∨",  "￢", "⇒", "⇔", "∀", "∃",  NULL};
 
-static gchar *number[] = {
-  "①", "②", "③", "④", "⑤",
-  "⑥", "⑦", "⑧", "⑨", "⑩",
-  "⑪", "⑫", "⑬", "⑭", "⑮",
-  "⑯", "⑰", "⑱", "⑲", "⑳",
-  "Ⅰ", "Ⅱ", "Ⅲ", "Ⅳ", "Ⅴ",
-  "Ⅵ", "Ⅶ", "Ⅷ", "Ⅸ", "Ⅹ",
-  "ⅰ", "ⅱ", "ⅲ", "ⅳ", "ⅴ",
-  "ⅵ", "ⅶ", "ⅷ", "ⅸ", "ⅹ",
-  NULL
-};
+static gchar *number[] = {"①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩", "⑪",
+                          "⑫", "⑬", "⑭", "⑮", "⑯", "⑰", "⑱", "⑲", "⑳", "Ⅰ", "Ⅱ",
+                          "Ⅲ", "Ⅳ", "Ⅴ", "Ⅵ", "Ⅶ", "Ⅷ", "Ⅸ", "Ⅹ", "ⅰ", "ⅱ", "ⅲ",
+                          "ⅳ", "ⅴ", "ⅵ", "ⅶ", "ⅷ", "ⅸ", "ⅹ", NULL};
 
-static gchar *greek_capital[] = {
-  "Α", "Β", "Γ", "Δ", "Ε",
-  "Ζ", "Η", "Θ", "Ι", "Κ",
-  "Λ", "Μ", "Ν", "Ξ", "Ο",
-  "Π", "Ρ", "Σ", "Τ", "Υ",
-  "Φ", "Χ", "Ψ", "Ω",
-  NULL
-};
+static gchar *greek_capital[] = {"Α", "Β", "Γ", "Δ", "Ε", "Ζ", "Η", "Θ", "Ι",
+                                 "Κ", "Λ", "Μ", "Ν", "Ξ", "Ο", "Π", "Ρ", "Σ",
+                                 "Τ", "Υ", "Φ", "Χ", "Ψ", "Ω", NULL};
 
-static gchar *greek_small[] = {
-  "α", "β", "γ", "δ", "ε",
-  "ζ", "η", "θ", "ι", "κ",
-  "λ", "μ", "ν", "ξ", "ο",
-  "π", "ρ", "σ", "τ", "υ",
-  "φ", "χ", "ψ", "ω",
-  NULL
-};
+static gchar *greek_small[] = {"α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι",
+                               "κ", "λ", "μ", "ν", "ξ", "ο", "π", "ρ", "σ",
+                               "τ", "υ", "φ", "χ", "ψ", "ω", NULL};
 
-static gchar *cyrillic_capital[] = {
-  "А", "Б", "В", "Г", "Д",
-  "Е", "Ё", "Ж", "З", "И",
-  "Й", "К", "Л", "М", "Н",
-  "О", "П", "Р", "С", "Т",
-  "У", "Ф", "Х", "Ц", "Ч",
-  "Ш", "Щ", "Ъ", "Ы", "Ь",
-  "Э", "Ю", "Я",
-  NULL
-};
+static gchar *cyrillic_capital[] = {"А", "Б", "В", "Г", "Д", "Е", "Ё", "Ж", "З",
+                                    "И", "Й", "К", "Л", "М", "Н", "О", "П", "Р",
+                                    "С", "Т", "У", "Ф", "Х", "Ц", "Ч", "Ш", "Щ",
+                                    "Ъ", "Ы", "Ь", "Э", "Ю", "Я", NULL};
 
-static gchar *cyrillic_small[] = {
-  "а", "б", "в", "г", "д",
-  "е", "ё", "ж", "з", "и",
-  "й", "к", "л", "м", "н",
-  "о", "п", "р", "с", "т",
-  "у", "ф", "х", "ц", "ч",
-  "ш", "щ", "ъ", "ы", "ь",
-  "э", "ю", "я",
-  NULL
-};
+static gchar *cyrillic_small[] = {"а", "б", "в", "г", "д", "е", "ё", "ж", "з",
+                                  "и", "й", "к", "л", "м", "н", "о", "п", "р",
+                                  "с", "т", "у", "ф", "х", "ц", "ч", "ш", "щ",
+                                  "ъ", "ы", "ь", "э", "ю", "я", NULL};
 
-static gchar *line[] = {
-  "─", "│", "┼", "",   "",
-  "┌", "┐", "┘", "└", "",
-  "├", "┬", "┤", "┴", "",
-  "━", "┃", "╋", "",   "",
-  "┏", "┓", "┛", "┗", "",
-  "┣", "┳", "┫", "┻", "",
-  "┠", "┯", "┨", "┷", "┿",
-  "┝", "┰", "┥", "┸", "╂",
-  NULL
-};
+static gchar *line[] = {"─", "│", "┼", "",  "",  "┌", "┐", "┘", "└", "",  "├",
+                        "┬", "┤", "┴", "",  "━", "┃", "╋", "",  "",  "┏", "┓",
+                        "┛", "┗", "",  "┣", "┳", "┫", "┻", "",  "┠", "┯", "┨",
+                        "┷", "┿", "┝", "┰", "┥", "┸", "╂", NULL};
 
 static int uim_fd = -1;
 static guint read_tag;
 static GtkWidget *pad_window;
 
-static void check_helper_connection(void);
-static void helper_disconnect_cb(void);
+static void
+check_helper_connection(void);
+static void
+helper_disconnect_cb(void);
 
 static gboolean
 fd_read_cb(GIOChannel *channel, GIOCondition c, gpointer p)
@@ -295,8 +195,8 @@ check_helper_connection(void)
   if (uim_fd >= 0) {
     GIOChannel *channel = g_io_channel_unix_new(uim_fd);
 
-    read_tag = g_io_add_watch(channel, G_IO_IN | G_IO_HUP | G_IO_ERR,
-                              fd_read_cb, NULL);
+    read_tag =
+      g_io_add_watch(channel, G_IO_IN | G_IO_HUP | G_IO_ERR, fd_read_cb, NULL);
     g_io_channel_unref(channel);
   }
 }
@@ -348,8 +248,7 @@ buttontable_create(gchar **table, int len)
         continue;
 
       button = gtk_button_new_with_label(table[i * BUTTON_H_ALIGN + j]);
-      g_signal_connect(button, "clicked",
-                       G_CALLBACK(padbutton_clicked), NULL);
+      g_signal_connect(button, "clicked", G_CALLBACK(padbutton_clicked), NULL);
       gtk_widget_set_hexpand(button, TRUE);
       gtk_widget_set_vexpand(button, TRUE);
       gtk_grid_attach(GTK_GRID(grid), button, j, i, 1, 1);
@@ -382,15 +281,19 @@ create_two_row_tab(gchar *table1[], guint len1, gchar *table2[], guint len2)
 static GtkWidget *
 create_hiragana_tab(void)
 {
-  return create_two_row_tab(hiragana, TABLEN(hiragana),
-                            kana_symbols, TABLEN(kana_symbols));
+  return create_two_row_tab(hiragana,
+                            TABLEN(hiragana),
+                            kana_symbols,
+                            TABLEN(kana_symbols));
 }
 
 static GtkWidget *
 create_katakana_tab(void)
 {
-  return create_two_row_tab(katakana, TABLEN(katakana),
-                            kana_symbols, TABLEN(kana_symbols));
+  return create_two_row_tab(katakana,
+                            TABLEN(katakana),
+                            kana_symbols,
+                            TABLEN(kana_symbols));
 }
 
 static GtkWidget *
@@ -398,8 +301,11 @@ create_eisu_tab(void)
 {
   GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
 
-  gtk_box_append(GTK_BOX(vbox), buttontable_create(alphabet_capital, TABLEN(alphabet_capital)));
-  gtk_box_append(GTK_BOX(vbox), buttontable_create(alphabet_small, TABLEN(alphabet_small)));
+  gtk_box_append(
+    GTK_BOX(vbox),
+    buttontable_create(alphabet_capital, TABLEN(alphabet_capital)));
+  gtk_box_append(GTK_BOX(vbox),
+                 buttontable_create(alphabet_small, TABLEN(alphabet_small)));
   gtk_box_append(GTK_BOX(vbox), buttontable_create(numbers, TABLEN(numbers)));
   gtk_box_append(GTK_BOX(vbox), buttontable_create(symbols, TABLEN(symbols)));
   return vbox;
@@ -420,15 +326,19 @@ create_symbol_tab(void)
 static GtkWidget *
 create_greek_tab(void)
 {
-  return create_two_row_tab(greek_capital, TABLEN(greek_capital),
-                            greek_small, TABLEN(greek_small));
+  return create_two_row_tab(greek_capital,
+                            TABLEN(greek_capital),
+                            greek_small,
+                            TABLEN(greek_small));
 }
 
 static GtkWidget *
 create_cyrillic_tab(void)
 {
-  return create_two_row_tab(cyrillic_capital, TABLEN(cyrillic_capital),
-                            cyrillic_small, TABLEN(cyrillic_small));
+  return create_two_row_tab(cyrillic_capital,
+                            TABLEN(cyrillic_capital),
+                            cyrillic_small,
+                            TABLEN(cyrillic_small));
 }
 
 static GtkWidget *
@@ -437,13 +347,17 @@ input_table_create(void)
   GtkWidget *notebook = gtk_notebook_new();
 
   gtk_notebook_set_scrollable(GTK_NOTEBOOK(notebook), TRUE);
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), create_hiragana_tab(),
+  gtk_notebook_append_page(GTK_NOTEBOOK(notebook),
+                           create_hiragana_tab(),
                            gtk_label_new(_("hiragana")));
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), create_katakana_tab(),
+  gtk_notebook_append_page(GTK_NOTEBOOK(notebook),
+                           create_katakana_tab(),
                            gtk_label_new(_("katakana")));
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), create_eisu_tab(),
+  gtk_notebook_append_page(GTK_NOTEBOOK(notebook),
+                           create_eisu_tab(),
                            gtk_label_new(_("eisu")));
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), create_symbol_tab(),
+  gtk_notebook_append_page(GTK_NOTEBOOK(notebook),
+                           create_symbol_tab(),
                            gtk_label_new(_("symbol")));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook),
                            create_tab(omission, TABLEN(omission)),
@@ -457,9 +371,11 @@ input_table_create(void)
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook),
                            create_tab(academic, TABLEN(academic)),
                            gtk_label_new(_("academic")));
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), create_greek_tab(),
+  gtk_notebook_append_page(GTK_NOTEBOOK(notebook),
+                           create_greek_tab(),
                            gtk_label_new(_("greek")));
-  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), create_cyrillic_tab(),
+  gtk_notebook_append_page(GTK_NOTEBOOK(notebook),
+                           create_cyrillic_tab(),
                            gtk_label_new(_("cyrillic")));
   gtk_notebook_append_page(GTK_NOTEBOOK(notebook),
                            create_tab(line, TABLEN(line)),

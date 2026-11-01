@@ -71,6 +71,25 @@ uimpref_file_entry_get_type(void);
 GtkWidget *
 uimpref_file_entry_new(void);
 
+/*
+ * UimPrefRow: one row of a GListModel backing the GtkColumnView and
+ * GtkListView widgets of uim-pref-gtk4.  It holds a fixed number of
+ * string columns, each of which may be NULL.
+ */
+#define UIM_PREF_TYPE_ROW (uim_pref_row_get_type())
+G_DECLARE_FINAL_TYPE(UimPrefRow, uim_pref_row, UIM_PREF, ROW, GObject)
+
+UimPrefRow *
+uim_pref_row_new(guint n_columns);
+guint
+uim_pref_row_get_n_columns(UimPrefRow *row);
+const char *
+uim_pref_row_get(UimPrefRow *row, guint column);
+gboolean
+uim_pref_row_set(UimPrefRow *row, guint column, const char *str);
+GtkListItemFactory *
+uim_pref_label_factory_new(guint column);
+
 G_END_DECLS
 
 void

@@ -41,6 +41,9 @@
   plain end-aligned GtkBox; and screen size is read from the first
   GdkMonitor rather than GdkScreen, since GTK 4 dropped both GdkScreen
   and any portable way to explicitly position a top-level window.
+  The group list on the left is a GtkColumnView over a GListStore of
+  UimPrefRow objects (GtkTreeView and GtkTreeStore are deprecated
+  since GTK 4.10).
 
 */
 
@@ -67,7 +70,7 @@
 #define USE_CHANGES_SENSITIVE_OK_BUTTON 0
 
 static GtkWidget *pref_window = NULL;
-static GtkWidget *pref_tree_view = NULL;
+static GtkWidget *pref_group_view = NULL;
 static GtkWidget *pref_hbox = NULL;
 static GtkWidget *current_group_widget = NULL;
 
@@ -77,20 +80,24 @@ static GtkWidget *pref_ok_button = NULL;
 
 enum {
   GROUP_COLUMN = 0,
-  GROUP_WIDGET = 1,
-  GROUP_SYM = 2,
+  GROUP_SYM = 1,
   NUM_COLUMNS
 };
+
+/* the lazily created page widget of a group, attached to its UimPrefRow */
+#define OBJECT_DATA_GROUP_WIDGET "uim-pref-gtk::group-widget"
 
 void
 uim_pref_gtk_mark_value_changed(void);
 void
 uim_pref_gtk_unmark_value_changed(void);
 
-static gboolean
-pref_tree_selection_changed(GtkTreeSelection *selection, gpointer data);
+static void
+pref_group_selection_changed(GtkSingleSelection *selection,
+                             GParamSpec *pspec,
+                             gpointer data);
 static GtkWidget *
-create_pref_treeview(void);
+create_pref_group_view(void);
 static GtkWidget *
 create_group_widget(const char *group_name);
 static void
@@ -116,35 +123,27 @@ uim_pref_gtk_unmark_value_changed(void)
 #endif
 }
 
-static gboolean
-pref_tree_selection_changed(GtkTreeSelection *selection, gpointer data)
+static void
+pref_group_selection_changed(GtkSingleSelection *selection,
+                             GParamSpec *pspec,
+                             gpointer data)
 {
-  GtkTreeStore *store;
-  GtkTreeIter iter;
-  GtkTreeModel *model;
-  char *group_name, *group_sym;
+  UimPrefRow *row;
   GtkWidget *group_widget;
 
-  if (gtk_tree_selection_get_selected(selection, &model, &iter) == FALSE)
-    return TRUE;
+  row = gtk_single_selection_get_selected_item(selection);
+  if (row == NULL || uim_pref_row_get(row, GROUP_COLUMN) == NULL)
+    return;
 
-  store = GTK_TREE_STORE(model);
-  gtk_tree_model_get(model,
-                     &iter,
-                     GROUP_COLUMN,
-                     &group_name,
-                     GROUP_WIDGET,
-                     &group_widget,
-                     GROUP_SYM,
-                     &group_sym,
-                     -1);
-
-  if (group_name == NULL)
-    return TRUE;
-
+  group_widget = g_object_get_data(G_OBJECT(row), OBJECT_DATA_GROUP_WIDGET);
   if (group_widget == NULL) {
-    group_widget = create_group_widget(group_sym);
-    gtk_tree_store_set(store, &iter, GROUP_WIDGET, group_widget, -1);
+    group_widget = create_group_widget(uim_pref_row_get(row, GROUP_SYM));
+    if (group_widget == NULL)
+      return;
+    g_object_set_data_full(G_OBJECT(row),
+                           OBJECT_DATA_GROUP_WIDGET,
+                           g_object_ref_sink(group_widget),
+                           g_object_unref);
   }
 
   /* hide current selected group's widget */
@@ -159,10 +158,6 @@ pref_tree_selection_changed(GtkTreeSelection *selection, gpointer data)
   gtk_widget_set_visible(group_widget, TRUE);
 
   current_group_widget = group_widget;
-
-  free(group_name);
-  free(group_sym);
-  return TRUE;
 }
 
 static void
@@ -237,81 +232,69 @@ close_request_cb(GtkWindow *window, gpointer data)
   return TRUE; /* stop the default close handling; quit_confirm() decides */
 }
 
-static GtkWidget *
-create_pref_treeview(void)
+static int
+group_row_compare(gconstpointer a, gconstpointer b, gpointer data)
 {
-  GtkTreeStore *tree_store;
-  GtkCellRenderer *renderer;
-  GtkTreeViewColumn *column;
-  GtkTreeIter iter;
+  const char *label_a = uim_pref_row_get(UIM_PREF_ROW((gpointer)a), 0);
+  const char *label_b = uim_pref_row_get(UIM_PREF_ROW((gpointer)b), 0);
+
+  return g_utf8_collate(label_a ? label_a : "", label_b ? label_b : "");
+}
+
+static GtkWidget *
+create_pref_group_view(void)
+{
+  GListStore *store;
+  GtkSortListModel *sort_model;
+  GtkSingleSelection *selection;
+  GtkColumnViewColumn *column;
+  GtkSorter *sorter;
   char **primary_groups, **grp;
-  GtkTreeSelection *selection;
-  GtkTreePath *first_path;
-  tree_store = gtk_tree_store_new(NUM_COLUMNS,
-                                  G_TYPE_STRING,
-                                  GTK_TYPE_WIDGET,
-                                  G_TYPE_STRING);
 
-  pref_tree_view = gtk_tree_view_new();
-
-  renderer = gtk_cell_renderer_text_new();
-  column = gtk_tree_view_column_new_with_attributes(_("Group"),
-                                                    renderer,
-                                                    "text",
-                                                    GROUP_COLUMN,
-                                                    (const gchar *)NULL);
-  gtk_tree_view_column_set_sort_column_id(column, 0);
-  gtk_tree_view_append_column(GTK_TREE_VIEW(pref_tree_view), column);
+  store = g_list_store_new(UIM_PREF_TYPE_ROW);
 
   primary_groups = uim_custom_primary_groups();
   for (grp = primary_groups; *grp; grp++) {
     struct uim_custom_group *group = uim_custom_group_get(*grp);
-    gtk_tree_store_append(tree_store, &iter, NULL /* parent iter */);
-    /* only set the widget of the first row for now */
-    if (grp == primary_groups) {
-      gtk_tree_store_set(tree_store,
-                         &iter,
-                         GROUP_COLUMN,
-                         group->label,
-                         GROUP_WIDGET,
-                         create_group_widget(*grp),
-                         GROUP_SYM,
-                         *grp,
-                         -1);
-    } else {
-      gtk_tree_store_set(tree_store,
-                         &iter,
-                         GROUP_COLUMN,
-                         group->label,
-                         GROUP_WIDGET,
-                         NULL,
-                         GROUP_SYM,
-                         *grp,
-                         -1);
-    }
+    UimPrefRow *row = uim_pref_row_new(NUM_COLUMNS);
+
+    uim_pref_row_set(row, GROUP_COLUMN, group->label);
+    uim_pref_row_set(row, GROUP_SYM, *grp);
+    g_list_store_append(store, row);
+    g_object_unref(row);
     uim_custom_group_free(group);
   }
   uim_custom_symbol_list_free(primary_groups);
 
-  gtk_tree_view_set_model(GTK_TREE_VIEW(pref_tree_view),
-                          GTK_TREE_MODEL(tree_store));
-  g_object_unref(tree_store);
-  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(pref_tree_view));
-  gtk_tree_selection_set_mode(selection, GTK_SELECTION_SINGLE);
+  pref_group_view = gtk_column_view_new(NULL);
+
+  /* clicking the header sorts the groups, as the GtkTreeView did */
+  column = gtk_column_view_column_new(_("Group"),
+                                      uim_pref_label_factory_new(GROUP_COLUMN));
+  sorter = GTK_SORTER(gtk_custom_sorter_new(group_row_compare, NULL, NULL));
+  gtk_column_view_column_set_sorter(column, sorter);
+  g_object_unref(sorter);
+  gtk_column_view_append_column(GTK_COLUMN_VIEW(pref_group_view), column);
+  g_object_unref(column);
+
+  sort_model = gtk_sort_list_model_new(
+    G_LIST_MODEL(store),
+    g_object_ref(gtk_column_view_get_sorter(GTK_COLUMN_VIEW(pref_group_view))));
+  /* the first group gets selected (autoselect) */
+  selection = gtk_single_selection_new(G_LIST_MODEL(sort_model));
   g_signal_connect(G_OBJECT(selection),
-                   "changed",
-                   G_CALLBACK(pref_tree_selection_changed),
+                   "notify::selected-item",
+                   G_CALLBACK(pref_group_selection_changed),
                    NULL);
+  gtk_column_view_set_model(GTK_COLUMN_VIEW(pref_group_view),
+                            GTK_SELECTION_MODEL(selection));
 
-  first_path = gtk_tree_path_new_from_indices(0, -1);
+  /* show the first group's widget */
+  pref_group_selection_changed(selection, NULL, NULL);
 
-  gtk_tree_view_set_cursor(GTK_TREE_VIEW(pref_tree_view),
-                           first_path,
-                           NULL,
-                           FALSE);
-  gtk_tree_path_free(first_path);
+  g_object_unref(selection);
 
-  return pref_tree_view;
+  return pref_group_view;
 }
 
 static void
@@ -537,7 +520,7 @@ static GtkWidget *
 create_pref_window(void)
 {
   GtkWidget *window;
-  GtkWidget *scrolled_win; /* treeview container */
+  GtkWidget *scrolled_win; /* group view container */
   GtkWidget *vbox;
   GtkEventController *key_controller;
 
@@ -567,7 +550,7 @@ create_pref_window(void)
   gtk_box_append(GTK_BOX(pref_hbox), scrolled_win);
 
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled_win),
-                                create_pref_treeview());
+                                create_pref_group_view());
 
   vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 8);
   gtk_widget_set_margin_start(vbox, 8);

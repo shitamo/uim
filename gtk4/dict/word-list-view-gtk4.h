@@ -29,9 +29,12 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *  GTK 4 note: GtkTreeView/GtkTreeViewColumn/GtkListStore were not
- *  removed in GTK 4 (only soft-deprecated since 4.10), so this widget
- *  keeps using them. GtkScrolledWindow, however, is a *final* class in
+ *  GTK 4 note: GtkTreeView/GtkTreeViewColumn/GtkListStore are
+ *  deprecated since GTK 4.10, so this widget is built on GtkColumnView
+ *  instead: the words live in a GListStore of row objects, wrapped in
+ *  a GtkSortListModel (driven by the column headers' sorter) and a
+ *  GtkSelectionModel matching the "selection_mode" property.
+ *  GtkScrolledWindow is a *final* class in
  *  GTK 4 (G_DECLARE_FINAL_TYPE) and its instance struct is opaque, so
  *  it can no longer be subclassed by embedding "GtkScrolledWindow
  *  container;" as the first field the way the GTK 3 version did.
@@ -77,17 +80,17 @@ struct _WordListView
 
   GtkWidget *scrolled_window; /* the real GtkScrolledWindow; this
                                * widget's single BinLayout child */
-  GtkTreeView *view;
-  GtkTreeModel *model;
+  GtkColumnView *view;
+  GListStore *store;            /* row objects, in insertion order */
+  GtkSortListModel *sort_model; /* store, sorted by the column view */
+  GtkSelectionModel *selection; /* sort_model, owned by the view */
 
-  GtkTreeViewColumn *word_type_column;
-  GtkTreeViewColumn *phon_column;
-  GtkTreeViewColumn *desc_column;
-  GtkTreeViewColumn *cclass_code_column;
-  GtkTreeViewColumn *freq_column;
-  GtkTreeViewColumn *okuri_column;
-
-  GtkTreeSelection *selection;
+  GtkColumnViewColumn *word_type_column;
+  GtkColumnViewColumn *phon_column;
+  GtkColumnViewColumn *desc_column;
+  GtkColumnViewColumn *cclass_code_column;
+  GtkColumnViewColumn *freq_column;
+  GtkColumnViewColumn *okuri_column;
 
   uim_dict *dict;
 
@@ -105,6 +108,10 @@ struct _WordListView
 struct _WordListViewClass
 {
   GtkWidgetClass parent_class;
+
+  /*-- signals --*/
+  /* emitted whenever the set of selected rows may have changed */
+  void (*selection_changed)(WordListView *view);
 };
 
 GType
@@ -151,6 +158,8 @@ GList *
 word_list_view_get_selected_data_list(WordListView *view);
 GList *
 word_list_view_get_all_data_list(WordListView *view);
+gboolean
+word_list_view_has_selection(WordListView *view);
 
 GtkSelectionMode
 word_list_view_get_selection_mode(WordListView *);

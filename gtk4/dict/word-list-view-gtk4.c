@@ -42,6 +42,202 @@
 #include <stdlib.h>
 #include <string.h>
 
+/*
+ * WordListItem: one row of the list -- a GObject wrapper around a
+ * uim_word (GListModel items must be GObjects). The displayed values
+ * are copies converted to UTF-8 and exposed as properties, so the
+ * column sorters can reach them through GtkPropertyExpression.
+ */
+#define WORD_LIST_ITEM_TYPE (word_list_item_get_type())
+G_DECLARE_FINAL_TYPE(WordListItem, word_list_item, WORD_LIST, ITEM, GObject)
+
+struct _WordListItem
+{
+  GObject parent_instance;
+
+  gint word_type;
+  gchar *phon;
+  gchar *desc;
+  gchar *cclass_code;
+  gint freq;
+  gboolean okuri;
+
+  uim_word *word; /* not owned; it belongs to the uim_dict */
+};
+
+enum {
+  ITEM_PROP_0,
+  ITEM_PROP_WORD_TYPE,
+  ITEM_PROP_PHON,
+  ITEM_PROP_DESC,
+  ITEM_PROP_CCLASS_CODE,
+  ITEM_PROP_FREQ,
+  ITEM_PROP_OKURI,
+  ITEM_N_PROPS
+};
+
+static GParamSpec *item_props[ITEM_N_PROPS];
+
+G_DEFINE_FINAL_TYPE(WordListItem, word_list_item, G_TYPE_OBJECT)
+
+/* GtkListStore accepted NULL strings (shown as empty cells), but the
+ * labels the strings are bound to don't, so keep "" instead */
+static gchar *
+dup_nonnull(const gchar *str)
+{
+  return g_strdup(str ? str : "");
+}
+
+static gchar *
+take_nonnull(gchar *str)
+{
+  return str ? str : g_strdup("");
+}
+
+static void
+word_list_item_finalize(GObject *object)
+{
+  WordListItem *item = WORD_LIST_ITEM(object);
+
+  g_free(item->phon);
+  g_free(item->desc);
+  g_free(item->cclass_code);
+
+  G_OBJECT_CLASS(word_list_item_parent_class)->finalize(object);
+}
+
+static void
+word_list_item_set_property(GObject *object,
+                            guint prop_id,
+                            const GValue *value,
+                            GParamSpec *pspec)
+{
+  WordListItem *item = WORD_LIST_ITEM(object);
+
+  switch (prop_id) {
+  case ITEM_PROP_WORD_TYPE:
+    item->word_type = g_value_get_int(value);
+    break;
+  case ITEM_PROP_PHON:
+    g_free(item->phon);
+    item->phon = dup_nonnull(g_value_get_string(value));
+    break;
+  case ITEM_PROP_DESC:
+    g_free(item->desc);
+    item->desc = dup_nonnull(g_value_get_string(value));
+    break;
+  case ITEM_PROP_CCLASS_CODE:
+    g_free(item->cclass_code);
+    item->cclass_code = dup_nonnull(g_value_get_string(value));
+    break;
+  case ITEM_PROP_FREQ:
+    item->freq = g_value_get_int(value);
+    break;
+  case ITEM_PROP_OKURI:
+    item->okuri = g_value_get_boolean(value);
+    break;
+  default:
+    G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+    break;
+  }
+}
+
+static void
+word_list_item_get_property(GObject *object,
+                            guint prop_id,
+                            GValue *value,
+                            GParamSpec *pspec)
+{
+  WordListItem *item = WORD_LIST_ITEM(object);
+
+  switch (prop_id) {
+  case ITEM_PROP_WORD_TYPE:
+    g_value_set_int(value, item->word_type);
+    break;
+  case ITEM_PROP_PHON:
+    g_value_set_string(value, item->phon);
+    break;
+  case ITEM_PROP_DESC:
+    g_value_set_string(value, item->desc);
+    break;
+  case ITEM_PROP_CCLASS_CODE:
+    g_value_set_string(value, item->cclass_code);
+    break;
+  case ITEM_PROP_FREQ:
+    g_value_set_int(value, item->freq);
+    break;
+  case ITEM_PROP_OKURI:
+    g_value_set_boolean(value, item->okuri);
+    break;
+  default:
+    G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+    break;
+  }
+}
+
+static void
+word_list_item_class_init(WordListItemClass *klass)
+{
+  GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
+
+  gobject_class->finalize = word_list_item_finalize;
+  gobject_class->set_property = word_list_item_set_property;
+  gobject_class->get_property = word_list_item_get_property;
+
+  item_props[ITEM_PROP_WORD_TYPE] = g_param_spec_int("word-type",
+                                                     NULL,
+                                                     NULL,
+                                                     G_MININT,
+                                                     G_MAXINT,
+                                                     0,
+                                                     G_PARAM_READWRITE);
+  item_props[ITEM_PROP_PHON] =
+    g_param_spec_string("phon", NULL, NULL, NULL, G_PARAM_READWRITE);
+  item_props[ITEM_PROP_DESC] =
+    g_param_spec_string("desc", NULL, NULL, NULL, G_PARAM_READWRITE);
+  item_props[ITEM_PROP_CCLASS_CODE] =
+    g_param_spec_string("cclass-code", NULL, NULL, NULL, G_PARAM_READWRITE);
+  item_props[ITEM_PROP_FREQ] = g_param_spec_int("freq",
+                                                NULL,
+                                                NULL,
+                                                G_MININT,
+                                                G_MAXINT,
+                                                0,
+                                                G_PARAM_READWRITE);
+  item_props[ITEM_PROP_OKURI] =
+    g_param_spec_boolean("okuri", NULL, NULL, FALSE, G_PARAM_READWRITE);
+
+  g_object_class_install_properties(gobject_class, ITEM_N_PROPS, item_props);
+}
+
+static void
+word_list_item_init(WordListItem *item)
+{
+  item->phon = g_strdup("");
+  item->desc = g_strdup("");
+  item->cclass_code = g_strdup("");
+}
+
+static WordListItem *
+word_list_item_new(uim_word *w)
+{
+  WordListItem *item = g_object_new(WORD_LIST_ITEM_TYPE, NULL);
+
+  item->word = w;
+  item->word_type = w->type;
+  item->phon = take_nonnull(charset_convert(w->phon, w->charset, "UTF-8"));
+  item->desc = take_nonnull(charset_convert(w->desc, w->charset, "UTF-8"));
+  item->cclass_code =
+    take_nonnull(charset_convert(w->cclass_code, w->charset, "UTF-8"));
+  item->freq = w->freq;
+  item->okuri = w->okuri;
+
+  return item;
+}
+
+/*
+ * WordListView
+ */
 static void
 word_list_view_class_init(WordListViewClass *klass);
 static void
@@ -62,12 +258,6 @@ word_list_view_get_property(GObject *object,
                             GValue *value,
                             GParamSpec *pspec);
 
-static void
-word_list_view_callback_cell_edited(GtkCellRendererText *renderer,
-                                    const gchar *path_string,
-                                    const gchar *new_text,
-                                    WordListView *view);
-
 static GtkWidgetClass *parent_class = NULL;
 
 enum {
@@ -79,18 +269,12 @@ enum {
   PROP_SELECTION_MODE
 };
 
-typedef enum {
-  TERMINATOR = -1,
-  WORD_LIST_WORD_TYPE = 0,
-  WORD_LIST_PHON,
-  WORD_LIST_DESC,
-  WORD_LIST_CCLASS_CODE,
-  WORD_LIST_FREQ,
-  WORD_LIST_OKURI,
-  WORD_LIST_EDITABLE,
-  WORD_LIST_WORD,
-  WORD_LIST_N_COLUMNS
-} WordListItems;
+enum {
+  SELECTION_CHANGED_SIGNAL,
+  LAST_SIGNAL
+};
+
+static guint word_list_view_signals[LAST_SIGNAL] = {0};
 
 GType
 word_list_view_get_type(void)
@@ -132,6 +316,17 @@ word_list_view_class_init(WordListViewClass *klass)
    * child the widget's whole allocation, matching how
    * GtkScrolledWindow itself lays out when it *was* the base class. */
   gtk_widget_class_set_layout_manager_type(object_class, GTK_TYPE_BIN_LAYOUT);
+
+  word_list_view_signals[SELECTION_CHANGED_SIGNAL] =
+    g_signal_new("selection-changed",
+                 G_TYPE_FROM_CLASS(klass),
+                 G_SIGNAL_RUN_FIRST,
+                 G_STRUCT_OFFSET(WordListViewClass, selection_changed),
+                 NULL,
+                 NULL,
+                 g_cclosure_marshal_VOID__VOID,
+                 G_TYPE_NONE,
+                 0);
 
   g_object_class_install_property(
     gobject_class,
@@ -177,13 +372,240 @@ word_list_view_class_init(WordListViewClass *klass)
                       G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 }
 
+/*
+ * cell factories
+ *
+ * Each column has its own GtkSignalListItemFactory carrying, as
+ * object data, the WordListItem property it shows ("property") and
+ * whether its cells honor the view's "editable" property
+ * ("editable"). Editable cells are GtkEditableLabels whose committed
+ * text is written back to the row object, like the "edited" handler
+ * of the old GtkCellRendererText did with the GtkListStore.
+ */
+static void
+cell_editing_changed_cb(GtkEditableLabel *label,
+                        GParamSpec *pspec,
+                        GtkListItemFactory *factory)
+{
+  WordListItem *item;
+  const gchar *property, *text;
+  GParamSpec *item_pspec;
+
+  if (gtk_editable_label_get_editing(label))
+    return;
+
+  item = g_object_get_data(G_OBJECT(label), "item");
+  if (!item)
+    return;
+
+  property = g_object_get_data(G_OBJECT(factory), "property");
+  text = gtk_editable_get_text(GTK_EDITABLE(label));
+  item_pspec = g_object_class_find_property(G_OBJECT_GET_CLASS(item), property);
+
+  if (G_PARAM_SPEC_VALUE_TYPE(item_pspec) == G_TYPE_INT)
+    g_object_set(item, property, atoi(text), NULL);
+  else
+    g_object_set(item, property, text, NULL);
+}
+
+static void
+cell_setup_cb(GtkSignalListItemFactory *factory,
+              GObject *object,
+              WordListView *view)
+{
+  GtkWidget *child;
+
+  if (g_object_get_data(G_OBJECT(factory), "editable")) {
+    child = gtk_editable_label_new("");
+    /* a non-editable view must not let a click or a key press start
+     * editing the cell; it then just selects the row */
+    g_object_bind_property(view,
+                           "editable",
+                           child,
+                           "editable",
+                           G_BINDING_SYNC_CREATE);
+    g_object_bind_property(view,
+                           "editable",
+                           child,
+                           "can-target",
+                           G_BINDING_SYNC_CREATE);
+    g_object_bind_property(view,
+                           "editable",
+                           child,
+                           "focusable",
+                           G_BINDING_SYNC_CREATE);
+    g_signal_connect(child,
+                     "notify::editing",
+                     G_CALLBACK(cell_editing_changed_cb),
+                     factory);
+  } else {
+    child = gtk_label_new(NULL);
+    gtk_label_set_xalign(GTK_LABEL(child), 0.0);
+  }
+  gtk_widget_set_halign(child, GTK_ALIGN_FILL);
+  gtk_column_view_cell_set_child(GTK_COLUMN_VIEW_CELL(object), child);
+}
+
+static void
+cell_bind_cb(GtkSignalListItemFactory *factory,
+             GObject *object,
+             WordListView *view)
+{
+  GtkColumnViewCell *cell = GTK_COLUMN_VIEW_CELL(object);
+  GtkWidget *child = gtk_column_view_cell_get_child(cell);
+  GObject *item = gtk_column_view_cell_get_item(cell);
+  const gchar *property = g_object_get_data(G_OBJECT(factory), "property");
+  GBinding *binding;
+
+  /* int and boolean properties are shown through GValue's default
+   * transformations to strings, as GtkCellRendererText did */
+  binding = g_object_bind_property(item,
+                                   property,
+                                   child,
+                                   GTK_IS_LABEL(child) ? "label" : "text",
+                                   G_BINDING_SYNC_CREATE);
+  g_object_set_data(G_OBJECT(child), "binding", binding);
+  g_object_set_data(G_OBJECT(child), "item", item);
+}
+
+static void
+cell_unbind_cb(GtkSignalListItemFactory *factory,
+               GObject *object,
+               WordListView *view)
+{
+  GtkWidget *child =
+    gtk_column_view_cell_get_child(GTK_COLUMN_VIEW_CELL(object));
+  GBinding *binding = g_object_get_data(G_OBJECT(child), "binding");
+
+  if (binding)
+    g_binding_unbind(binding);
+  g_object_set_data(G_OBJECT(child), "binding", NULL);
+  g_object_set_data(G_OBJECT(child), "item", NULL);
+}
+
+static GtkColumnViewColumn *
+word_list_view_append_column(WordListView *view,
+                             const gchar *title,
+                             const gchar *property,
+                             gboolean editable,
+                             GtkSorter *sorter)
+{
+  GtkListItemFactory *factory;
+  GtkColumnViewColumn *column;
+
+  factory = gtk_signal_list_item_factory_new();
+  g_object_set_data(G_OBJECT(factory), "property", (gpointer)property);
+  g_object_set_data(G_OBJECT(factory), "editable", GINT_TO_POINTER(editable));
+  g_signal_connect(factory, "setup", G_CALLBACK(cell_setup_cb), view);
+  g_signal_connect(factory, "bind", G_CALLBACK(cell_bind_cb), view);
+  g_signal_connect(factory, "unbind", G_CALLBACK(cell_unbind_cb), view);
+
+  column = gtk_column_view_column_new(title, factory);
+  if (sorter) {
+    gtk_column_view_column_set_sorter(column, sorter);
+    g_object_unref(sorter);
+  }
+  gtk_column_view_append_column(view->view, column);
+  /* the view holds its own reference; the WordListView keeps a
+   * borrowed pointer, valid as long as the view */
+  g_object_unref(column);
+
+  return column;
+}
+
+static GtkSorter *
+string_sorter_new(const gchar *property)
+{
+  GtkStringSorter *sorter = gtk_string_sorter_new(
+    gtk_property_expression_new(WORD_LIST_ITEM_TYPE, NULL, property));
+
+  /* GtkTreeSortable's default sort is case sensitive */
+  gtk_string_sorter_set_ignore_case(sorter, FALSE);
+
+  return GTK_SORTER(sorter);
+}
+
+static GtkSorter *
+numeric_sorter_new(const gchar *property)
+{
+  return GTK_SORTER(gtk_numeric_sorter_new(
+    gtk_property_expression_new(WORD_LIST_ITEM_TYPE, NULL, property)));
+}
+
+static void
+selection_model_changed_cb(GtkSelectionModel *model,
+                           guint position,
+                           guint n_items,
+                           WordListView *view)
+{
+  g_signal_emit(view, word_list_view_signals[SELECTION_CHANGED_SIGNAL], 0);
+}
+
+static void
+selection_model_items_changed_cb(GListModel *model,
+                                 guint position,
+                                 guint removed,
+                                 guint added,
+                                 WordListView *view)
+{
+  /* GtkTreeSelection emitted "changed" when selected rows went away;
+   * GtkSelectionModel doesn't always emit "selection-changed" then,
+   * so forward any change of the rows as well. */
+  g_signal_emit(view, word_list_view_signals[SELECTION_CHANGED_SIGNAL], 0);
+}
+
+static GtkSelectionModel *
+word_list_view_create_selection(WordListView *view, GtkSelectionMode mode)
+{
+  GListModel *model = G_LIST_MODEL(g_object_ref(view->sort_model));
+  GtkSelectionModel *selection;
+
+  switch (mode) {
+  case GTK_SELECTION_NONE:
+    selection = GTK_SELECTION_MODEL(gtk_no_selection_new(model));
+    break;
+  case GTK_SELECTION_MULTIPLE:
+    selection = GTK_SELECTION_MODEL(gtk_multi_selection_new(model));
+    break;
+  case GTK_SELECTION_BROWSE:
+    {
+      GtkSingleSelection *single = gtk_single_selection_new(model);
+
+      gtk_single_selection_set_autoselect(single, TRUE);
+      gtk_single_selection_set_can_unselect(single, FALSE);
+      selection = GTK_SELECTION_MODEL(single);
+      break;
+    }
+  case GTK_SELECTION_SINGLE:
+  default:
+    {
+      GtkSingleSelection *single = gtk_single_selection_new(model);
+
+      gtk_single_selection_set_autoselect(single, FALSE);
+      gtk_single_selection_set_can_unselect(single, TRUE);
+      selection = GTK_SELECTION_MODEL(single);
+      break;
+    }
+  }
+
+  g_signal_connect_object(selection,
+                          "selection-changed",
+                          G_CALLBACK(selection_model_changed_cb),
+                          view,
+                          0);
+  g_signal_connect_object(selection,
+                          "items-changed",
+                          G_CALLBACK(selection_model_items_changed_cb),
+                          view,
+                          0);
+
+  return selection;
+}
+
 static void
 word_list_view_init(WordListView *view)
 {
-  GtkWidget *treeview;
-  GtkTreeViewColumn *column;
-  GtkCellRenderer *renderer;
-  GtkListStore *store;
+  GtkWidget *columnview;
 
   gtk_widget_set_focusable(GTK_WIDGET(view), TRUE);
   gtk_widget_set_receives_default(GTK_WIDGET(view), TRUE);
@@ -196,158 +618,77 @@ word_list_view_init(WordListView *view)
   gtk_scrolled_window_set_has_frame(GTK_SCROLLED_WINDOW(view->scrolled_window),
                                     TRUE);
 
-  treeview = gtk_tree_view_new();
-  view->view = GTK_TREE_VIEW(treeview);
+  columnview = gtk_column_view_new(NULL);
+  view->view = GTK_COLUMN_VIEW(columnview);
+  gtk_column_view_set_reorderable(view->view, FALSE);
 
   /* GtkContainer is gone in GTK 4; a GtkScrolledWindow now takes its
    * single child directly. */
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(view->scrolled_window),
-                                treeview);
-
-  view->selection = gtk_tree_view_get_selection(view->view);
-  gtk_tree_selection_set_mode(view->selection, GTK_SELECTION_SINGLE);
+                                columnview);
 
   /* Word Type */
-  renderer = gtk_cell_renderer_text_new();
-  g_object_set_data(G_OBJECT(renderer),
-                    "column",
-                    GINT_TO_POINTER(WORD_LIST_WORD_TYPE));
-  column = gtk_tree_view_column_new_with_attributes(_("Word Type"),
-                                                    renderer,
-                                                    "text",
-                                                    WORD_LIST_WORD_TYPE,
-                                                    "editable",
-                                                    WORD_LIST_EDITABLE,
-                                                    NULL);
-
-  gtk_tree_view_column_set_visible(column, FALSE);
-  gtk_tree_view_append_column(view->view, column);
-  view->word_type_column = column;
+  view->word_type_column = word_list_view_append_column(view,
+                                                        _("Word Type"),
+                                                        "word-type",
+                                                        FALSE,
+                                                        NULL);
+  gtk_column_view_column_set_visible(view->word_type_column, FALSE);
 
   /* Phon */
-  renderer = gtk_cell_renderer_text_new();
-  g_signal_connect(renderer,
-                   "edited",
-                   G_CALLBACK(word_list_view_callback_cell_edited),
-                   view);
-  g_object_set_data(G_OBJECT(renderer),
-                    "column",
-                    GINT_TO_POINTER(WORD_LIST_PHON));
-
-  column = gtk_tree_view_column_new();
-  gtk_tree_view_column_set_title(column, _("Phonetic"));
-  gtk_tree_view_column_pack_start(column, renderer, TRUE);
-  gtk_tree_view_column_set_visible(column, TRUE);
-  gtk_tree_view_column_set_attributes(column,
-                                      renderer,
-                                      "text",
-                                      WORD_LIST_PHON,
-                                      "editable",
-                                      WORD_LIST_EDITABLE,
-                                      NULL);
-  gtk_tree_view_column_set_sort_column_id(column, WORD_LIST_PHON);
-  gtk_tree_view_column_set_resizable(column, TRUE);
-
-  gtk_tree_view_append_column(view->view, column);
-  view->phon_column = column;
+  view->phon_column = word_list_view_append_column(view,
+                                                   _("Phonetic"),
+                                                   "phon",
+                                                   TRUE,
+                                                   string_sorter_new("phon"));
+  gtk_column_view_column_set_resizable(view->phon_column, TRUE);
 
   /* Desc */
-  renderer = gtk_cell_renderer_text_new();
-  g_signal_connect(renderer,
-                   "edited",
-                   G_CALLBACK(word_list_view_callback_cell_edited),
-                   view);
-  g_object_set_data(G_OBJECT(renderer),
-                    "column",
-                    GINT_TO_POINTER(WORD_LIST_DESC));
-  column = gtk_tree_view_column_new_with_attributes("Literal",
-                                                    renderer,
-                                                    "text",
-                                                    WORD_LIST_DESC,
-                                                    "editable",
-                                                    WORD_LIST_EDITABLE,
-                                                    NULL);
-  gtk_tree_view_append_column(view->view, column);
-  gtk_tree_view_column_set_title(column, _("Literal"));
-  gtk_tree_view_column_set_visible(column, TRUE);
-  gtk_tree_view_column_set_sort_column_id(column, WORD_LIST_DESC);
-  gtk_tree_view_column_set_resizable(column, TRUE);
-  view->desc_column = column;
+  view->desc_column = word_list_view_append_column(view,
+                                                   _("Literal"),
+                                                   "desc",
+                                                   TRUE,
+                                                   string_sorter_new("desc"));
+  gtk_column_view_column_set_resizable(view->desc_column, TRUE);
 
   /* CClass (part of speech) Code */
-  renderer = gtk_cell_renderer_text_new();
-  g_signal_connect(renderer,
-                   "edited",
-                   G_CALLBACK(word_list_view_callback_cell_edited),
-                   view);
-  g_object_set_data(G_OBJECT(renderer),
-                    "column",
-                    GINT_TO_POINTER(WORD_LIST_CCLASS_CODE));
-  column = gtk_tree_view_column_new_with_attributes("Part of Speech",
-                                                    renderer,
-                                                    "text",
-                                                    WORD_LIST_CCLASS_CODE,
-                                                    "editable",
-                                                    WORD_LIST_EDITABLE,
-                                                    NULL);
-  gtk_tree_view_column_set_visible(column, FALSE);
-  gtk_tree_view_column_set_title(column, _("Part of Speech"));
-  gtk_tree_view_column_set_sort_column_id(column, WORD_LIST_CCLASS_CODE);
-  gtk_tree_view_column_set_resizable(column, TRUE);
-  gtk_tree_view_append_column(view->view, column);
-  view->cclass_code_column = column;
+  view->cclass_code_column =
+    word_list_view_append_column(view,
+                                 _("Part of Speech"),
+                                 "cclass-code",
+                                 TRUE,
+                                 string_sorter_new("cclass-code"));
+  gtk_column_view_column_set_visible(view->cclass_code_column, FALSE);
+  gtk_column_view_column_set_resizable(view->cclass_code_column, TRUE);
 
   /* Freq */
-  renderer = gtk_cell_renderer_text_new();
-  g_signal_connect(renderer,
-                   "edited",
-                   G_CALLBACK(word_list_view_callback_cell_edited),
-                   view);
-  g_object_set_data(G_OBJECT(renderer),
-                    "column",
-                    GINT_TO_POINTER(WORD_LIST_FREQ));
-  column = gtk_tree_view_column_new_with_attributes("Frequency",
-                                                    renderer,
-                                                    "text",
-                                                    WORD_LIST_FREQ,
-                                                    "editable",
-                                                    WORD_LIST_EDITABLE,
-                                                    NULL);
-  gtk_tree_view_column_set_visible(column, FALSE);
-  gtk_tree_view_column_set_title(column, _("Frequency"));
-  gtk_tree_view_column_set_sort_column_id(column, WORD_LIST_FREQ);
-  gtk_tree_view_column_set_resizable(column, TRUE);
-  gtk_tree_view_append_column(view->view, column);
-  view->freq_column = column;
+  view->freq_column = word_list_view_append_column(view,
+                                                   _("Frequency"),
+                                                   "freq",
+                                                   TRUE,
+                                                   numeric_sorter_new("freq"));
+  gtk_column_view_column_set_visible(view->freq_column, FALSE);
+  gtk_column_view_column_set_resizable(view->freq_column, TRUE);
 
   /* Okuri */
-  renderer = gtk_cell_renderer_text_new();
-  column = gtk_tree_view_column_new_with_attributes("Okuri",
-                                                    renderer,
-                                                    "text",
-                                                    WORD_LIST_OKURI,
-                                                    "editable",
-                                                    WORD_LIST_EDITABLE,
-                                                    NULL);
-  gtk_tree_view_column_set_title(column, _("Okuri"));
-  gtk_tree_view_column_set_visible(column, FALSE);
-  gtk_tree_view_column_set_sort_column_id(column, WORD_LIST_OKURI);
-  gtk_tree_view_column_set_resizable(column, TRUE);
-  gtk_tree_view_append_column(view->view, column);
-  view->okuri_column = column;
+  view->okuri_column =
+    word_list_view_append_column(view,
+                                 _("Okuri"),
+                                 "okuri",
+                                 FALSE,
+                                 numeric_sorter_new("okuri"));
+  gtk_column_view_column_set_visible(view->okuri_column, FALSE);
+  gtk_column_view_column_set_resizable(view->okuri_column, TRUE);
 
-  store = gtk_list_store_new(WORD_LIST_N_COLUMNS,
-                             G_TYPE_INT,      /* Word Type     */
-                             G_TYPE_STRING,   /* Phon	         */
-                             G_TYPE_STRING,   /* Desc          */
-                             G_TYPE_STRING,   /* cclass code   */
-                             G_TYPE_INT,      /* Frequency     */
-                             G_TYPE_BOOLEAN,  /* Okuri for SKK */
-                             G_TYPE_BOOLEAN,  /* Editable      */
-                             G_TYPE_POINTER); /* word object   */
-  gtk_tree_view_set_model(view->view, GTK_TREE_MODEL(store));
+  view->store = g_list_store_new(WORD_LIST_ITEM_TYPE);
+  view->sort_model = gtk_sort_list_model_new(
+    G_LIST_MODEL(g_object_ref(view->store)),
+    g_object_ref(gtk_column_view_get_sorter(view->view)));
 
-  view->model = GTK_TREE_MODEL(store);
+  view->selection = word_list_view_create_selection(view, GTK_SELECTION_SINGLE);
+  gtk_column_view_set_model(view->view, view->selection);
+  /* the column view keeps its own reference */
+  g_object_unref(view->selection);
 
   view->cclass_code_show = FALSE;
   view->freq_show = FALSE;
@@ -359,15 +700,6 @@ word_list_view_init(WordListView *view)
 static void
 word_list_view_finalize(GObject *object)
 {
-  WordListView *view = WORD_LIST_VIEW(object);
-
-  if (view->model != NULL) {
-    GObject *model = G_OBJECT(view->model);
-
-    view->model = NULL;
-    g_object_unref(model);
-  }
-
   if (G_OBJECT_CLASS(parent_class)->finalize)
     G_OBJECT_CLASS(parent_class)->finalize(object);
 }
@@ -385,8 +717,19 @@ word_list_view_dispose(GObject *object)
   /* GtkWidgetClass has no "destroy" vfunc in GTK 4; a custom widget
    * unparents its own children from dispose() instead (dispose can
    * run more than once, so g_clear_pointer's NULL-then-skip is what
-   * makes that safe here). */
+   * makes that safe here). Unparenting drops the column view, and
+   * with it the selection model it owned. */
   g_clear_pointer(&view->scrolled_window, gtk_widget_unparent);
+  view->view = NULL;
+  view->selection = NULL;
+  view->word_type_column = NULL;
+  view->phon_column = NULL;
+  view->desc_column = NULL;
+  view->cclass_code_column = NULL;
+  view->freq_column = NULL;
+  view->okuri_column = NULL;
+  g_clear_object(&view->sort_model);
+  g_clear_object(&view->store);
 
   G_OBJECT_CLASS(parent_class)->dispose(object);
 }
@@ -432,7 +775,7 @@ word_list_view_set_visible_cclass_code_column(WordListView *view, gboolean show)
 
   if (view->cclass_code_show != show) {
     view->cclass_code_show = show;
-    gtk_tree_view_column_set_visible(view->cclass_code_column, show);
+    gtk_column_view_column_set_visible(view->cclass_code_column, show);
     g_object_notify(G_OBJECT(view), "cclass_code_show");
   }
 }
@@ -452,7 +795,7 @@ word_list_view_set_visible_freq_column(WordListView *view, gboolean show)
 
   if (view->freq_show != show) {
     view->freq_show = show;
-    gtk_tree_view_column_set_visible(view->freq_column, show);
+    gtk_column_view_column_set_visible(view->freq_column, show);
     g_object_notify(G_OBJECT(view), "freq_show");
   }
 }
@@ -472,7 +815,7 @@ word_list_view_set_visible_okuri_column(WordListView *view, gboolean show)
 
   if (view->okuri_show != show) {
     view->okuri_show = show;
-    gtk_tree_view_column_set_visible(view->okuri_column, show);
+    gtk_column_view_column_set_visible(view->okuri_column, show);
     g_object_notify(G_OBJECT(view), "okuri_show");
   }
 }
@@ -488,22 +831,14 @@ word_list_view_get_visible_okuri_column(WordListView *view)
 void
 word_list_view_set_editable(WordListView *view, gboolean editable)
 {
-  GtkTreeIter iter;
   g_return_if_fail(IS_WORD_LIST_VIEW(view));
 
+  editable = editable ? TRUE : FALSE;
   if (view->editable != editable) {
     view->editable = editable;
-    if (gtk_tree_model_get_iter_first(view->model, &iter)) {
-      do {
-        gtk_list_store_set(GTK_LIST_STORE(view->model),
-                           &iter,
-                           WORD_LIST_EDITABLE,
-                           editable,
-                           TERMINATOR);
-      } while (gtk_tree_model_iter_next(view->model, &iter));
-
-      g_object_notify(G_OBJECT(view), "editable");
-    }
+    /* the editable cells follow this notification through their
+     * property bindings (see cell_setup_cb()) */
+    g_object_notify(G_OBJECT(view), "editable");
   }
 }
 
@@ -522,8 +857,11 @@ word_list_view_set_selection_mode(WordListView *view, GtkSelectionMode mode)
 
   if (view->selection_mode != mode) {
     view->selection_mode = mode;
-    gtk_tree_selection_set_mode(view->selection, mode);
+    view->selection = word_list_view_create_selection(view, mode);
+    gtk_column_view_set_model(view->view, view->selection);
+    g_object_unref(view->selection);
     g_object_notify(G_OBJECT(view), "selection_mode");
+    g_signal_emit(view, word_list_view_signals[SELECTION_CHANGED_SIGNAL], 0);
   }
 }
 
@@ -619,12 +957,13 @@ word_list_view_set_dict(WordListView *view, uim_dict *dict)
 void
 word_list_view_set_values(WordListView *view, uim_word *data)
 {
-  GtkTreeIter iter;
-  gchar *phonetic, *literal, *cclass;
+  GPtrArray *items;
   uim_word *w;
 
   g_return_if_fail(IS_WORD_LIST_VIEW(view));
   g_return_if_fail(data != NULL);
+
+  items = g_ptr_array_new_with_free_func(g_object_unref);
 
   for (w = data; w; w = w->next) {
     if (w->phon == NULL)
@@ -634,53 +973,35 @@ word_list_view_set_values(WordListView *view, uim_word *data)
     if (w->cclass_code == NULL)
       w->cclass_code = g_strdup("");
 
-    phonetic = charset_convert(w->phon, w->charset, "UTF-8");
-    literal = charset_convert(w->desc, w->charset, "UTF-8");
-    cclass = charset_convert(w->cclass_code, w->charset, "UTF-8");
-
-    gtk_list_store_append(GTK_LIST_STORE(view->model), &iter);
-    gtk_list_store_set(GTK_LIST_STORE(view->model),
-                       &iter,
-                       WORD_LIST_WORD_TYPE,
-                       w->type,
-                       WORD_LIST_PHON,
-                       phonetic,
-                       WORD_LIST_DESC,
-                       literal,
-                       WORD_LIST_CCLASS_CODE,
-                       cclass,
-                       WORD_LIST_FREQ,
-                       w->freq,
-                       WORD_LIST_OKURI,
-                       w->okuri,
-                       WORD_LIST_EDITABLE,
-                       view->editable,
-                       WORD_LIST_WORD,
-                       w,
-                       TERMINATOR);
-
-    g_free(phonetic);
-    g_free(literal);
-    g_free(cclass);
+    g_ptr_array_add(items, word_list_item_new(w));
   }
+
+  /* append them all at once: one "items-changed" instead of one per
+   * word */
+  g_list_store_splice(view->store,
+                      g_list_model_get_n_items(G_LIST_MODEL(view->store)),
+                      0,
+                      items->pdata,
+                      items->len);
+  g_ptr_array_unref(items);
 }
 
 void
 word_list_view_clear(WordListView *view)
 {
   g_return_if_fail(IS_WORD_LIST_VIEW(view));
-  g_return_if_fail(view->model);
+  g_return_if_fail(view->store);
 
-  gtk_list_store_clear(GTK_LIST_STORE(view->model));
+  g_list_store_remove_all(view->store);
 }
 
 void
 word_list_view_refresh(WordListView *view)
 {
   g_return_if_fail(IS_WORD_LIST_VIEW(view));
-  g_return_if_fail(view->model);
+  g_return_if_fail(view->store);
 
-  gtk_list_store_clear(GTK_LIST_STORE(view->model));
+  g_list_store_remove_all(view->store);
 
   if (view->dict) {
     uim_dict_refresh(view->dict);
@@ -692,134 +1013,99 @@ word_list_view_refresh(WordListView *view)
 GList *
 word_list_view_get_all_data_list(WordListView *view)
 {
-  GtkTreeIter iter;
+  GListModel *model;
   GList *list = NULL;
-  uim_word *data;
+  guint i, n_items;
 
   g_return_val_if_fail(IS_WORD_LIST_VIEW(view), NULL);
 
-  if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(view->model), &iter)) {
-    do {
-      gtk_tree_model_get(view->model, &iter, WORD_LIST_WORD, &data, TERMINATOR);
-      if (data)
-        list = g_list_append(list, data);
-    } while (gtk_tree_model_iter_next(GTK_TREE_MODEL(view->model), &iter));
+  /* in display (i.e. sorted) order, as GtkTreeModel iteration was */
+  model = G_LIST_MODEL(view->sort_model);
+  n_items = g_list_model_get_n_items(model);
+  for (i = 0; i < n_items; i++) {
+    WordListItem *item = g_list_model_get_item(model, i);
+
+    if (item->word)
+      list = g_list_prepend(list, item->word);
+    g_object_unref(item);
   }
-  return list;
+  return g_list_reverse(list);
+}
+
+/* the selected row objects, in display order (transfer full) */
+static GList *
+word_list_view_get_selected_items(WordListView *view)
+{
+  GtkBitset *selected;
+  GtkBitsetIter iter;
+  guint position;
+  GList *items = NULL;
+
+  selected = gtk_selection_model_get_selection(view->selection);
+  if (gtk_bitset_iter_init_first(&iter, selected, &position)) {
+    do {
+      items = g_list_prepend(
+        items,
+        g_list_model_get_item(G_LIST_MODEL(view->selection), position));
+    } while (gtk_bitset_iter_next(&iter, &position));
+  }
+  gtk_bitset_unref(selected);
+
+  return g_list_reverse(items);
+}
+
+gboolean
+word_list_view_has_selection(WordListView *view)
+{
+  GtkBitset *selected;
+  gboolean empty;
+
+  g_return_val_if_fail(IS_WORD_LIST_VIEW(view), FALSE);
+
+  selected = gtk_selection_model_get_selection(view->selection);
+  empty = gtk_bitset_is_empty(selected);
+  gtk_bitset_unref(selected);
+
+  return !empty;
 }
 
 GList *
 word_list_view_get_selected_data_list(WordListView *view)
 {
-  GtkTreeIter iter;
-  GList *pos, *list;
+  GList *items, *pos;
   GList *selected_data = NULL;
 
   g_return_val_if_fail(IS_WORD_LIST_VIEW(view), NULL);
 
-  list = gtk_tree_selection_get_selected_rows(view->selection, &view->model);
+  items = word_list_view_get_selected_items(view);
+  for (pos = items; pos != NULL; pos = g_list_next(pos)) {
+    WordListItem *item = pos->data;
 
-  for (pos = g_list_first(list); pos != NULL; pos = g_list_next(pos)) {
-    GtkTreePath *path = pos->data;
-
-    pos->data = gtk_tree_row_reference_new(view->model, path);
-    gtk_tree_path_free(path);
+    if (item->word)
+      selected_data = g_list_prepend(selected_data, item->word);
   }
+  g_list_free_full(items, g_object_unref);
 
-  for (pos = g_list_first(list); pos != NULL; pos = g_list_next(pos)) {
-    GtkTreePath *path = gtk_tree_row_reference_get_path(pos->data);
-
-    if (path) {
-      if (gtk_tree_model_get_iter(view->model, &iter, path)) {
-        uim_word *data;
-
-        gtk_tree_model_get(view->model,
-                           &iter,
-                           WORD_LIST_WORD,
-                           &data,
-                           TERMINATOR);
-        if (data)
-          selected_data = g_list_append(selected_data, data);
-
-        gtk_tree_row_reference_free(pos->data);
-        gtk_tree_path_free(path);
-      }
-    }
-  }
-  g_list_free(list);
-  return selected_data;
+  return g_list_reverse(selected_data);
 }
 
 void
 word_list_view_remove_selected_data(WordListView *view)
 {
-  GtkTreeIter iter;
-  GList *pos, *list;
+  GList *items, *pos;
 
   g_return_if_fail(IS_WORD_LIST_VIEW(view));
 
-  list = gtk_tree_selection_get_selected_rows(view->selection, &view->model);
+  /* positions shift as rows are removed (and the selection and store
+   * orders differ when sorted), so look each object up in the store */
+  items = word_list_view_get_selected_items(view);
+  for (pos = items; pos != NULL; pos = g_list_next(pos)) {
+    guint position;
 
-  for (pos = g_list_first(list); pos != NULL; pos = g_list_next(pos)) {
-    GtkTreePath *path = pos->data;
-
-    pos->data = gtk_tree_row_reference_new(view->model, path);
-    gtk_tree_path_free(path);
+    if (g_list_store_find(view->store, pos->data, &position))
+      g_list_store_remove(view->store, position);
   }
+  g_list_free_full(items, g_object_unref);
 
-  for (pos = g_list_first(list); pos != NULL; pos = g_list_next(pos)) {
-    GtkTreePath *path = gtk_tree_row_reference_get_path(pos->data);
-
-    if (path) {
-      if (gtk_tree_model_get_iter(view->model, &iter, path)) {
-        gtk_list_store_remove(GTK_LIST_STORE(view->model), &iter);
-        gtk_tree_row_reference_free(pos->data);
-        gtk_tree_path_free(path);
-      }
-    }
-  }
-  g_list_free(list);
-  gtk_tree_selection_unselect_all(view->selection);
-}
-
-static void
-word_list_view_callback_cell_edited(GtkCellRendererText *renderer,
-                                    const gchar *path_string,
-                                    const gchar *new_text,
-                                    WordListView *view)
-{
-  GtkTreeModel *model = view->model;
-  GtkTreeIter iter;
-  GtkTreePath *path;
-  gchar *old_text;
-  gint *column;
-
-  path = gtk_tree_path_new_from_string(path_string);
-  column = g_object_get_data(G_OBJECT(renderer), "column");
-
-  gtk_tree_model_get_iter(model, &iter, path);
-
-  switch (GPOINTER_TO_INT(column)) {
-  case WORD_LIST_PHON:
-  case WORD_LIST_DESC:
-  case WORD_LIST_CCLASS_CODE:
-    gtk_tree_model_get(model, &iter, column, &old_text, TERMINATOR);
-    g_free(old_text);
-    gtk_list_store_set(GTK_LIST_STORE(model),
-                       &iter,
-                       column,
-                       new_text,
-                       TERMINATOR);
-    break;
-  case WORD_LIST_FREQ:
-    gtk_list_store_set(GTK_LIST_STORE(model),
-                       &iter,
-                       column,
-                       atoi(new_text),
-                       TERMINATOR);
-    break;
-  default:
-    break;
-  }
-  gtk_tree_path_free(path);
+  gtk_selection_model_unselect_all(view->selection);
 }

@@ -67,13 +67,13 @@ typedef enum {
 
 struct _WordWindow
 {
-  GtkDialog parent;
+  GtkWindow parent;
 
   GtkWidget *pane;
 
   GtkWidget *phon;
   GtkWidget *desc;
-  GtkWidget *combobox_pos_broad;
+  GtkWidget *combobox_pos_broad; /* GtkDropDown */
 
   GtkWidget *cclass_code;
   GtkWidget *freq;
@@ -90,7 +90,7 @@ struct _WordWindow
 
 struct _WordWindowClass
 {
-  GtkDialogClass parent_class;
+  GtkWindowClass parent_class;
 
   /*-- signals --*/
   void (*word_added)(WordWindow *window);

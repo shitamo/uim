@@ -85,10 +85,9 @@ word_list_click_pressed_cb(GtkGestureClick *gesture,
                            gdouble x,
                            gdouble y,
                            WordListWindow *window);
-static gboolean
-word_list_row_activated_cb(GtkTreeView *treeview,
-                           GtkTreePath *path,
-                           GtkTreeViewColumn *column,
+static void
+word_list_row_activated_cb(GtkColumnView *view,
+                           guint position,
                            WordListWindow *window);
 static gboolean
 word_list_key_pressed_cb(GtkEventControllerKey *controller,
@@ -97,8 +96,7 @@ word_list_key_pressed_cb(GtkEventControllerKey *controller,
                          GdkModifierType state,
                          WordListWindow *window);
 static void
-word_list_selection_changed_cb(GtkTreeSelection *selection,
-                               WordListWindow *window);
+word_list_selection_changed_cb(WordListView *view, WordListWindow *window);
 
 /* call back functions for WordWindow */
 static void
@@ -382,12 +380,12 @@ build_popup_menu(WordListWindow *window)
 
   /* Anchor the popover to word_list (our own plain GtkWidget, built
    * with a modern layout manager -- see word-list-view-gtk4.c) rather
-   * than to its internal GtkTreeView: GtkTreeView keeps its own
-   * private bookkeeping for headers/children and doesn't reliably
-   * support an *extra* widget being attached to it via
-   * gtk_widget_set_parent(), which was corrupting its CSS node
-   * ordering ("gtk_css_node_insert_after" critical warning) as soon
-   * as the popup menu was built. word_list_click_pressed_cb()
+   * than to its internal GtkColumnView: list widgets keep their own
+   * private bookkeeping for headers/rows and don't support an *extra*
+   * widget being attached to them via gtk_widget_set_parent() (with
+   * the former GtkTreeView this corrupted its CSS node ordering, a
+   * "gtk_css_node_insert_after" critical warning, as soon as the
+   * popup menu was built). word_list_click_pressed_cb()
    * translates the click position into word_list's own coordinate
    * space accordingly. */
   gtk_widget_set_parent(window->popup_menu, window->word_list);
@@ -397,7 +395,7 @@ build_popup_menu(WordListWindow *window)
 static void
 word_list_window_init(WordListWindow *window)
 {
-  GtkWidget *word_list, *vbox, *statusbar;
+  GtkWidget *word_list, *vbox, *status_label;
   GtkEventController *key_controller;
   GtkGesture *click_gesture;
 
@@ -422,6 +420,13 @@ word_list_window_init(WordListWindow *window)
 
   click_gesture = gtk_gesture_click_new();
   gtk_gesture_single_set_button(GTK_GESTURE_SINGLE(click_gesture), 0);
+  /* Listen in the capture phase: the column view's rows have click
+   * gestures of their own, which would otherwise claim the press
+   * before it bubbles up to the view. This gesture never claims, so
+   * row selection keeps working as usual. */
+  gtk_event_controller_set_propagation_phase(
+    GTK_EVENT_CONTROLLER(click_gesture),
+    GTK_PHASE_CAPTURE);
   gtk_widget_add_controller(GTK_WIDGET(WORD_LIST_VIEW(window->word_list)->view),
                             GTK_EVENT_CONTROLLER(click_gesture));
   g_signal_connect(click_gesture,
@@ -430,7 +435,7 @@ word_list_window_init(WordListWindow *window)
                    window);
 
   g_signal_connect(WORD_LIST_VIEW(window->word_list)->view,
-                   "row-activated",
+                   "activate",
                    G_CALLBACK(word_list_row_activated_cb),
                    window);
 
@@ -442,13 +447,21 @@ word_list_window_init(WordListWindow *window)
                    G_CALLBACK(word_list_key_pressed_cb),
                    window);
 
-  g_signal_connect(WORD_LIST_VIEW(window->word_list)->selection,
-                   "changed",
+  g_signal_connect(window->word_list,
+                   "selection-changed",
                    G_CALLBACK(word_list_selection_changed_cb),
                    window);
 
-  window->statusbar = statusbar = gtk_statusbar_new();
-  gtk_box_append(GTK_BOX(vbox), statusbar);
+  /* GtkStatusbar is deprecated since GTK 4.10; only one message is
+   * ever shown (the dictionary name), so a plain label does. */
+  window->statusbar = status_label = gtk_label_new(NULL);
+  gtk_label_set_xalign(GTK_LABEL(status_label), 0.0);
+  gtk_label_set_ellipsize(GTK_LABEL(status_label), PANGO_ELLIPSIZE_END);
+  gtk_widget_set_margin_top(status_label, 3);
+  gtk_widget_set_margin_bottom(status_label, 3);
+  gtk_widget_set_margin_start(status_label, 6);
+  gtk_widget_set_margin_end(status_label, 6);
+  gtk_box_append(GTK_BOX(vbox), status_label);
 
   word_list_window_set_sensitive(window);
 }
@@ -526,9 +539,7 @@ dict_set_property(GObject *object,
     }
     word_list_view_set_dict(WORD_LIST_VIEW(window->word_list), dict);
 
-    gtk_statusbar_push(GTK_STATUSBAR(window->statusbar),
-                       0,
-                       _(dict->identifier));
+    gtk_label_set_text(GTK_LABEL(window->statusbar), _(dict->identifier));
     break;
   default:
     break;
@@ -554,13 +565,8 @@ static void
 word_list_window_set_sensitive(WordListWindow *window)
 {
   gboolean selected;
-  WordListView *word_list;
-  GtkTreeSelection *selection;
 
-  word_list = WORD_LIST_VIEW(window->word_list);
-  selection = word_list->selection;
-
-  selected = gtk_tree_selection_get_selected(selection, NULL, NULL);
+  selected = word_list_view_has_selection(WORD_LIST_VIEW(window->word_list));
 
   if (selected) {
     SET_ACTION_SENSITIVE(window, ACTION_EDIT_WORD, TRUE);
@@ -812,29 +818,28 @@ word_list_click_pressed_cb(GtkGestureClick *gesture,
     ACTIVATE_ACTION(window, ACTION_EDIT_WORD);
   } else if (button == GDK_BUTTON_SECONDARY) {
     GtkWidget *view = GTK_WIDGET(WORD_LIST_VIEW(window->word_list)->view);
-    double tx = x, ty = y;
+    graphene_point_t point = GRAPHENE_POINT_INIT((float)x, (float)y);
     GdkRectangle rect;
 
-    /* x/y arrive in the treeview's own coordinate space (the gesture
-     * is attached to it); the popover is anchored to word_list
-     * instead (see build_popup_menu()), so translate accordingly. */
-    gtk_widget_translate_coordinates(view, window->word_list, x, y, &tx, &ty);
-    rect = (GdkRectangle){(int)tx, (int)ty, 1, 1};
+    /* x/y arrive in the column view's own coordinate space (the
+     * gesture is attached to it); the popover is anchored to
+     * word_list instead (see build_popup_menu()), so translate
+     * accordingly. */
+    if (!gtk_widget_compute_point(view, window->word_list, &point, &point))
+      point = GRAPHENE_POINT_INIT((float)x, (float)y);
+    rect = (GdkRectangle){(int)point.x, (int)point.y, 1, 1};
 
     gtk_popover_set_pointing_to(GTK_POPOVER(window->popup_menu), &rect);
     gtk_popover_popup(GTK_POPOVER(window->popup_menu));
   }
 }
 
-static gboolean
-word_list_row_activated_cb(GtkTreeView *treeview,
-                           GtkTreePath *path,
-                           GtkTreeViewColumn *column,
+static void
+word_list_row_activated_cb(GtkColumnView *view,
+                           guint position,
                            WordListWindow *window)
 {
   ACTIVATE_ACTION(window, ACTION_EDIT_WORD);
-
-  return FALSE;
 }
 
 static gboolean
@@ -857,8 +862,7 @@ word_list_key_pressed_cb(GtkEventControllerKey *controller,
 }
 
 static void
-word_list_selection_changed_cb(GtkTreeSelection *selection,
-                               WordListWindow *window)
+word_list_selection_changed_cb(WordListView *view, WordListWindow *window)
 {
   word_list_window_set_sensitive(window);
 }

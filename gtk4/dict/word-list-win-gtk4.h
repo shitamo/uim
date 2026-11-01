@@ -67,7 +67,7 @@ struct _WordListWindow
 {
   GtkWindow parent;
   GtkWidget *word_list;
-  GtkWidget *statusbar;
+  GtkWidget *statusbar;        /* GtkLabel showing the dictionary name */
   GtkWidget *popup_menu;       /* GtkPopoverMenu, parented on the word list */
   GSimpleActionGroup *actions; /* "win" action group */
   DictEnumDictionaryType dictionary_type;

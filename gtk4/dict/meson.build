@@ -25,3 +25,7 @@ executable('uim-dict-gtk4',
            include_directories: uim_include_directories,
            install: true,
            link_with: [libuim_scm, libuim])
+
+if get_option('tests').allowed()
+  subdir('tests')
+endif

@@ -883,8 +883,16 @@ set_olist_buttons_sensitive(GtkEntry *olist_entry)
       GtkTreePath *path = rows->data;
       GtkTreeIter iter;
 
-      if (path && !gtk_tree_path_prev(path))
-        is_first = TRUE;
+      /* gtk_tree_path_prev() moves the path it is given, so check the
+       * first row on a copy to keep path at the selected row for the
+       * last row check below. */
+      if (path) {
+        GtkTreePath *prev = gtk_tree_path_copy(path);
+
+        if (!gtk_tree_path_prev(prev))
+          is_first = TRUE;
+        gtk_tree_path_free(prev);
+      }
 
       if (gtk_tree_model_get_iter(model, &iter, path)) {
         if (!gtk_tree_model_iter_next(model, &iter)) {
@@ -2158,17 +2166,19 @@ table_pref_renderer_edited(GtkCellRendererText *renderer,
   GtkTreeIter iter;
   gint column =
     GPOINTER_TO_INT(g_object_get_data(G_OBJECT(renderer), "column"));
-  gint num = gtk_tree_model_iter_n_children(model, NULL);
+  gint n_columns = gtk_tree_model_get_n_columns(model);
+  gboolean found;
 
-  if (column < 0 || column >= num) {
+  if (column < 0 || column >= n_columns) {
     gtk_tree_path_free(tree_path);
     return;
   }
 
-  if (!gtk_tree_model_get_iter(model, &iter, tree_path))
+  found = gtk_tree_model_get_iter(model, &iter, tree_path);
+  gtk_tree_path_free(tree_path);
+  if (!found)
     return;
 
-  gtk_tree_path_free(tree_path);
   gtk_list_store_set(GTK_LIST_STORE(model), &iter, column, new_text, -1);
   uim_pref_gtk_mark_value_changed();
 }

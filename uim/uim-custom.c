@@ -829,7 +829,7 @@ uim_custom_table_get(const char *custom_sym, const char *getter_proc)
   int row_count;
   int row;
 
-  UIM_EVAL_FSTRING1(NULL, "(length %s)", custom_sym);
+  UIM_EVAL_FSTRING2(NULL, "(length (%s '%s))", getter_proc, custom_sym);
   row_count = uim_scm_c_int(uim_scm_return_value());
 
   custom_table = (char ***)malloc(sizeof(char **) * (row_count + 1));
@@ -840,7 +840,8 @@ uim_custom_table_get(const char *custom_sym, const char *getter_proc)
   for (row = 0; row < row_count; row++) {
     int column_count;
     int column;
-    UIM_EVAL_FSTRING2(NULL, "(length (nth %d %s))", row, custom_sym);
+    UIM_EVAL_FSTRING3(NULL, "(length (nth %d (%s '%s)))",
+		      row, getter_proc, custom_sym);
     column_count = uim_scm_c_int(uim_scm_return_value());
 
     custom_table[row] = (char **)malloc(sizeof(char *) * (column_count + 1));
@@ -849,12 +850,10 @@ uim_custom_table_get(const char *custom_sym, const char *getter_proc)
     custom_table[row][column_count] = NULL;
     for (column = 0; column < column_count; column++) {
       char *str;
-      UIM_EVAL_FSTRING3(NULL, "(nth %d (nth %d %s))", column, row, custom_sym);
+      UIM_EVAL_FSTRING4(NULL, "(nth %d (nth %d (%s '%s)))",
+			column, row, getter_proc, custom_sym);
       str = uim_scm_c_str(uim_scm_return_value());
       if (!str)
-        return NULL;
-      custom_table[row][column] = malloc(sizeof(char) * (strlen(str) + 1));
-      if (!custom_table[row][column])
         return NULL;
       custom_table[row][column] = str;
     }

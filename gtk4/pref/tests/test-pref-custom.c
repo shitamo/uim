@@ -408,10 +408,7 @@ test_table(void)
 }
 
 /* uim_pref_gtk_set_default_value() ("Defaults") copies default_value
- * into value. For tables libuim's uim_custom_table_get() ignores its
- * getter argument and returns the current value for default_value as
- * well, so a table cannot be reset. Reported as TODO until libuim is
- * fixed. */
+ * into value, so default_value must not follow the current value. */
 static void
 test_table_default(void)
 {
@@ -421,12 +418,11 @@ test_table_default(void)
   uim_scm_eval_c_string("(custom-set-value! 'pref-test-table '((\"q\")))");
   custom = uim_custom_get("pref-test-table");
   g_assert_cmpstr(custom->value->as_table[0][0], ==, "q");
-  if (g_strcmp0(custom->default_value->as_table[0][0], "a") != 0) {
-    g_test_incomplete("libuim returns the current value as the default "
-                      "value of a table custom");
-  } else {
-    g_assert_cmpstr(custom->default_value->as_table[1][1], ==, "y");
-  }
+  g_assert_null(custom->value->as_table[1]);
+  g_assert_cmpstr(custom->default_value->as_table[0][0], ==, "a");
+  g_assert_cmpstr(custom->default_value->as_table[0][1], ==, "x");
+  g_assert_cmpstr(custom->default_value->as_table[1][1], ==, "y");
+  g_assert_null(custom->default_value->as_table[2]);
   uim_custom_free(custom);
 }
 

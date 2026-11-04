@@ -480,18 +480,9 @@ test_olist(Fixture *fixture, gconstpointer data)
   assert_model_string(disabled, 0, 0, "Three");
   assert_olist_buttons(FALSE, FALSE, FALSE, FALSE);
 
-  /* The last enabled item can move up but not down. Down should be
-   * insensitive here, but set_olist_buttons_sensitive() calls
-   * gtk_tree_path_prev() on the path before checking for the last row
-   * (inherited from the GTK 3 version), so only check that pressing it
-   * changes nothing. */
+  /* the last enabled item can move up but not down */
   select_row(enabled, 1);
-  g_assert_true(gtk_widget_get_sensitive(olist_pref_win.up_button));
-  g_assert_false(gtk_widget_get_sensitive(olist_pref_win.left_button));
-  g_assert_true(gtk_widget_get_sensitive(olist_pref_win.right_button));
-  click(olist_pref_win.down_button);
-  pref_test_assert_value("pref-test-olist", "'(one two)");
-  g_assert_cmpint(mark_value_changed_count, ==, 0);
+  assert_olist_buttons(TRUE, FALSE, FALSE, TRUE);
   click(olist_pref_win.up_button);
   pref_test_assert_value("pref-test-olist", "'(two one)");
   assert_editable_text(entry, "\"Two\", \"One\"");
@@ -761,6 +752,39 @@ test_table(Fixture *fixture, gconstpointer data)
   pref_test_assert_value("pref-test-table", "'((\"c\" \"z\") (\"b\" \"y\"))");
 }
 
+/* Every column can be edited, also when the table has fewer rows than
+ * columns. */
+static void
+test_table_edit_narrow(Fixture *fixture, gconstpointer data)
+{
+  GtkWidget *label = find_custom_widget(fixture, "pref-test-table");
+  GtkWidget *dialog;
+  GtkTreeView *view;
+
+  set_value("pref-test-table", "'((\"a\" \"x\"))");
+  click(sibling_button(label));
+  dialog = find_dialog();
+  view = GTK_TREE_VIEW(find_widget_by_type(dialog, GTK_TYPE_TREE_VIEW));
+  g_assert_cmpint(model_n_rows(view), ==, 1);
+
+  edit_table_cell(view, 0, 1, "w");
+  assert_model_string(view, 0, 1, "w");
+  g_assert_cmpint(mark_value_changed_count, ==, 1);
+
+  /* out of range rows and columns are ignored */
+  edit_table_cell(view, 0, 0, "v");
+  g_signal_emit_by_name(gtk_cell_layout_get_cells(
+                          GTK_CELL_LAYOUT(gtk_tree_view_get_column(view, 0)))
+                          ->data,
+                        "edited",
+                        "5",
+                        "ignored");
+  g_assert_cmpint(model_n_rows(view), ==, 1);
+
+  gtk_dialog_response(GTK_DIALOG(dialog), GTK_RESPONSE_CLOSE);
+  pref_test_assert_value("pref-test-table", "'((\"v\" \"w\"))");
+}
+
 static void
 test_set_default_value(Fixture *fixture, gconstpointer data)
 {
@@ -796,8 +820,7 @@ test_set_default_value(Fixture *fixture, gconstpointer data)
   pref_test_assert_value("pref-test-file", "\"/tmp/pref-test-file\"");
   pref_test_assert_value("pref-test-choice", "'beta");
   pref_test_assert_value("pref-test-olist", "'(one two)");
-  /* pref-test-table is not checked: libuim gives a table custom its
-   * current value as default_value (see /pref/custom/table-default). */
+  pref_test_assert_value("pref-test-table", "'((\"a\" \"x\") (\"b\" \"y\"))");
 
   g_assert_true(gtk_check_button_get_active(
     GTK_CHECK_BUTTON(find_custom_widget(fixture, "pref-test-bool"))));
@@ -853,6 +876,7 @@ main(int argc, char *argv[])
   ADD_TEST("key", test_key);
   ADD_TEST("key-literal", test_key_literal);
   ADD_TEST("table", test_table);
+  ADD_TEST("table-edit-narrow", test_table_edit_narrow);
   ADD_TEST("set-default-value", test_set_default_value);
 
   status = g_test_run();

@@ -1,4 +1,12 @@
-EXTRA_DIST = meson.build
+EXTRA_DIST = meson.build \
+	tests/fixture.scm \
+	tests/meson.build \
+	tests/pref-test-common.h \
+	tests/test-pref-custom.c \
+	tests/test-pref-keyevent.c \
+	tests/test-pref-keytab.c \
+	tests/test-pref-widgets.c \
+	tests/test-pref-window.c
 
 if GTK4
 if PREF

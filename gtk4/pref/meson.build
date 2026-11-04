@@ -11,3 +11,7 @@ executable('uim-pref-gtk4',
            include_directories: uim_include_directories,
            install: true,
            link_with: gtk4_pref_link_with)
+
+if get_option('tests').allowed()
+  subdir('tests')
+endif

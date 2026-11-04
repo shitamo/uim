@@ -61,6 +61,8 @@ static void
 word_window_class_init(WordWindowClass *window);
 static void
 word_window_init(WordWindow *window);
+static void
+word_window_dispose(GObject *object);
 
 static GtkWidget *
 word_window_necessary_create(WordWindow *window);
@@ -73,6 +75,8 @@ word_window_validate_values(WordWindow *window);
 static void
 word_window_cclass_reset(WordWindow *window);
 
+static void
+word_window_schedule_destroy(WordWindow *window);
 static gboolean
 idle_wordwin_destroy(gpointer data);
 
@@ -86,6 +90,7 @@ static void
 browse_cclass_result_cb(gchar *cclass_code, gpointer user_data);
 
 static gint word_window_signals[LAST_SIGNAL] = {0};
+static GtkDialogClass *parent_class = NULL;
 
 static void
 notify(GtkWindow *parent, const gchar *message)
@@ -121,7 +126,11 @@ word_window_get_type(void)
 static void
 word_window_class_init(WordWindowClass *klass)
 {
+  GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
   GtkDialogClass *dialog_class = (GtkDialogClass *)klass;
+
+  parent_class = g_type_class_peek_parent(klass);
+  gobject_class->dispose = word_window_dispose;
 
   word_window_signals[WORD_ADDED_SIGNAL] =
     g_signal_new("word-added",
@@ -209,6 +218,25 @@ word_window_init(WordWindow *window)
   window->clear = NULL;
 
   window->dict = NULL;
+}
+
+/*
+ * The window holds a reference to its dictionary for as long as it exists
+ * and drops it here, however it is closed (Add, Cancel or the window
+ * manager's close button, which GtkDialog reports as
+ * GTK_RESPONSE_DELETE_EVENT and then destroys the window itself).
+ */
+static void
+word_window_dispose(GObject *object)
+{
+  WordWindow *window = WORD_WINDOW(object);
+
+  if (window->dict) {
+    uim_dict_unref(window->dict);
+    window->dict = NULL;
+  }
+
+  G_OBJECT_CLASS(parent_class)->dispose(object);
 }
 
 GtkWidget *
@@ -480,10 +508,8 @@ word_window_add(WordWindow *window)
   word_window_clear(window);
 
   /* do not destroy the window when the continuance check box is checked */
-  if (!word_window_is_continuance_mode(window)) {
-    g_idle_add(idle_wordwin_destroy, window);
-    uim_dict_unref(window->dict);
-  }
+  if (!word_window_is_continuance_mode(window))
+    word_window_schedule_destroy(window);
 }
 
 static gboolean
@@ -512,6 +538,18 @@ word_window_validate_values(WordWindow *window)
   return TRUE;
 }
 
+/* Destroy the window from an idle handler.  The handler keeps the window
+ * object alive, and gtk_window_destroy() ignores a window that has been
+ * destroyed in the meantime. */
+static void
+word_window_schedule_destroy(WordWindow *window)
+{
+  g_idle_add_full(G_PRIORITY_DEFAULT_IDLE,
+                  idle_wordwin_destroy,
+                  g_object_ref(window),
+                  g_object_unref);
+}
+
 static gboolean
 idle_wordwin_destroy(gpointer data)
 {
@@ -532,8 +570,7 @@ word_window_response(GtkDialog *dialog, gint arg)
     break;
   case GTK_RESPONSE_CLOSE:
   case GTK_RESPONSE_CANCEL:
-    uim_dict_unref(WORD_WINDOW(dialog)->dict);
-    g_idle_add(idle_wordwin_destroy, dialog);
+    word_window_schedule_destroy(WORD_WINDOW(dialog));
     break;
   default:
     break;

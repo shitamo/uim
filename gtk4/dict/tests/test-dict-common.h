@@ -69,7 +69,8 @@ test_dict_word_list_find(uim_word *list, const gchar *phon, const gchar *desc);
 /*
  * Make Anthy use the temporary home returned by test_dict_setup_home()
  * and (re)write its private dictionary file with @contents, which is in
- * Anthy's text format ("yomi #WTYPE*freq word" per line, UTF-8).
+ * Anthy's text format ("yomi #WTYPE*freq word" per line, UTF-8).  When
+ * @contents is NULL, the file is removed instead (a new user's state).
  *
  * Anthy does not look at $HOME; it takes the home directory from the
  * password database.  test_dict_anthy_setup() therefore overrides Anthy's

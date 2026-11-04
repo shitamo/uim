@@ -34,10 +34,13 @@
 #include <config.h>
 
 #include <dlfcn.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <glib.h>
+#include <glib/gstdio.h>
 
 #include <anthy/anthy.h>
 #include <anthy/dicutil.h>
@@ -142,7 +145,9 @@ dict_anthy_read_priv_dic_list(uim_word **head)
 
 #if LIBANTHY_UTF8_CAPABLE
       {
-        gchar *cclass_code_utf8 = eucjp_to_utf8(cclass_code);
+        /* cclass_code is NULL for a word type unknown to uim */
+        gchar *cclass_code_utf8 =
+          cclass_code ? eucjp_to_utf8(cclass_code) : NULL;
         word_append(head,
                     WORD_TYPE_ANTHY,
                     "UTF-8",
@@ -173,6 +178,52 @@ dict_anthy_read_priv_dic_list(uim_word **head)
   return 0;
 }
 
+/*
+ * Anthy (at least 0.4) only adds words to a private dictionary file that
+ * already exists and fails with ANTHY_DIC_UTIL_ERROR otherwise, so adding
+ * the first word for a new user never works.  Create the empty file where
+ * Anthy looks for it.  Anthy takes its home directory from its own
+ * configuration ("HOME", normally from the password database), which is
+ * read through anthy_conf_get_str().  That function is exported but not
+ * declared in Anthy's headers, so look it up at run time and do nothing
+ * if it is not there.  uim-dict never sets a personality, so the file is
+ * the "default" one.
+ *
+ * Returns 1 if the file has been created.
+ */
+static int
+dict_anthy_create_priv_dic_file(void)
+{
+  typedef const char *(*conf_get_str_func)(const char *var);
+  conf_get_str_func conf_get_str;
+  const char *home;
+  gchar *dir, *path;
+  int fd, created = 0;
+
+  conf_get_str = (conf_get_str_func)dlsym(RTLD_DEFAULT, "anthy_conf_get_str");
+  if (!conf_get_str)
+    return 0;
+
+  home = conf_get_str("HOME");
+  if (!home || !*home)
+    return 0;
+
+  /* anthy_dic_util_init() creates this directory */
+  dir = g_build_filename(home, ".anthy", NULL);
+  path = g_build_filename(dir, "private_words_default", NULL);
+  if (g_file_test(dir, G_FILE_TEST_IS_DIR)) {
+    fd = g_open(path, O_WRONLY | O_CREAT | O_EXCL, 0600);
+    if (fd >= 0) {
+      close(fd);
+      created = 1;
+    }
+  }
+  g_free(path);
+  g_free(dir);
+
+  return created;
+}
+
 static int
 dict_anthy_add_priv_dic_with_flags(char *phon,
                                    char *desc,
@@ -187,6 +238,8 @@ dict_anthy_add_priv_dic_with_flags(char *phon,
   }
 
   status = anthy_priv_dic_add_entry(phon, desc, cclass_code, freq);
+  if (status == ANTHY_DIC_UTIL_ERROR && dict_anthy_create_priv_dic_file())
+    status = anthy_priv_dic_add_entry(phon, desc, cclass_code, freq);
 
   switch (status) {
   case ANTHY_DIC_UTIL_OK:
@@ -298,7 +351,7 @@ uim_dict_anthy_refresh(uim_dict *dict)
   if (dict == NULL)
     return;
 
-  dict->word_list = NULL;
   word_free_list(dict->word_list);
+  dict->word_list = NULL;
   dict_anthy_read_priv_dic_list(&dict->word_list);
 }

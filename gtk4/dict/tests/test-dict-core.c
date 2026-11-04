@@ -329,15 +329,9 @@ test_cclass_tables_consistent(void)
       g_assert_true(g_utf8_validate(utf8, -1, NULL));
       g_free(utf8);
 
-      /* code -> description -> code round trip within the category.
-       * Descriptions are not unique (see test_cclass_duplicate_desc()), so
-       * only require a code with the same description. */
+      /* code -> description -> code round trip within the category */
       g_assert_cmpstr(find_desc_from_code_with_type(c->code, pos), ==, c->desc);
-      g_assert_nonnull(find_code_from_desc(c->desc, pos));
-      g_assert_cmpstr(
-        find_desc_from_code_with_type(find_code_from_desc(c->desc, pos), pos),
-        ==,
-        c->desc);
+      g_assert_cmpstr(find_code_from_desc(c->desc, pos), ==, c->code);
       g_assert_cmpint(find_cclass_type_from_code(c->code), ==, pos);
       g_assert_cmpint(find_cclass_type_from_desc(c->desc), ==, pos);
       g_assert_cmpstr(find_desc_from_code(c->code), ==, c->desc);
@@ -355,29 +349,37 @@ test_cclass_duplicate_desc(void)
   get_cclass_tables(tables);
 
   /* The GUI shows descriptions and maps them back to codes with
-   * find_code_from_desc(), so two codes sharing a description cannot both
-   * be chosen.  Keep track of the known case and catch new ones. */
+   * find_code_from_desc(), so two codes sharing a description could not
+   * both be chosen.  Descriptions must be unique across categories too,
+   * since find_cclass_type_from_desc() picks the first matching one. */
   for (pos = 0; pos < NR_POS; pos++) {
-    unsigned int i, j;
+    unsigned int i;
 
     for (i = 0; i < *tables[pos].n; i++) {
-      for (j = i + 1; j < *tables[pos].n; j++) {
-        if (!strcmp(tables[pos].table[i].desc, tables[pos].table[j].desc))
-          g_string_append_printf(duplicates,
-                                 "%s=%s ",
-                                 tables[pos].table[i].code,
-                                 tables[pos].table[j].code);
+      int pos2;
+
+      for (pos2 = pos; pos2 < NR_POS; pos2++) {
+        unsigned int j;
+
+        for (j = (pos2 == pos) ? i + 1 : 0; j < *tables[pos2].n; j++) {
+          if (!strcmp(tables[pos].table[i].desc, tables[pos2].table[j].desc))
+            g_string_append_printf(duplicates,
+                                   "%s=%s ",
+                                   tables[pos].table[i].code,
+                                   tables[pos2].table[j].code);
+        }
       }
     }
   }
+  g_assert_cmpstr(duplicates->str, ==, "");
 
-  /* "#T37" and "#F14" are both described as "adverb (stem)"; the later
-   * entry wins, so "#T37" cannot be selected from its description. */
-  g_assert_cmpstr(duplicates->str, ==, "#T37=#F14 ");
-  g_assert_cmpstr(find_code_from_desc(adverb_code[5].desc, POS_ADVERB),
+  /* "#T37" and "#F14" used to share the description "adverb (stem)" */
+  g_assert_cmpstr(find_code_from_desc(find_desc_from_code("#T37"), POS_ADVERB),
+                  ==,
+                  "#T37");
+  g_assert_cmpstr(find_code_from_desc(find_desc_from_code("#F14"), POS_ADVERB),
                   ==,
                   "#F14");
-  g_assert_cmpstr(adverb_code[5].code, ==, "#T37");
 
   g_string_free(duplicates, TRUE);
 }
@@ -408,6 +410,8 @@ test_cclass_known_codes(void)
   check_code("#KY", POS_ADJECTIVE, "形容詞");
   check_code("#F06", POS_ADVERB, "副詞(と,語幹)");
   check_code("#T07", POS_ADVERB, "副詞(な,さ,語幹)");
+  check_code("#T37", POS_ADVERB, "名詞・副詞(語幹)");
+  check_code("#F14", POS_ADVERB, "副詞(語幹)");
   check_code("#KJ", POS_ETC, "一文字漢字");
   check_code("#NN", POS_ETC, "数詞:一般");
 }
@@ -612,6 +616,51 @@ test_dict_missing_methods(void)
   word_free_list(word);
 }
 
+static void
+test_dict_remove_dispatch(void)
+{
+  /* classes that only implement one of the two methods */
+  static uim_dict_class remove_only = {"RemoveOnly"};
+  static uim_dict_class change_only = {"ChangeOnly"};
+  uim_dict *dict;
+  uim_word *word = NULL;
+
+  fake_dict_reset_stats();
+  remove_only.remove_word = fake_dict_class.remove_word;
+  change_only.change_word = fake_dict_class.change_word;
+
+  dict = uim_dict_ref(fake_dict_new("Test dictionary", "UTF-8"));
+  fake_dict_store(dict, "a", "b", NULL, NULL, 1);
+  word_append(&word,
+              WORD_TYPE_ANTHY,
+              "UTF-8",
+              "a",
+              "b",
+              NULL,
+              NULL,
+              1,
+              0,
+              NULL);
+
+  /* uim_dict_remove_word() needs remove_word, not change_word */
+  dict->funcs = &remove_only;
+  g_assert_cmpint(uim_dict_change_word(dict, word), ==, 0);
+  g_assert_cmpint(uim_dict_remove_word(dict, word), ==, 1);
+  g_assert_cmpint(fake_dict_stats_data.n_remove, ==, 1);
+  g_assert_cmpuint(fake_dict_n_stored(dict), ==, 0);
+
+  /* and must not call a missing remove_word */
+  dict->funcs = &change_only;
+  g_assert_cmpint(uim_dict_remove_word(dict, word), ==, 0);
+  g_assert_cmpint(fake_dict_stats_data.n_remove, ==, 1);
+  g_assert_cmpint(uim_dict_change_word(dict, word), ==, 1);
+
+  dict->funcs = &fake_dict_class;
+  uim_dict_unref(dict);
+  word_free_list(word);
+  fake_dict_reset_stats();
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -647,6 +696,7 @@ main(int argc, char *argv[])
   g_test_add_func("/dict/dict/dispatch", test_dict_dispatch);
   g_test_add_func("/dict/dict/refcount", test_dict_refcount);
   g_test_add_func("/dict/dict/missing-methods", test_dict_missing_methods);
+  g_test_add_func("/dict/dict/remove-dispatch", test_dict_remove_dispatch);
 
   return g_test_run();
 }

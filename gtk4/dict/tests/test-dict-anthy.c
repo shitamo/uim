@@ -332,6 +332,63 @@ test_anthy_remove_word(void)
 }
 
 static void
+test_anthy_unknown_word_type(void)
+{
+  uim_dict *dict;
+  uim_word *w;
+
+  /* a word type that is not in uim's part-of-speech tables used to pass
+   * NULL to eucjp_to_utf8() (a GLib critical, fatal in the tests) */
+  if (!test_dict_anthy_setup(FIXTURE "なぞ #ZZZ*10 謎\n"))
+    return;
+
+  dict = open_dict();
+  g_assert_cmpuint(test_dict_word_list_length(dict->word_list), ==, 3);
+  w = find_word(dict, "なぞ", "謎");
+  g_assert_nonnull(w);
+  g_assert_cmpstr(w->cclass_native, ==, "#ZZZ");
+  g_assert_cmpstr(w->cclass_code, ==, "");
+  g_assert_cmpint(w->freq, ==, 10);
+
+  /* refreshing (which re-reads the list) works the same way */
+  uim_dict_refresh(dict);
+  g_assert_cmpuint(test_dict_word_list_length(dict->word_list), ==, 3);
+  g_assert_nonnull(find_word(dict, "なぞ", "謎"));
+
+  uim_dict_unref(dict);
+}
+
+static void
+test_anthy_add_without_private_dic(void)
+{
+  uim_dict *dict;
+  uim_word *word;
+  gchar *contents;
+
+  /* a new user has no private dictionary file yet */
+  if (!test_dict_anthy_setup(NULL))
+    return;
+
+  dict = open_dict();
+  g_assert_null(dict->word_list);
+
+  word = make_word(dict, "おく", "置く", "#K5", 300);
+  g_assert_cmpint(uim_dict_add_word(dict, word), ==, 1);
+  word_free_list(word);
+
+  contents = test_dict_anthy_read_private_dic();
+  g_assert_nonnull(contents);
+  g_assert_nonnull(strstr(contents, "おく #K5*300 置く"));
+  g_free(contents);
+
+  uim_dict_refresh(dict);
+  g_assert_cmpuint(test_dict_word_list_length(dict->word_list), ==, 1);
+  g_assert_nonnull(find_word(dict, "おく", "置く"));
+
+  uim_dict_unref(dict);
+}
+
+static void
 test_anthy_change_word_unsupported(void)
 {
   uim_dict *dict;
@@ -359,6 +416,10 @@ main(int argc, char *argv[])
   g_test_add_func("/dict/anthy/add-duplicate", test_anthy_add_duplicate);
   g_test_add_func("/dict/anthy/add-invalid", test_anthy_add_invalid);
   g_test_add_func("/dict/anthy/remove-word", test_anthy_remove_word);
+  g_test_add_func("/dict/anthy/unknown-word-type",
+                  test_anthy_unknown_word_type);
+  g_test_add_func("/dict/anthy/add-without-private-dic",
+                  test_anthy_add_without_private_dic);
   g_test_add_func("/dict/anthy/change-word-unsupported",
                   test_anthy_change_word_unsupported);
 

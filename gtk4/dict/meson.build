@@ -21,7 +21,7 @@ endif
 executable('uim-dict-gtk4',
            dict_gtk4_sources,
            c_args: dict_gtk4_c_args,
-           dependencies: [gtk4, dict_anthy, dict_canna],
+           dependencies: [gtk4, dict_anthy, dict_canna, dl],
            include_directories: uim_include_directories,
            install: true,
            link_with: [libuim_scm, libuim])

@@ -62,7 +62,7 @@ if dict_anthy.found()
       dict_src_dir / 'word.c',
     ],
     c_args: ['-DUSE_ANTHY'],
-    dependencies: [dict_test_glib, dict_anthy],
+    dependencies: [dict_test_glib, dict_anthy, dl],
     include_directories: dict_test_include_directories,
     install: false)
   test('test-dict-anthy',
@@ -92,7 +92,7 @@ test_dict_gtk = executable(
   'test-dict-gtk',
   dict_gtk_test_sources,
   c_args: dict_gtk4_c_args + ['-DGDK_DISABLE_DEPRECATION_WARNINGS'],
-  dependencies: [gtk4, dict_anthy, dict_canna],
+  dependencies: [gtk4, dict_anthy, dict_canna, dl],
   include_directories: dict_test_include_directories,
   link_with: [libuim_scm, libuim],
   install: false)

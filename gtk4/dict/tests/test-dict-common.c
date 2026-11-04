@@ -179,11 +179,14 @@ test_dict_anthy_setup(const gchar *contents)
   g_assert_cmpint(g_mkdir_with_parents(anthy_dir, 0700), ==, 0);
   g_free(anthy_dir);
 
-  /* Anthy only adds words to an existing private dictionary file, so
-   * always create it (possibly empty). */
   path = anthy_private_dic_path();
-  g_file_set_contents(path, contents ? contents : "", -1, &error);
-  g_assert_no_error(error);
+  if (contents) {
+    g_file_set_contents(path, contents, -1, &error);
+    g_assert_no_error(error);
+  } else {
+    g_remove(path);
+    g_assert_false(g_file_test(path, G_FILE_TEST_EXISTS));
+  }
   g_free(path);
 
   return TRUE;

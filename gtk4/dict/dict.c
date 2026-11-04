@@ -142,7 +142,7 @@ uim_dict_remove_word(uim_dict *dict, uim_word *word)
   if (!dict)
     return 0;
 
-  if (!dict->funcs || !dict->funcs->change_word) {
+  if (!dict->funcs || !dict->funcs->remove_word) {
     /* warning? */
     return 0;
   }

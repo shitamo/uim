@@ -698,8 +698,8 @@ test_word_window_defaults(void)
   /* Cancel releases the dictionary and destroys the window */
   g_object_add_weak_pointer(G_OBJECT(widget), (gpointer *)&widget);
   gtk_dialog_response(GTK_DIALOG(window), GTK_RESPONSE_CANCEL);
-  g_assert_cmpuint(dict->ref_count, ==, 1);
   g_assert_true(wait_for(is_null_cond, &widget));
+  g_assert_cmpuint(dict->ref_count, ==, 1);
   g_assert_cmpint(fake_dict_stats_data.n_add, ==, 0);
 
   uim_dict_unref(dict);
@@ -787,6 +787,32 @@ test_word_window_canna_freq(void)
 }
 
 static void
+test_word_window_close_button(void)
+{
+  uim_dict *dict = uim_dict_ref(fake_dict_new("Test dictionary", "UTF-8"));
+  GtkWidget *widget;
+
+  widget = word_window_new(WORD_WINDOW_MODE_ADD, dict);
+  gtk_window_present(GTK_WINDOW(widget));
+  spin();
+  g_assert_cmpuint(dict->ref_count, ==, 2);
+
+  /* the window manager's close button: GtkDialog emits
+   * GTK_RESPONSE_DELETE_EVENT and destroys the window by itself */
+  g_object_add_weak_pointer(G_OBJECT(widget), (gpointer *)&widget);
+  gtk_window_close(GTK_WINDOW(widget));
+  g_assert_true(wait_for(is_null_cond, &widget));
+
+  /* the window's reference to the dictionary is released */
+  g_assert_cmpuint(dict->ref_count, ==, 1);
+  g_assert_cmpint(fake_dict_stats_data.n_close, ==, 0);
+
+  uim_dict_unref(dict);
+  g_assert_cmpint(fake_dict_stats_data.n_close, ==, 1);
+  fixture_teardown();
+}
+
+static void
 fill_word_window(
   WordWindow *window, const gchar *phon, const gchar *desc, int pos, int freq)
 {
@@ -838,6 +864,35 @@ test_word_window_add(void)
   /* ... and, not being in continuance mode, went away */
   g_assert_true(wait_for(is_null_cond, &widget));
   g_assert_cmpuint(dict->ref_count, ==, 1);
+
+  uim_dict_unref(dict);
+  fixture_teardown();
+}
+
+static void
+test_word_window_add_then_cancel(void)
+{
+  uim_dict *dict = uim_dict_ref(fake_dict_new("Test dictionary", "UTF-8"));
+  GtkWidget *widget;
+  WordWindow *window;
+
+  widget = word_window_new(WORD_WINDOW_MODE_ADD, dict);
+  window = WORD_WINDOW(widget);
+  gtk_window_present(GTK_WINDOW(widget));
+  spin();
+  g_object_add_weak_pointer(G_OBJECT(widget), (gpointer *)&widget);
+
+  /* Add schedules the window's destruction; a second closing response
+   * before that happens must not release the dictionary twice */
+  fill_word_window(window, "おく", "置く", POS_VERB, 1);
+  gtk_dialog_response(GTK_DIALOG(window), WORD_WINDOW_RESPONSE_ADD);
+  gtk_dialog_response(GTK_DIALOG(window), GTK_RESPONSE_CANCEL);
+  close_message("Word registration succeeded.");
+  g_assert_true(wait_for(is_null_cond, &widget));
+
+  g_assert_cmpuint(dict->ref_count, ==, 1);
+  g_assert_cmpint(fake_dict_stats_data.n_close, ==, 0);
+  g_assert_cmpuint(fake_dict_n_stored(dict), ==, 1);
 
   uim_dict_unref(dict);
   fixture_teardown();
@@ -1207,7 +1262,11 @@ main(int argc, char *argv[])
                   test_word_window_edit_mode);
   g_test_add_func("/dict/gtk/word-window/canna-freq",
                   test_word_window_canna_freq);
+  g_test_add_func("/dict/gtk/word-window/close-button",
+                  test_word_window_close_button);
   g_test_add_func("/dict/gtk/word-window/add", test_word_window_add);
+  g_test_add_func("/dict/gtk/word-window/add-then-cancel",
+                  test_word_window_add_then_cancel);
   g_test_add_func("/dict/gtk/word-window/add-continuance",
                   test_word_window_add_continuance);
   g_test_add_func("/dict/gtk/word-window/add-validation",
